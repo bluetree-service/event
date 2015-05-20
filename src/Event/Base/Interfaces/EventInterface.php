@@ -1,6 +1,6 @@
 <?php
 
-namespace ClassEvent\Event\Base;
+namespace ClassEvent\Event\Base\Interfaces;
 
 interface EventInterface
 {

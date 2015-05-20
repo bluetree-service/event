@@ -2,7 +2,11 @@
 
 namespace ClassEvent\Event\Base;
 
-class EventManager implements EventDispatcherInterface
+use ClassEvent\Event\Base\Interfaces\EventManagerInterface;
+use ClassEvent\Event\Base\Interfaces\EventInterface;
+use Zend\Config\Reader;
+
+class EventManager implements EventManagerInterface
 {
     protected $_configuration = [];
 
@@ -18,11 +22,19 @@ class EventManager implements EventDispatcherInterface
 
     protected $_eventsToLog = [];
 
-    public function __construct($configurationPath)
+    public function __construct($configurationPath = '', $type = [])
     {
-        $this->configuration = $this->readEventConfiguration($configurationPath);
+        $this->_configuration = $this->readEventConfiguration($configurationPath, $type);
     }
 
+    /**
+     * return event object or create it if not exist
+     *
+     * @param string $eventName
+     * @return bool
+     * 
+     * @todo check that object is instance of event interface
+     */
     public function getEventObject($eventName)
     {
         try {
@@ -42,12 +54,19 @@ class EventManager implements EventDispatcherInterface
         return $this->_events[$eventName];
     }
 
-    public function setEventConfiguration($configuration)
+    /**
+     * add event configuration into event manager
+     *
+     * @param string|array $configuration
+     * @param string|null $type
+     * @return $this
+     */
+    public function setEventConfiguration($configuration, $type = null)
     {
         if (is_string($configuration)) {
             $this->_configuration = array_merge_recursive(
                 $this->_configuration,
-                $this->readEventConfiguration($configuration)
+                $this->readEventConfiguration($configuration, $type)
             );
         } elseif (is_array($configuration)) {
             $this->_configuration = array_merge_recursive($this->_configuration, $configuration);
@@ -66,14 +85,87 @@ class EventManager implements EventDispatcherInterface
         
     }
 
-    public function readEventConfiguration($configuration)
+    /**
+     * read configuration from file
+     * 
+     * @param mixed $configuration
+     * @param string|null $type
+     * @return array
+     * 
+     * @todo other config not only from files
+     */
+    public function readEventConfiguration($configuration, $type)
     {
-        return null;
+        $config = [];
+
+        if ($type) {
+            $config = $this->_configurationStrategy($configuration, $type);
+        }
+
+        return $config;
     }
 
+    /**
+     * call and read specified configuration
+     *
+     * @param string $configuration
+     * @param string $type
+     * @return array
+     */
+    protected function _configurationStrategy($configuration, $type)
+    {
+        if (!file_exists($configuration)) {
+            throw new \InvalidArgumentException('File ' . $configuration . 'don\'t exists.');
+        }
+
+        switch ($type) {
+            case 'array':
+                $file   = new \SplFileObject($configuration, "r");
+                $config = $file->fread($file->getSize());
+                break;
+            case 'ini':
+                $reader = new Reader\Ini;
+                $config = $reader->fromFile($configuration);
+                break;
+            case 'xml':
+                $reader = new Reader\Xml;
+                $config = $reader->fromFile($configuration);
+                break;
+            case 'json':
+                $reader = new Reader\Json;
+                $config = $reader->fromFile($configuration);
+                break;
+            case 'yaml':
+                $reader = new Reader\Yaml;
+                $config = $reader->fromFile($configuration);
+                break;
+            case 'java':
+                $reader = new Reader\JavaProperties;
+                $config = $reader->fromFile($configuration);
+                break;
+            default:
+                $config = [];
+        }
+
+        return $config;
+    }
+
+    /**
+     * @todo log all events or single event
+     */
     public function logEvent()
     {
         
+    }
+
+    /**
+     * return current event configuration
+     *
+     * @return array
+     */
+    public function getEventConfiguration()
+    {
+        return $this->_configuration;
     }
 
     public function getErrors()

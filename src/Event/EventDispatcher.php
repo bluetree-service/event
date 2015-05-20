@@ -1,22 +1,10 @@
 <?php
-/**
- * eventList[
- *      'event_code' => [
- *          'object' => 'namespace',
- *          'listeners' => [
- *              'callable',
- *              'callable',
- *              'callable'
- *          ]
- *      ]
- * ]
- */
 
-namespace Event;
+namespace ClassEvent\Event;
 
-use ClassEvent\Event\Base\EventManager as EventInstance;
-use ClassEvent\Event\Base\EventDispatcherInterface;
-use ClassEvent\Event\Base\EventInterface;
+use ClassEvent\Event\Base\Interfaces\EventManagerInterface;
+use ClassEvent\Event\Base\Interfaces\EventInterface;
+use ClassEvent\Event\Base\EventManager;
 
 class EventDispatcher
 {
@@ -27,22 +15,24 @@ class EventDispatcher
      * initialize event dispatch instance
      *
      * @param string $configurationPath
+     * @param string|null $configType
      * @param string $instanceName
-     * @param string|EventDispatcherInterface $eventDispatcher
+     * @param string|EventManagerInterface $eventManager
      */
     public static function init(
         $configurationPath,
+        $configType = null,
         $instanceName = 'default',
-        $eventDispatcher = 'default'
+        $eventManager = 'default'
     ) {
         if (array_key_exists($instanceName, self::$_dispatcherInstance)) {
             return;
         }
 
-        if ($eventDispatcher === 'default') {
-            self::$_dispatcherInstance[$instanceName] = new EventInstance($configurationPath);
-        } elseif ($eventDispatcher instanceof EventDispatcherInterface) {
-            self::$_dispatcherInstance[$instanceName] = $eventDispatcher;
+        if ($eventManager === 'default') {
+            self::$_dispatcherInstance[$instanceName] = new EventManager($configurationPath, $configType);
+        } elseif ($eventManager instanceof EventManagerInterface) {
+            self::$_dispatcherInstance[$instanceName] = $eventManager;
         } else {
             throw new \RuntimeException('Undefined event dispatcher instance.');
         }
@@ -93,10 +83,17 @@ class EventDispatcher
         
     }
 
-    public static function setEventConfiguration(array $config, $instanceName = 'default')
+    /**
+     * allow to add event configuration after initialize event dispatcher
+     *
+     * @param array $config
+     * @param string $type
+     * @param string $instanceName
+     */
+    public static function setEventConfiguration(array $config, $type, $instanceName = 'default')
     {
         self::_initException();
-        self::getInstance($instanceName)->setEventConfiguration($config);
+        self::getInstance($instanceName)->setEventConfiguration($config, $type);
     }
 
     public static function getErrors()
@@ -125,7 +122,7 @@ class EventDispatcher
      * return event dispatcher instance object
      *
      * @param string $instanceName
-     * @return null|EventDispatcherInterface
+     * @return null|EventManagerInterface
      */
     public static function getInstance($instanceName = 'default')
     {
