@@ -1,5 +1,8 @@
 ClassEvent
 ============
+
+[![Build Status](https://travis-ci.org/chajr/class-event.svg)](https://travis-ci.org/chajr/class-event)
+
 Simple PHP event handling mechanism
 
 Change log
