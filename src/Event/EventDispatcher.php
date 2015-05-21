@@ -3,13 +3,12 @@
 namespace ClassEvent\Event;
 
 use ClassEvent\Event\Base\Interfaces\EventManagerInterface;
-use ClassEvent\Event\Base\Interfaces\EventInterface;
 use ClassEvent\Event\Base\EventManager;
 
 class EventDispatcher
 {
     protected static $_initialized = false;
-    protected static $_dispatcherInstance = [];
+    protected static $_managerInstance = [];
 
     /**
      * initialize event dispatch instance
@@ -20,19 +19,19 @@ class EventDispatcher
      * @param string|EventManagerInterface $eventManager
      */
     public static function init(
-        $configurationPath,
+        $configurationPath = '',
         $configType = null,
         $instanceName = 'default',
         $eventManager = 'default'
     ) {
-        if (array_key_exists($instanceName, self::$_dispatcherInstance)) {
+        if (array_key_exists($instanceName, self::$_managerInstance)) {
             return;
         }
 
         if ($eventManager === 'default') {
-            self::$_dispatcherInstance[$instanceName] = new EventManager($configurationPath, $configType);
+            self::$_managerInstance[$instanceName] = new EventManager($configurationPath, $configType);
         } elseif ($eventManager instanceof EventManagerInterface) {
-            self::$_dispatcherInstance[$instanceName] = $eventManager;
+            self::$_managerInstance[$instanceName] = $eventManager;
         } else {
             throw new \RuntimeException('Undefined event dispatcher instance.');
         }
@@ -50,27 +49,20 @@ class EventDispatcher
     public static function triggerEvent($name, $data = [], $instanceName = 'default')
     {
         self::_initException();
-        $listeners = self::getInstance($instanceName)->getEventListeners($name);
-        /** @var EventInterface $event */
-        $event = self::getInstance($instanceName)->getEventObject($name);
+        self::_getInstance($instanceName)->triggerEvent($name, $data);
+    }
 
-        if (!$event) {
-            throw new \UnexpectedValueException(
-                self::getInstance($instanceName)->getErrors()
-            );
-        }
+    /**
+     * check that event dispatcher was initialized with given instance
+     * 
+     * @param string $instance
+     * @return bool
+     */
+    public static function isInitialized($instance = 'default')
+    {
+        $instanceExists = array_key_exists($instance, self::$_managerInstance);
 
-        foreach ($listeners as $listener) {
-            if ($event->isPropagationStopped()) {
-                break;
-            }
-
-            try {
-                self::getInstance($instanceName)->callFunction($listener, $data, $event);
-            } catch (\Exception $e) {
-                self::getInstance($instanceName)->addError($e);
-            }
-        }
+        return self::$_initialized && $instanceExists;
     }
 
     public static function addEventListener()
@@ -93,7 +85,7 @@ class EventDispatcher
     public static function setEventConfiguration(array $config, $type, $instanceName = 'default')
     {
         self::_initException();
-        self::getInstance($instanceName)->setEventConfiguration($config, $type);
+        self::_getInstance($instanceName)->setEventConfiguration($config, $type);
     }
 
     public static function getErrors()
@@ -119,17 +111,17 @@ class EventDispatcher
     }
 
     /**
-     * return event dispatcher instance object
+     * return event manager instance object
      *
      * @param string $instanceName
      * @return null|EventManagerInterface
      */
-    public static function getInstance($instanceName = 'default')
+    protected static function _getInstance($instanceName = 'default')
     {
-        if (!array_key_exists($instanceName, self::$_dispatcherInstance)) {
+        if (!array_key_exists($instanceName, self::$_managerInstance)) {
             return null;
         }
 
-        return self::$_dispatcherInstance[$instanceName];
+        return self::$_managerInstance[$instanceName];
     }
 }

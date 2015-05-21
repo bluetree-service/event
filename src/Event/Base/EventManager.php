@@ -75,14 +75,49 @@ class EventManager implements EventManagerInterface
         return $this;
     }
 
-    public function getEventListeners($name)
+    /**
+     * trigger new event with automatic call all subscribed listeners
+     *
+     * @param string $name
+     * @param array $data
+     */
+    public function triggerEvent($name, $data = [])
     {
-        
+        /** @var EventInterface $event */
+        $event = $this->getEventObject($name);
+
+        if (!$event) {
+            throw new \UnexpectedValueException($this->getErrors());
+        }
+
+        foreach ($this->_configuration as $listener) {
+            if ($event->isPropagationStopped()) {
+                break;
+            }
+
+            foreach ($listener['listeners'] as $eventListener) {
+                try {
+                    $this->_callFunction($eventListener, $data, $event);
+                } catch (\Exception $e) {
+                    $this->addError($e);
+                }
+            }
+            
+        }
     }
 
-    public function callFunction($listener, array $data, EventInterface $event)
+    /**
+     * allow to call event listeners functions
+     *
+     * @param string $listener
+     * @param array $data
+     * @param EventInterface $event
+     */
+    protected function _callFunction($listener, array $data, EventInterface $event)
     {
-        
+        if (is_callable($listener)) {
+            call_user_func_array($listener, [$data, $event]);
+        }
     }
 
     /**
