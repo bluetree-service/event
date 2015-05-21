@@ -10,20 +10,27 @@
 namespace Test;
 
 use ClassEvent\Event\EventDispatcher;
-use ClassEvent\Event\Base\Interfaces\EventManagerInterface;
 use ClassEvent\Event\Base\EventManager;
 
 class EventDispatcherTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * store information that even was triggered
+     *
+     * @var bool
+     */
+    public static $eventTriggered = false;
+
+    /**
      * test event initialize
      */
     public function testEventInstanceCreation()
     {
-        EventDispatcher::init('');
+        EventDispatcher::init();
+        $this->assertNotFalse(EventDispatcher::isInitialized());
 
-        $this->assertNotNull(EventDispatcher::getInstance());
-        $this->assertTrue(EventDispatcher::getInstance() instanceof EventManagerInterface);
+        EventDispatcher::init('', null, 'new_instance');
+        $this->assertNotFalse(EventDispatcher::isInitialized('new_instance'));
     }
 
     /**
@@ -37,6 +44,25 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         $eventManager->setEventConfiguration($this->getEventConfig());
 
         $this->assertEquals($this->getEventConfig(), $eventManager->getEventConfiguration());
+    }
+
+    /**
+     * test that event is called correctly
+     */
+    public function testTriggerEvent()
+    {
+        EventDispatcher::init();
+        EventDispatcher::setEventConfiguration([
+            'test_event' => [
+                'object'    => 'ClassEvent\Event\BaseEvent',
+                'listeners' => [
+                    'Test\EventDispatcherTest::trigger',
+                ]
+            ]
+        ], 'array');
+        EventDispatcher::triggerEvent('test_event');
+
+        $this->assertTrue(self::$eventTriggered);
     }
 
     /**
@@ -56,5 +82,13 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
                 ]
             ]
         ];
+    }
+
+    /**
+     * method to test event triggering
+     */
+    public static function trigger()
+    {
+        self::$eventTriggered = true;
     }
 }
