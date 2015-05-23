@@ -22,9 +22,37 @@ class EventManager implements EventManagerInterface
 
     protected $_eventsToLog = [];
 
-    public function __construct($configurationPath = '', $type = [])
+    /**
+     * store default options for event manager
+     *
+     * @var array
+     */
+    protected $_options = [
+        'configuration'     => [],
+        'type'              => 'array',
+        'from_file'         => false
+    ];
+
+    /**
+     * create manage instance
+     *
+     * @param array $options
+     */
+    public function __construct(array $options = [])
     {
-        $this->_configuration = $this->readEventConfiguration($configurationPath, $type);
+        $this->_options = array_merge($this->_options, $options);
+
+        if ($this->_options['from_file']) {
+            $this->_configuration = $this->readEventConfiguration(
+                $this->_options['configuration'],
+                $this->_options['type']
+            );
+        } else {
+            $this->_configuration = array_merge(
+                $this->_configuration,
+                $this->_options['configuration']
+            );
+        }
     }
 
     /**
@@ -57,19 +85,21 @@ class EventManager implements EventManagerInterface
     /**
      * add event configuration into event manager
      *
-     * @param string|array $configuration
-     * @param string|null $type
+     * @param array $config
      * @return $this
      */
-    public function setEventConfiguration($configuration, $type = null)
+    public function setEventConfiguration(array $config)
     {
-        if (is_string($configuration)) {
+        if ($config['from_file']) {
             $this->_configuration = array_merge_recursive(
                 $this->_configuration,
-                $this->readEventConfiguration($configuration, $type)
+                $this->readEventConfiguration($config['configuration'], $config['type'])
             );
-        } elseif (is_array($configuration)) {
-            $this->_configuration = array_merge_recursive($this->_configuration, $configuration);
+        } else {
+            $this->_configuration = array_merge_recursive(
+                $this->_configuration,
+                $config['configuration']
+            );
         }
 
         return $this;

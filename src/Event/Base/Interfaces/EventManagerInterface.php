@@ -4,7 +4,7 @@ namespace ClassEvent\Event\Base\Interfaces;
 
 interface EventManagerInterface
 {
-    public function __construct($configurationPath = '', $type = []);
+    public function __construct(array $options = []);
     public function getEventObject($eventName);
     public function triggerEvent($name, $data = []);
     public function readEventConfiguration($configuration, $type);
@@ -13,5 +13,5 @@ interface EventManagerInterface
     public function hasErrors();
     public function clearErrors();
     public function addError(\Exception $e);
-    public function setEventConfiguration($configuration, $type = null);
+    public function setEventConfiguration(array $config);
 }

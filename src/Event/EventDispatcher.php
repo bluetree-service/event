@@ -3,37 +3,52 @@
 namespace ClassEvent\Event;
 
 use ClassEvent\Event\Base\Interfaces\EventManagerInterface;
-use ClassEvent\Event\Base\EventManager;
 
 class EventDispatcher
 {
+    const DEFAULT_INSTANCE = 'default';
+
     protected static $_initialized = false;
     protected static $_managerInstance = [];
 
     /**
+     * store all default options for event dispatcher
+     *
+     * @var array
+     */
+    protected static $_options = [
+        'configuration'     => [],
+        'type'              => 'array',
+        'from_file'         => false,
+        'instance_name'     => self::DEFAULT_INSTANCE,
+        'event_manager'     => 'ClassEvent\Event\Base\EventManager'
+    ];
+
+    /**
      * initialize event dispatch instance
      *
-     * @param string $configurationPath
-     * @param string|null $configType
-     * @param string $instanceName
-     * @param string|EventManagerInterface $eventManager
+     * @param array $options
      */
-    public static function init(
-        $configurationPath = '',
-        $configType = null,
-        $instanceName = 'default',
-        $eventManager = 'default'
-    ) {
+    public static function init(array $options = [])
+    {
+        $options        = array_merge(self::$_options, $options);
+        $instanceName   = $options['instance_name'];
+
         if (array_key_exists($instanceName, self::$_managerInstance)) {
             return;
         }
 
-        if ($eventManager === 'default') {
-            self::$_managerInstance[$instanceName] = new EventManager($configurationPath, $configType);
-        } elseif ($eventManager instanceof EventManagerInterface) {
-            self::$_managerInstance[$instanceName] = $eventManager;
-        } else {
-            throw new \RuntimeException('Undefined event dispatcher instance.');
+        switch (true) {
+            case is_string($options['event_manager']):
+                $reflection                             = new \ReflectionClass($options['event_manager']);
+                self::$_managerInstance[$instanceName]  = $reflection->newInstanceArgs($options);
+                break;
+            case $options['event_manager'] instanceof EventManagerInterface:
+                self::$_managerInstance[$instanceName] = $options['event_manager'];
+                break;
+            default:
+                throw new \RuntimeException('Undefined event dispatcher instance.');
+                break;
         }
 
         self::$_initialized = true;
@@ -79,13 +94,12 @@ class EventDispatcher
      * allow to add event configuration after initialize event dispatcher
      *
      * @param array $config
-     * @param string $type
-     * @param string $instanceName
      */
-    public static function setEventConfiguration(array $config, $type, $instanceName = 'default')
+    public static function setEventConfiguration(array $config)
     {
         self::_initException();
-        self::_getInstance($instanceName)->setEventConfiguration($config, $type);
+        $config = array_merge(self::$_options, $config);
+        self::_getInstance($config['instance_name'])->setEventConfiguration($config);
     }
 
     public static function getErrors()

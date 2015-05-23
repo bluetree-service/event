@@ -29,7 +29,9 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         EventDispatcher::init();
         $this->assertNotFalse(EventDispatcher::isInitialized());
 
-        EventDispatcher::init('', null, 'new_instance');
+        EventDispatcher::init([
+            'instance_name' => 'new_instance'
+        ]);
         $this->assertNotFalse(EventDispatcher::isInitialized('new_instance'));
     }
 
@@ -43,23 +45,27 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         $eventManager = new EventManager;
         $eventManager->setEventConfiguration($this->getEventConfig());
 
-        $this->assertEquals($this->getEventConfig(), $eventManager->getEventConfiguration());
+        $this->assertEquals($this->getEventConfig()['configuration'], $eventManager->getEventConfiguration());
     }
 
     /**
      * test that event is called correctly
+     * 
+     * @todo test with filesystem mocking
      */
     public function testTriggerEvent()
     {
         EventDispatcher::init();
         EventDispatcher::setEventConfiguration([
-            'test_event' => [
-                'object'    => 'ClassEvent\Event\BaseEvent',
-                'listeners' => [
-                    'Test\EventDispatcherTest::trigger',
+            'configuration' => [
+                'test_event' => [
+                    'object'    => 'ClassEvent\Event\BaseEvent',
+                    'listeners' => [
+                        'Test\EventDispatcherTest::trigger',
+                    ]
                 ]
-            ]
-        ], 'array');
+            ],
+        ]);
         EventDispatcher::triggerEvent('test_event');
 
         $this->assertTrue(self::$eventTriggered);
@@ -73,14 +79,18 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
     public function getEventConfig()
     {
         return [
-            'test_event_code' => [
-                'object'    => 'ClassEvent\Event\BaseEvent',
-                'listeners' => [
-                    'ClassOne::method',
-                    'ClassSecond::method',
-                    'someFunction',
+            'configuration' => [
+                'test_event_code' => [
+                    'object'    => 'ClassEvent\Event\BaseEvent',
+                    'listeners' => [
+                        'ClassOne::method',
+                        'ClassSecond::method',
+                        'someFunction',
+                    ]
                 ]
-            ]
+            ],
+            'type'      => 'array',
+            'from_file' => false,
         ];
     }
 
