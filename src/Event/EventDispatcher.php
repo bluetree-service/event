@@ -10,13 +10,14 @@ class EventDispatcher
 
     protected static $_initialized = false;
     protected static $_managerInstance = [];
+    protected static $_instanceConfig = [];
 
     /**
      * store all default options for event dispatcher
      *
      * @var array
      */
-    protected static $_options = [
+    protected static $_defaultOptions = [
         'configuration'     => [],
         'type'              => 'array',
         'from_file'         => false,
@@ -31,8 +32,8 @@ class EventDispatcher
      */
     public static function init(array $options = [])
     {
-        $options        = array_merge(self::$_options, $options);
-        $instanceName   = $options['instance_name'];
+        $options      = self::_setInstanceConfig($options);
+        $instanceName = $options['instance_name'];
 
         if (array_key_exists($instanceName, self::$_managerInstance)) {
             return;
@@ -98,7 +99,7 @@ class EventDispatcher
     public static function setEventConfiguration(array $config)
     {
         self::_initException();
-        $config = array_merge(self::$_options, $config);
+        $config = self::_setInstanceConfig($config);
         self::_getInstance($config['instance_name'])->setEventConfiguration($config);
     }
 
@@ -116,7 +117,36 @@ class EventDispatcher
     {
         self::_initException();
     }
-    
+
+    /**
+     * allow to set configuration for given instance
+     *
+     * @param array $config
+     * @return array
+     */
+    protected static function _setInstanceConfig(array $config)
+    {
+        $instanceName = self::DEFAULT_INSTANCE;
+
+        if (array_key_exists('instance_name', $config)) {
+            $instanceName = $config['instance_name'];
+        }
+
+        if (array_key_exists($instanceName, self::$_instanceConfig)) {
+            self::$_instanceConfig[$instanceName] = array_merge_recursive(
+                self::$_instanceConfig[$instanceName],
+                $config
+            );
+        } else {
+            self::$_instanceConfig[$instanceName] = array_merge(
+                self::$_defaultOptions,
+                $config
+            );
+        }
+
+        return self::$_instanceConfig[$instanceName];
+    }
+
     protected static function _initException()
     {
         if (!self::$_initialized) {
