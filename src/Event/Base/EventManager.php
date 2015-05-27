@@ -60,23 +60,22 @@ class EventManager implements EventManagerInterface
      *
      * @param string $eventName
      * @return bool
-     * 
-     * @todo check that object is instance of event interface
      */
     public function getEventObject($eventName)
     {
-        try {
-            if (!array_key_exists($eventName, $this->_configuration)) {
-                throw new \InvalidArgumentException('Event is not defined.');
+        if (!array_key_exists($eventName, $this->_configuration)) {
+            throw new \InvalidArgumentException('Event is not defined.');
+        }
+
+        if (!array_key_exists($eventName, $this->_events)) {
+            $namespace                  = $this->_configuration[$eventName]['object'];
+            $instance                   = new $namespace;
+
+            if (!($instance instanceof EventInterface)) {
+                throw new \LogicException('Invalid interface of event object');
             }
 
-            if (!array_key_exists($eventName, $this->_events)) {
-                $namespace                  = $this->_configuration[$eventName]['object'];
-                $this->_events[$eventName]  = new $namespace;
-            }
-        } catch (\Exception $e) {
-            $this->addError($e);
-            return false;
+            $this->_events[$eventName] = $instance;
         }
 
         return $this->_events[$eventName];

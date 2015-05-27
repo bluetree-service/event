@@ -18,4 +18,9 @@ abstract class Event implements EventInterface
     {
         
     }
+
+    public function stopPropagation()
+    {
+
+    }
 }

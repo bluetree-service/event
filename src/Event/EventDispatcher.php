@@ -62,7 +62,7 @@ class EventDispatcher
      * @param array $data
      * @param string $instanceName
      */
-    public static function triggerEvent($name, $data = [], $instanceName = 'default')
+    public static function triggerEvent($name, $data = [], $instanceName = self::DEFAULT_INSTANCE)
     {
         self::_initException();
         self::_getInstance($instanceName)->triggerEvent($name, $data);
@@ -74,7 +74,7 @@ class EventDispatcher
      * @param string $instance
      * @return bool
      */
-    public static function isInitialized($instance = 'default')
+    public static function isInitialized($instance = self::DEFAULT_INSTANCE)
     {
         $instanceExists = array_key_exists($instance, self::$_managerInstance);
 
@@ -86,7 +86,7 @@ class EventDispatcher
         self::_initException();
     }
 
-    public static function getCalledEvents()
+    public static function getCalledEvents($instance = self::DEFAULT_INSTANCE)
     {
         
     }
@@ -147,6 +147,11 @@ class EventDispatcher
         return self::$_instanceConfig[$instanceName];
     }
 
+    /**
+     * check that event dispatcher was initialized
+     *
+     * @throws \RuntimeException
+     */
     protected static function _initException()
     {
         if (!self::$_initialized) {
@@ -160,7 +165,7 @@ class EventDispatcher
      * @param string $instanceName
      * @return null|EventManagerInterface
      */
-    protected static function _getInstance($instanceName = 'default')
+    protected static function _getInstance($instanceName = self::DEFAULT_INSTANCE)
     {
         if (!array_key_exists($instanceName, self::$_managerInstance)) {
             return null;
