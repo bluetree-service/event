@@ -215,6 +215,16 @@ class EventManager implements EventManagerInterface
     }
 
     /**
+     * return all currently launched events
+     *
+     * @return array
+     */
+    public function getAllEvents()
+    {
+        return $this->_events;
+    }
+
+    /**
      * @todo log all events or single event
      */
     public function logEvent()

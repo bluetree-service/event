@@ -14,4 +14,5 @@ interface EventManagerInterface
     public function clearErrors();
     public function addError(\Exception $e);
     public function setEventConfiguration(array $config);
+    public function getAllEvents();
 }

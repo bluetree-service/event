@@ -86,9 +86,17 @@ class EventDispatcher
         self::_initException();
     }
 
+    /**
+     * return all called events for given instance
+     *
+     * @param string $instance
+     * @return mixed
+     */
     public static function getCalledEvents($instance = self::DEFAULT_INSTANCE)
     {
-        
+        /** @var EventManagerInterface $instanceObject */
+        $instanceObject = self::$_managerInstance[$instance];
+        return $instanceObject->getAllEvents();
     }
 
     /**
