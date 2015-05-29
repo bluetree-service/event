@@ -111,6 +111,19 @@ class EventDispatcher
         self::_getInstance($config['instance_name'])->setEventConfiguration($config);
     }
 
+    /**
+     * return set up configuration for given instance
+     *
+     * @param string $instanceName
+     * @return array
+     */
+    public static function getEventConfiguration($instanceName = self::DEFAULT_INSTANCE)
+    {
+        /** @var EventManagerInterface $instanceObject */
+        $instanceObject = self::$_managerInstance[$instanceName];
+        return $instanceObject->getEventConfiguration();
+    }
+
     public static function getErrors()
     {
         self::_initException();
