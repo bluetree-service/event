@@ -141,7 +141,7 @@ class EventDispatcher
         }
 
         if (array_key_exists($instanceName, self::$_instanceConfig)) {
-            self::$_instanceConfig[$instanceName] = array_merge_recursive(
+            self::$_instanceConfig[$instanceName] = array_replace_recursive(
                 self::$_instanceConfig[$instanceName],
                 $config
             );

@@ -90,12 +90,12 @@ class EventManager implements EventManagerInterface
     public function setEventConfiguration(array $config)
     {
         if ($config['from_file']) {
-            $this->_configuration = array_merge_recursive(
+            $this->_configuration = array_replace_recursive(
                 $this->_configuration,
                 $this->readEventConfiguration($config['configuration'], $config['type'])
             );
         } else {
-            $this->_configuration = array_merge_recursive(
+            $this->_configuration = array_replace_recursive(
                 $this->_configuration,
                 $config['configuration']
             );
