@@ -1,6 +1,6 @@
 <?php
 /**
- * test Event Dispatcher class
+ * test Event Manager class
  *
  * @package     ClassEvent
  * @subpackage  Test
@@ -9,7 +9,7 @@
  */
 namespace Test;
 
-use ClassEvent\Event\EventDispatcher;
+use ClassEvent\Event\Base\Interfaces\EventInterface;
 use ClassEvent\Event\Base\EventManager;
 
 class EventManagerTest extends \PHPUnit_Framework_TestCase
@@ -41,6 +41,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
      * test read configuration
      *
      * @todo check other data types
+     * @todo read config from file
      */
     public function testSetEventManagerConfiguration()
     {
@@ -49,6 +50,23 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $this->getEventConfig()['configuration'],
+            $eventManager->getEventConfiguration()
+        );
+
+        $eventManager->setEventConfiguration([
+            'configuration' => [
+                'test_event_code' => [
+                    'listeners' => [
+                        'newListener'
+                    ]
+                ]
+            ]
+        ]);
+
+        $config                                     = $this->getEventConfig()['configuration'];
+        $config['test_event_code']['listeners'][]   = 'newListener';
+        $this->assertEquals(
+            $config,
             $eventManager->getEventConfiguration()
         );
     }
@@ -60,12 +78,49 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testTriggerEvent()
     {
+        $instance = new EventManager;
+        $instance->setEventConfiguration([
+            'configuration' => [
+                'test_event' => [
+                    'object'    => 'ClassEvent\Event\BaseEvent',
+                    'listeners' => [
+                        'Test\EventManagerTest::trigger',
+                        function ($attr, $event) {
+                            self::$eventTriggered += $attr['value'];
+                        }
+                    ]
+                ],
+            ],
+        ]);
 
+        $instance->triggerEvent('test_event', ['value' => 2]);
+
+        $this->assertEquals(3, self::$eventTriggered);
     }
 
+    /**
+     * test trigger event with stop propagation before next listener
+     */
     public function testTriggerWithStopPropagation()
     {
+        $instance = new EventManager;
+        $instance->setEventConfiguration([
+            'configuration' => [
+                'test_event' => [
+                    'object'    => 'ClassEvent\Event\BaseEvent',
+                    'listeners' => [
+                        'Test\EventManagerTest::triggerStop',
+                        function ($attr, $event) {
+                            self::$eventTriggered += $attr['value'];
+                        }
+                    ]
+                ],
+            ],
+        ]);
 
+        $instance->triggerEvent('test_event', ['value' => 2]);
+
+        $this->assertEquals(4, self::$eventTriggered);
     }
 
     public function testAddListenerAndTriggerEvent()
@@ -104,5 +159,24 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
             'type'      => 'array',
             'from_file' => false,
         ];
+    }
+
+    /**
+     * method to test event triggering
+     */
+    public static function trigger()
+    {
+        self::$eventTriggered++;
+    }
+    /**
+     * method to test event triggering
+     *
+     * @param mixed $attr
+     * @param EventInterface $event
+     */
+    public static function triggerStop($attr, EventInterface $event)
+    {
+        $event->stopPropagation();
+        self::$eventTriggered++;
     }
 }

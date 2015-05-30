@@ -10,7 +10,6 @@
 namespace Test;
 
 use ClassEvent\Event\EventDispatcher;
-use ClassEvent\Event\Base\EventManager;
 
 class EventDispatcherTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,7 +18,7 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
      *
      * @var bool
      */
-    public static $eventTriggered = false;
+    public static $eventTriggered = 0;
 
     /**
      * test event initialize
@@ -33,6 +32,17 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
             'instance_name' => 'new_instance'
         ]);
         $this->assertNotFalse(EventDispatcher::isInitialized('new_instance'));
+
+        $this->assertEquals(
+            [],
+            EventDispatcher::getEventConfiguration()
+        );
+
+        //test with error
+        /*EventDispatcher::init([
+            'instance_name' => 'error_instance',
+            'event_manager' => 'None\Exist\Namespace'
+        ]);*/
     }
 
     /**
@@ -40,12 +50,15 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
      *
      * @todo check other data types
      */
-    public function testSetEventManagerConfiguration()
+    public function testSetEventDispatcherConfiguration()
     {
-        $eventManager = new EventManager;
-        $eventManager->setEventConfiguration($this->getEventConfig());
+        EventDispatcher::init();
+        EventDispatcher::setEventConfiguration($this->getEventConfig());
 
-        $this->assertEquals($this->getEventConfig()['configuration'], $eventManager->getEventConfiguration());
+        $this->assertEquals(
+            $this->getEventConfig()['configuration'],
+            EventDispatcher::getEventConfiguration()
+        );
     }
 
     /**
@@ -62,13 +75,37 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
                     'object'    => 'ClassEvent\Event\BaseEvent',
                     'listeners' => [
                         'Test\EventDispatcherTest::trigger',
+                        function ($attr, $event) {
+                            self::$eventTriggered += $attr['value'];
+                        }
                     ]
-                ]
+                ],
             ],
         ]);
-        EventDispatcher::triggerEvent('test_event');
 
-        $this->assertTrue(self::$eventTriggered);
+        EventDispatcher::triggerEvent('test_event', ['value' => 2]);
+
+        $this->assertEquals(3, self::$eventTriggered);
+    }
+
+    public function testTriggerWithStopPropagation()
+    {
+
+    }
+
+    public function testAddListenerAndTriggerEvent()
+    {
+
+    }
+
+    public function testGettingAllCreatedEvents()
+    {
+
+    }
+
+    public function testErrorHandling()
+    {
+
     }
 
     /**
@@ -99,6 +136,6 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
      */
     public static function trigger()
     {
-        self::$eventTriggered = true;
+        self::$eventTriggered++;
     }
 }
