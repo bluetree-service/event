@@ -40,17 +40,17 @@ class EventManager implements EventManagerInterface
      */
     public function __construct(array $options = [])
     {
-        $this->_options = array_merge($this->_options, $options);
+        $config = array_merge($this->_options, $options);
 
-        if ($this->_options['from_file']) {
+        if ($config['from_file']) {
             $this->_configuration = $this->readEventConfiguration(
-                $this->_options['configuration'],
-                $this->_options['type']
+                $config['configuration'],
+                $config['type']
             );
         } else {
             $this->_configuration = array_merge(
                 $this->_configuration,
-                $this->_options['configuration']
+                $config['configuration']
             );
         }
     }
@@ -89,17 +89,21 @@ class EventManager implements EventManagerInterface
      */
     public function setEventConfiguration(array $config)
     {
+        $config = array_merge($this->_options, $config);
+
         if ($config['from_file']) {
-            $this->_configuration = array_replace_recursive(
-                $this->_configuration,
-                $this->readEventConfiguration($config['configuration'], $config['type'])
+            $configuration = $this->readEventConfiguration(
+                $config['configuration'],
+                $config['type']
             );
         } else {
-            $this->_configuration = array_replace_recursive(
-                $this->_configuration,
-                $config['configuration']
-            );
+            $configuration = $config['configuration'];
         }
+
+        $this->_configuration = array_merge_recursive(
+            $this->_configuration,
+            $configuration
+        );
 
         return $this;
     }
@@ -120,11 +124,11 @@ class EventManager implements EventManagerInterface
         }
 
         foreach ($this->_configuration as $listener) {
-            if ($event->isPropagationStopped()) {
-                break;
-            }
-
             foreach ($listener['listeners'] as $eventListener) {
+                if ($event->isPropagationStopped()) {
+                    break;
+                }
+
                 try {
                     $this->_callFunction($eventListener, $data, $event);
                 } catch (\Exception $e) {
