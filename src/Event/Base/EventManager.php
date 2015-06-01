@@ -113,6 +113,7 @@ class EventManager implements EventManagerInterface
      *
      * @param string $name
      * @param array $data
+     * @return $this
      */
     public function triggerEvent($name, $data = [])
     {
@@ -135,8 +136,31 @@ class EventManager implements EventManagerInterface
                     $this->addError($e);
                 }
             }
-            
         }
+
+        return $this;
+    }
+
+    /**
+     * dynamically add new listener or listeners for given event name
+     * listeners are added at end of the list
+     *
+     * @param string $eventName
+     * @param array $listeners
+     * @return $this
+     */
+    public function addEventListener($eventName, array $listeners)
+    {
+        if (!array_key_exists($eventName, $this->_configuration)) {
+            $this->_configuration[$eventName] = [];
+        }
+
+        $this->_configuration[$eventName]['listeners'] = array_merge(
+            $this->_configuration[$eventName]['listeners'],
+            $listeners
+        );
+
+        return $this;
     }
 
     /**

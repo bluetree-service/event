@@ -123,9 +123,35 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(4, self::$eventTriggered);
     }
 
+    /**
+     * test dynamically add new listener or listeners for given event name
+     */
     public function testAddListenerAndTriggerEvent()
     {
+        $instance = new EventManager;
+        $instance->setEventConfiguration([
+            'configuration' => [
+                'test_event' => [
+                    'object'    => 'ClassEvent\Event\BaseEvent',
+                    'listeners' => [
+                        'Test\EventManagerTest::trigger'
+                    ]
+                ],
+            ],
+        ]);
 
+        $instance->addEventListener(
+            'test_event',
+            [
+                function ($attr, $event) {
+                    self::$eventTriggered += $attr['value'];
+                }
+            ]
+        );
+
+        $instance->triggerEvent('test_event', ['value' => 2]);
+
+        $this->assertEquals(7, self::$eventTriggered);
     }
 
     public function testGettingAllCreatedEvents()
