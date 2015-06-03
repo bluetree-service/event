@@ -8,19 +8,33 @@ use Zend\Config\Reader;
 
 class EventManager implements EventManagerInterface
 {
-    protected $_configuration = [];
+    /**
+     * store all loaded configuration
+     *
+     * @var array
+     */
+    protected $_eventsConfig = [];
 
+    /**
+     * store all called events
+     *
+     * @var array
+     */
     protected $_events = [];
 
-    protected $_errors;
-
+    /**
+     * 
+     *
+     * @var bool
+     */
     protected $_hasErrors = false;
 
+    /**
+     * store all errors
+     *
+     * @var
+     */
     protected $_errorList = [];
-
-    protected $_logEvents = false;
-
-    protected $_eventsToLog = [];
 
     /**
      * store default options for event manager
@@ -28,8 +42,9 @@ class EventManager implements EventManagerInterface
      * @var array
      */
     protected $_options = [
-        'configuration'     => [],
+        'events'            => [],
         'type'              => 'array',
+        'log_events'        => false,
         'from_file'         => false
     ];
 
@@ -43,14 +58,14 @@ class EventManager implements EventManagerInterface
         $config = array_merge($this->_options, $options);
 
         if ($config['from_file']) {
-            $this->_configuration = $this->readEventConfiguration(
-                $config['configuration'],
+            $this->_eventsConfig = $this->readEventConfiguration(
+                $config['events'],
                 $config['type']
             );
         } else {
-            $this->_configuration = array_merge(
-                $this->_configuration,
-                $config['configuration']
+            $this->_eventsConfig = array_merge(
+                $this->_eventsConfig,
+                $config['events']
             );
         }
     }
@@ -63,12 +78,12 @@ class EventManager implements EventManagerInterface
      */
     public function getEventObject($eventName)
     {
-        if (!array_key_exists($eventName, $this->_configuration)) {
+        if (!array_key_exists($eventName, $this->_eventsConfig)) {
             throw new \InvalidArgumentException('Event is not defined.');
         }
 
         if (!array_key_exists($eventName, $this->_events)) {
-            $namespace                  = $this->_configuration[$eventName]['object'];
+            $namespace                  = $this->_eventsConfig[$eventName]['object'];
             $instance                   = new $namespace;
 
             if (!($instance instanceof EventInterface)) {
@@ -93,15 +108,15 @@ class EventManager implements EventManagerInterface
 
         if ($config['from_file']) {
             $configuration = $this->readEventConfiguration(
-                $config['configuration'],
+                $config['events'],
                 $config['type']
             );
         } else {
-            $configuration = $config['configuration'];
+            $configuration = $config['events'];
         }
 
-        $this->_configuration = array_merge_recursive(
-            $this->_configuration,
+        $this->_eventsConfig = array_merge_recursive(
+            $this->_eventsConfig,
             $configuration
         );
 
@@ -124,7 +139,7 @@ class EventManager implements EventManagerInterface
             throw new \UnexpectedValueException($this->getErrors());
         }
 
-        foreach ($this->_configuration as $listener) {
+        foreach ($this->_eventsConfig as $listener) {
             foreach ($listener['listeners'] as $eventListener) {
                 if ($event->isPropagationStopped()) {
                     break;
@@ -151,12 +166,12 @@ class EventManager implements EventManagerInterface
      */
     public function addEventListener($eventName, array $listeners)
     {
-        if (!array_key_exists($eventName, $this->_configuration)) {
-            $this->_configuration[$eventName] = [];
+        if (!array_key_exists($eventName, $this->_eventsConfig)) {
+            $this->_eventsConfig[$eventName] = [];
         }
 
-        $this->_configuration[$eventName]['listeners'] = array_merge(
-            $this->_configuration[$eventName]['listeners'],
+        $this->_eventsConfig[$eventName]['listeners'] = array_merge(
+            $this->_eventsConfig[$eventName]['listeners'],
             $listeners
         );
 
@@ -183,8 +198,6 @@ class EventManager implements EventManagerInterface
      * @param mixed $configuration
      * @param string|null $type
      * @return array
-     * 
-     * @todo other config not only from files
      */
     public function readEventConfiguration($configuration, $type)
     {
@@ -243,6 +256,28 @@ class EventManager implements EventManagerInterface
     }
 
     /**
+     * allow to enable event logging
+     *
+     * @return $this
+     */
+    public function enableEventLog()
+    {
+        $this->_options['log_events'] = true;
+        return $this;
+    }
+
+    /**
+     * allow to disable event logging
+     *
+     * @return $this
+     */
+    public function disableEventLog()
+    {
+        $this->_options['log_events'] = false;
+        return $this;
+    }
+
+    /**
      * return all currently launched events
      *
      * @return array
@@ -267,7 +302,7 @@ class EventManager implements EventManagerInterface
      */
     public function getEventConfiguration()
     {
-        return $this->_configuration;
+        return $this->_eventsConfig;
     }
 
     public function getErrors()

@@ -32,7 +32,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
 
         $instance = new EventManager($this->getEventConfig());
         $this->assertEquals(
-            $this->getEventConfig()['configuration'],
+            $this->getEventConfig()['events'],
             $instance->getEventConfiguration()
         );
     }
@@ -49,12 +49,12 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         $eventManager->setEventConfiguration($this->getEventConfig());
 
         $this->assertEquals(
-            $this->getEventConfig()['configuration'],
+            $this->getEventConfig()['events'],
             $eventManager->getEventConfiguration()
         );
 
         $eventManager->setEventConfiguration([
-            'configuration' => [
+            'events' => [
                 'test_event_code' => [
                     'listeners' => [
                         'newListener'
@@ -63,7 +63,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $config                                     = $this->getEventConfig()['configuration'];
+        $config                                     = $this->getEventConfig()['events'];
         $config['test_event_code']['listeners'][]   = 'newListener';
         $this->assertEquals(
             $config,
@@ -80,7 +80,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     {
         $instance = new EventManager;
         $instance->setEventConfiguration([
-            'configuration' => [
+            'events' => [
                 'test_event' => [
                     'object'    => 'ClassEvent\Event\BaseEvent',
                     'listeners' => [
@@ -105,7 +105,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     {
         $instance = new EventManager;
         $instance->setEventConfiguration([
-            'configuration' => [
+            'events' => [
                 'test_event' => [
                     'object'    => 'ClassEvent\Event\BaseEvent',
                     'listeners' => [
@@ -130,7 +130,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     {
         $instance = new EventManager;
         $instance->setEventConfiguration([
-            'configuration' => [
+            'events' => [
                 'test_event' => [
                     'object'    => 'ClassEvent\Event\BaseEvent',
                     'listeners' => [
@@ -172,7 +172,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     public function getEventConfig()
     {
         return [
-            'configuration' => [
+            'events' => [
                 'test_event_code' => [
                     'object'    => 'ClassEvent\Event\BaseEvent',
                     'listeners' => [
@@ -194,6 +194,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     {
         self::$eventTriggered++;
     }
+
     /**
      * method to test event triggering
      *

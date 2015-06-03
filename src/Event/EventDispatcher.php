@@ -18,9 +18,10 @@ class EventDispatcher
      * @var array
      */
     protected static $_defaultOptions = [
-        'configuration'     => [],
+        'events'            => [],
         'type'              => 'array',
         'from_file'         => false,
+        'log_events'        => false,
         'instance_name'     => self::DEFAULT_INSTANCE,
         'event_manager'     => 'ClassEvent\Event\Base\EventManager'
     ];

@@ -56,7 +56,7 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         EventDispatcher::setEventConfiguration($this->getEventConfig());
 
         $this->assertEquals(
-            $this->getEventConfig()['configuration'],
+            $this->getEventConfig()['events'],
             EventDispatcher::getEventConfiguration()
         );
     }
@@ -70,7 +70,7 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
     {
         EventDispatcher::init();
         EventDispatcher::setEventConfiguration([
-            'configuration' => [
+            'events' => [
                 'test_event' => [
                     'object'    => 'ClassEvent\Event\BaseEvent',
                     'listeners' => [
@@ -116,7 +116,7 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
     public function getEventConfig()
     {
         return [
-            'configuration' => [
+            'events' => [
                 'test_event_code' => [
                     'object'    => 'ClassEvent\Event\BaseEvent',
                     'listeners' => [
