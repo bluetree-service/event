@@ -19,6 +19,9 @@
     "zendframework/zend-config": "2.4.*",
     "zendframework/zend-json": "2.4.*"
   },
+  "require-dev": {
+    "satooshi/php-coveralls": "dev-master"
+  },
   "autoload": {
     "psr-4": {
       "ClassEvent\\": "src/"
