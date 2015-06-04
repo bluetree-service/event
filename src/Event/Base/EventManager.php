@@ -225,8 +225,7 @@ class EventManager implements EventManagerInterface
 
         switch ($type) {
             case 'array':
-                $file   = new \SplFileObject($configuration, "r");
-                $config = $file->fread($file->getSize());
+                $config = include_once($configuration);
                 break;
             case 'ini':
                 $reader = new Reader\Ini;

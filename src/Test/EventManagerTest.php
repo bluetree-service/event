@@ -39,9 +39,6 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * test read configuration
-     *
-     * @todo check other data types
-     * @todo read config from file
      */
     public function testSetEventManagerConfiguration()
     {
@@ -67,6 +64,27 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         $config['test_event_code']['listeners'][]   = 'newListener';
         $this->assertEquals(
             $config,
+            $eventManager->getEventConfiguration()
+        );
+
+        $eventManager = new EventManager;
+        $eventManager->setEventConfiguration($this->getEventFileConfig('array'));
+        $this->assertEquals(
+            $this->getEventConfig()['events'],
+            $eventManager->getEventConfiguration()
+        );
+
+        $eventManager = new EventManager;
+        $eventManager->setEventConfiguration($this->getEventFileConfig('json'));
+        $this->assertEquals(
+            $this->getEventConfig()['events'],
+            $eventManager->getEventConfiguration()
+        );
+
+        $eventManager = new EventManager;
+        $eventManager->setEventConfiguration($this->getEventFileConfig('ini'));
+        $this->assertEquals(
+            $this->getEventConfig()['events'],
             $eventManager->getEventConfiguration()
         );
     }
@@ -184,6 +202,26 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
             ],
             'type'      => 'array',
             'from_file' => false,
+        ];
+    }
+
+    /**
+     * config data for test from file
+     *
+     * @param string $type
+     * @return array
+     */
+    public function getEventFileConfig($type)
+    {
+        $extension = $type;
+        if ($type === 'array') {
+            $extension = 'php';
+        }
+
+        return [
+            'events'    => dirname(__FILE__) . '/testConfig/config.' . $extension,
+            'from_file' => true,
+            'type'      => $type,
         ];
     }
 
