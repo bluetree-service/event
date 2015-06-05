@@ -304,16 +304,31 @@ class EventManager implements EventManagerInterface
         return $this->_eventsConfig;
     }
 
+    /**
+     * return all event manager errors
+     *
+     * @return array
+     */
     public function getErrors()
     {
         return $this->_errorList;
     }
 
+    /**
+     * return information that event manager has some errors
+     *
+     * @return bool
+     */
     public function hasErrors()
     {
         return $this->_hasErrors;
     }
 
+    /**
+     * clear all event manager errors
+     *
+     * @return $this
+     */
     public function clearErrors()
     {
         $this->_errorList = [];
@@ -322,9 +337,20 @@ class EventManager implements EventManagerInterface
         return $this;
     }
 
-    public function addError(\Exception $e)
+    /**
+     * add new error to list
+     *
+     * @param \Exception $exception
+     * @return $this
+     */
+    public function addError(\Exception $exception)
     {
-        $this->_errorList[] = $e;
+        $this->_errorList[$exception->getCode()] = [
+            'message'   => $exception->getMessage(),
+            'line'      => $exception->getLine(),
+            'file'      => $exception->getFile(),
+            'trace'     => $exception->getTraceAsString(),
+        ];
         $this->_hasErrors   = true;
 
         return $this;

@@ -6,10 +6,30 @@ use ClassEvent\Event\Base\Interfaces\EventManagerInterface;
 
 class EventDispatcher
 {
+    /**
+     * default instance name
+     */
     const DEFAULT_INSTANCE = 'default';
 
+    /**
+     * store information that event manager was initialized
+     *
+     * @var bool
+     */
     protected static $_initialized = false;
+
+    /**
+     * store all called event manager instances
+     *
+     * @var array
+     */
     protected static $_managerInstance = [];
+
+    /**
+     * store all instances default configuration
+     *
+     * @var array
+     */
     protected static $_instanceConfig = [];
 
     /**
@@ -125,19 +145,46 @@ class EventDispatcher
         return $instanceObject->getEventConfiguration();
     }
 
-    public static function getErrors()
+    /**
+     * return all event manager errors
+     *
+     * @param string $instanceName
+     * @return array
+     */
+    public static function getErrors($instanceName = self::DEFAULT_INSTANCE)
     {
         self::_initException();
+        /** @var EventManagerInterface $instanceObject */
+        $instanceObject = self::$_managerInstance[$instanceName];
+        return $instanceObject->getErrors();
     }
 
-    public static function hasErrors()
+    /**
+     * return information that event manager has some errors
+     *
+     * @param string $instanceName
+     * @return bool
+     */
+    public static function hasErrors($instanceName = self::DEFAULT_INSTANCE)
     {
         self::_initException();
+        /** @var EventManagerInterface $instanceObject */
+        $instanceObject = self::$_managerInstance[$instanceName];
+        return $instanceObject->hasErrors();
     }
 
-    public static function clearErrors()
+    /**
+     * clear all event manager errors
+     *
+     * @param string $instanceName
+     * @return $this
+     */
+    public static function clearErrors($instanceName = self::DEFAULT_INSTANCE)
     {
         self::_initException();
+        /** @var EventManagerInterface $instanceObject */
+        $instanceObject = self::$_managerInstance[$instanceName];
+        return $instanceObject->clearErrors();
     }
 
     /**
