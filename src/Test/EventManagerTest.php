@@ -172,6 +172,39 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(7, self::$eventTriggered);
     }
 
+    /**
+     * test trigger event with exception
+     */
+    public function testTriggerEventWithError()
+    {
+        $instance = new EventManager;
+        $instance->setEventConfiguration([
+            'events' => [
+                'test_event' => [
+                    'object'    => 'ClassEvent\Event\BaseEvent',
+                    'listeners' => [
+                        'Test\EventManagerTest::triggerError',
+                    ]
+                ],
+            ],
+        ]);
+
+        $this->assertFalse($instance->hasErrors());
+        $this->assertEquals([], $instance->getErrors());
+
+        $instance->triggerEvent('test_event');
+
+        $this->assertTrue($instance->hasErrors());
+        $this->assertEquals(
+            'Test error',
+            $instance->getErrors()[0]['message']
+        );
+
+        $instance->clearErrors();
+        $this->assertFalse($instance->hasErrors());
+        $this->assertEquals([], $instance->getErrors());
+    }
+
     public function testGettingAllCreatedEvents()
     {
 
@@ -231,6 +264,14 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     public static function trigger()
     {
         self::$eventTriggered++;
+    }
+
+    /**
+     * method to test event triggering
+     */
+    public static function triggerError()
+    {
+        throw new \Exception('Test error');
     }
 
     /**

@@ -351,7 +351,7 @@ class EventManager implements EventManagerInterface
             'file'      => $exception->getFile(),
             'trace'     => $exception->getTraceAsString(),
         ];
-        $this->_hasErrors   = true;
+        $this->_hasErrors = true;
 
         return $this;
     }
