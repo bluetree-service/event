@@ -205,6 +205,29 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([], $instance->getErrors());
     }
 
+    /**
+     * test return of event object launch count correct value
+     */
+    public function testEventLaunchCount()
+    {
+        $instance = new EventManager;
+        $instance->setEventConfiguration([
+            'events' => [
+                'test_event' => [
+                    'object'    => 'ClassEvent\Event\BaseEvent',
+                    'listeners' => [
+                        'Test\EventManagerTest::triggerError',
+                    ]
+                ],
+            ],
+        ]);
+
+        $instance->triggerEvent('test_event');
+        $instance->triggerEvent('test_event');
+
+        $this->assertEquals(6, $instance->getEventObject('test_event')->getLaunchCount());
+    }
+
     public function testGettingAllCreatedEvents()
     {
 

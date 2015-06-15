@@ -74,7 +74,7 @@ class EventManager implements EventManagerInterface
      * return event object or create it if not exist
      *
      * @param string $eventName
-     * @return bool
+     * @return EventInterface
      */
     public function getEventObject($eventName)
     {
