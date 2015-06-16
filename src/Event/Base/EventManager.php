@@ -167,7 +167,10 @@ class EventManager implements EventManagerInterface
     public function addEventListener($eventName, array $listeners)
     {
         if (!array_key_exists($eventName, $this->_eventsConfig)) {
-            $this->_eventsConfig[$eventName] = [];
+            $this->_eventsConfig[$eventName] = [
+                'object'    => 'ClassEvent\Event\BaseEvent',
+                'listeners' => $listeners,
+            ];
         }
 
         $this->_eventsConfig[$eventName]['listeners'] = array_merge(
@@ -274,6 +277,16 @@ class EventManager implements EventManagerInterface
     {
         $this->_options['log_events'] = false;
         return $this;
+    }
+
+    /**
+     * get information that event log is enabled or disabled
+     *
+     * @return bool
+     */
+    public function isLogEnabled()
+    {
+        return $this->_options['log_events'];
     }
 
     /**

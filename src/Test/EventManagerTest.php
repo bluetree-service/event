@@ -228,9 +228,60 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(6, $instance->getEventObject('test_event')->getLaunchCount());
     }
 
+    /**
+     * test get all called events objects
+     */
     public function testGettingAllCreatedEvents()
     {
+        $instance = new EventManager;
 
+        $this->assertEmpty($instance->getAllEvents());
+
+        $instance->setEventConfiguration([
+            'events' => [
+                'test_event' => [
+                    'object'    => 'ClassEvent\Event\BaseEvent',
+                    'listeners' => [
+                        'Test\EventManagerTest::triggerError',
+                    ]
+                ],
+            ],
+        ]);
+        $this->assertEmpty($instance->getAllEvents());
+
+        $instance->triggerEvent('test_event');
+
+        $this->assertNotEmpty($instance->getAllEvents());
+        $this->assertCount(1, $instance->getAllEvents());
+    }
+
+    /**
+     * test that event log can be enabled/disabled
+     */
+    public function testEnableAndDisableEventLog()
+    {
+        $instance = new EventManager;
+
+        $this->assertFalse($instance->isLogEnabled());
+        $instance->disableEventLog();
+        $this->assertFalse($instance->isLogEnabled());
+        $instance->enableEventLog();
+        $this->assertTrue($instance->isLogEnabled());
+    }
+
+    /**
+     * test try to add event listener fo none existing event in configuration
+     */
+    public function testAddEventListenerForNoneExistingEvent()
+    {
+        $instance = new EventManager;
+
+        $instance->addEventListener('test_event', []);
+
+        $instance->triggerEvent('test_event');
+
+        $this->assertNotEmpty($instance->getAllEvents());
+        $this->assertCount(1, $instance->getAllEvents());
     }
 
     public function testErrorHandling()
