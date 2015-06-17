@@ -87,12 +87,16 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
             $this->getEventConfig()['events'],
             $eventManager->getEventConfiguration()
         );
+
+        $eventManager = new EventManager($this->getEventFileConfig('xml'));
+        $this->assertEquals(
+            $this->getEventConfig()['events'],
+            $eventManager->getEventConfiguration()
+        );
     }
 
     /**
      * test that event is called correctly
-     *
-     * @todo test with filesystem mocking
      */
     public function testTriggerEvent()
     {
@@ -226,6 +230,18 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         $instance->triggerEvent('test_event');
 
         $this->assertEquals(6, $instance->getEventObject('test_event')->getLaunchCount());
+    }
+
+    /**
+     * test that event manager throw an exception if we try to get none existing event object
+     */
+    public function testGetNoneExistingObject()
+    {
+        $instance = new EventManager;
+
+        $this->setExpectedException('InvalidArgumentException', 'Event is not defined.');
+
+        $instance->getEventObject('none_existing_event');
     }
 
     /**

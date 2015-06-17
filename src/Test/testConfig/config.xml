@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <test_event_code>
+        <object>ClassEvent\Event\BaseEvent</object>
+        <listeners>ClassOne::method</listeners>
+        <listeners>ClassSecond::method</listeners>
+        <listeners>someFunction</listeners>
+    </test_event_code>
+</config>
