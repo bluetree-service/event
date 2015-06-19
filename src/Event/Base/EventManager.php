@@ -135,10 +135,6 @@ class EventManager implements EventManagerInterface
         /** @var EventInterface $event */
         $event = $this->getEventObject($name);
 
-        if (!$event) {
-            throw new \UnexpectedValueException($this->getErrors());
-        }
-
         foreach ($this->_eventsConfig as $listener) {
             foreach ($listener['listeners'] as $eventListener) {
                 if ($event->isPropagationStopped()) {
@@ -243,11 +239,7 @@ class EventManager implements EventManagerInterface
                 $config = $reader->fromFile($configuration);
                 break;
             case 'yaml':
-                $reader = new Reader\Yaml;
-                $config = $reader->fromFile($configuration);
-                break;
-            case 'java':
-                $reader = new Reader\JavaProperties;
+                $reader = new Reader\Yaml(['Spyc','YAMLLoadString']);
                 $config = $reader->fromFile($configuration);
                 break;
             default:

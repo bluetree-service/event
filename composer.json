@@ -16,8 +16,9 @@
   ],
   "require": {
     "php": ">=5.4.0",
-    "zendframework/zend-config": "2.4.*",
-    "zendframework/zend-json": "2.4.*"
+    "zendframework/zend-config": "2.5.*",
+    "zendframework/zend-json": "2.5.*",
+    "mustangostang/spyc": "0.5.*"
   },
   "require-dev": {
     "satooshi/php-coveralls": "dev-master"

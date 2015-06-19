@@ -93,6 +93,24 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
             $this->getEventConfig()['events'],
             $eventManager->getEventConfiguration()
         );
+
+        $eventManager = new EventManager($this->getEventFileConfig('yaml'));
+        $this->assertEquals(
+            $this->getEventConfig()['events'],
+            $eventManager->getEventConfiguration()
+        );
+    }
+
+    /**
+     * check for error if configuration file don't exists
+     */
+    public function testTryToLoadConfigFromMissingFile()
+    {
+        $eventManager = new EventManager;
+
+        $this->setExpectedException('InvalidArgumentException');
+
+        $eventManager->setEventConfiguration($this->getEventFileConfig('txt'));
     }
 
     /**
@@ -245,6 +263,27 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * check for error if invalid object was declared as listener
+     */
+    public function testGetInvalidEventObject()
+    {
+        $instance = new EventManager;
+
+        $instance->setEventConfiguration([
+            'events' => [
+                'invalid_object_event' => [
+                    'object'    => 'Test\InvalidEventObject',
+                    'listeners' => []
+                ],
+            ],
+        ]);
+
+        $this->setExpectedException('LogicException', 'Invalid interface of event object');
+
+        $instance->getEventObject('invalid_object_event');
+    }
+
+    /**
      * test get all called events objects
      */
     public function testGettingAllCreatedEvents()
@@ -376,3 +415,5 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         self::$eventTriggered++;
     }
 }
+
+class InvalidEventObject{};
