@@ -29,26 +29,62 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertNotFalse(EventDispatcher::isInitialized());
 
         EventDispatcher::init([
-            'instance_name' => 'new_instance'
+            'instance_name' => 'instance_1'
         ]);
-        $this->assertNotFalse(EventDispatcher::isInitialized('new_instance'));
+        $this->assertNotFalse(EventDispatcher::isInitialized('instance_1'));
 
         $this->assertEquals(
             [],
             EventDispatcher::getEventConfiguration()
         );
 
-        //test with error
-        /*EventDispatcher::init([
-            'instance_name' => 'error_instance',
-            'event_manager' => 'None\Exist\Namespace'
-        ]);*/
+        EventDispatcher::init([
+            'instance_name' => 'instance_2',
+            'event_manager' => new \ClassEvent\Event\Base\EventManager
+        ]);
+
+        $this->assertEquals(
+            [],
+            EventDispatcher::getEventConfiguration()
+        );
+    }
+
+    /**
+     * initialize dispatcher with error
+     */
+    public function testGetNoneExistingInstance()
+    {
+        $this->setExpectedException(
+            'RuntimeException',
+            'Instance: not_exists don\'t exists'
+        );
+
+        EventDispatcher::getEventConfiguration('not_exists');
+    }
+
+    /**
+     * test that dispatcher throw exception if event manager is incorrect
+     */
+    public function testEventInitializeWithError()
+    {
+        $this->setExpectedException(
+            'RuntimeException',
+            'Incorrect event manager instance.'
+        );
+
+        EventDispatcher::init([
+            'instance_name' => 'error_instance_1',
+            'event_manager' => new IncorrectEventManager
+        ]);
+
+        EventDispatcher::init([
+            'instance_name' => 'error_instance_1',
+            'event_manager' => 'Test\IncorrectEventManager'
+        ]);
     }
 
     /**
      * test read configuration
-     *
-     * @todo check other data types
      */
     public function testSetEventDispatcherConfiguration()
     {
@@ -63,8 +99,6 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
 
     /**
      * test that event is called correctly
-     * 
-     * @todo test with filesystem mocking
      */
     public function testTriggerEvent()
     {
@@ -98,14 +132,25 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * test getting all called events
+     */
     public function testGettingAllCreatedEvents()
     {
+        $events = EventDispatcher::getCalledEvents();
 
+        $this->assertArrayHasKey('test_event', $events);
     }
 
+    /**
+     * test dispatcher error handling
+     * 
+     * @todo create error and clear
+     */
     public function testErrorHandling()
     {
-
+        $this->assertEquals([], EventDispatcher::getErrors());
+        $this->assertFalse(EventDispatcher::hasErrors());
     }
 
     /**
@@ -137,5 +182,12 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
     public static function trigger()
     {
         self::$eventTriggered++;
+    }
+}
+
+class IncorrectEventManager
+{
+    public function __construct()
+    {
     }
 }

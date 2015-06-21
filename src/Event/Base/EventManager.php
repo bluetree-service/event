@@ -222,6 +222,8 @@ class EventManager implements EventManagerInterface
             throw new \InvalidArgumentException('File ' . $configuration . 'don\'t exists.');
         }
 
+        $config = [];
+
         switch ($type) {
             case 'array':
                 $config = include_once($configuration);
@@ -242,8 +244,6 @@ class EventManager implements EventManagerInterface
                 $reader = new Reader\Yaml(['Spyc','YAMLLoadString']);
                 $config = $reader->fromFile($configuration);
                 break;
-            default:
-                $config = [];
         }
 
         return $config;

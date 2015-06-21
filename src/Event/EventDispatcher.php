@@ -53,8 +53,9 @@ class EventDispatcher
      */
     public static function init(array $options = [])
     {
-        $options      = self::_setInstanceConfig($options);
-        $instanceName = $options['instance_name'];
+        $options        = self::_setInstanceConfig($options);
+        $instanceName   = $options['instance_name'];
+        $message        = 'Incorrect event manager instance.';
 
         if (array_key_exists($instanceName, self::$_managerInstance)) {
             return;
@@ -62,14 +63,21 @@ class EventDispatcher
 
         switch (true) {
             case is_string($options['event_manager']):
-                $reflection                             = new \ReflectionClass($options['event_manager']);
+                $reflection = new \ReflectionClass($options['event_manager']);
+
+                if (!$reflection->implementsInterface('ClassEvent\Event\Base\Interfaces\EventManagerInterface')) {
+                    throw new \RuntimeException($message);
+                }
+
                 self::$_managerInstance[$instanceName]  = $reflection->newInstanceArgs($options);
                 break;
+
             case $options['event_manager'] instanceof EventManagerInterface:
                 self::$_managerInstance[$instanceName] = $options['event_manager'];
                 break;
+
             default:
-                throw new \RuntimeException('Undefined event dispatcher instance.');
+                throw new \RuntimeException($message);
                 break;
         }
 
@@ -110,13 +118,13 @@ class EventDispatcher
     /**
      * return all called events for given instance
      *
-     * @param string $instance
+     * @param string $instanceName
      * @return mixed
      */
-    public static function getCalledEvents($instance = self::DEFAULT_INSTANCE)
+    public static function getCalledEvents($instanceName = self::DEFAULT_INSTANCE)
     {
         /** @var EventManagerInterface $instanceObject */
-        $instanceObject = self::$_managerInstance[$instance];
+        $instanceObject = self::_getInstance($instanceName);
         return $instanceObject->getAllEvents();
     }
 
@@ -141,7 +149,7 @@ class EventDispatcher
     public static function getEventConfiguration($instanceName = self::DEFAULT_INSTANCE)
     {
         /** @var EventManagerInterface $instanceObject */
-        $instanceObject = self::$_managerInstance[$instanceName];
+        $instanceObject = self::_getInstance($instanceName);
         return $instanceObject->getEventConfiguration();
     }
 
@@ -155,7 +163,7 @@ class EventDispatcher
     {
         self::_initException();
         /** @var EventManagerInterface $instanceObject */
-        $instanceObject = self::$_managerInstance[$instanceName];
+        $instanceObject = self::_getInstance($instanceName);
         return $instanceObject->getErrors();
     }
 
@@ -169,7 +177,7 @@ class EventDispatcher
     {
         self::_initException();
         /** @var EventManagerInterface $instanceObject */
-        $instanceObject = self::$_managerInstance[$instanceName];
+        $instanceObject = self::_getInstance($instanceName);
         return $instanceObject->hasErrors();
     }
 
@@ -183,7 +191,7 @@ class EventDispatcher
     {
         self::_initException();
         /** @var EventManagerInterface $instanceObject */
-        $instanceObject = self::$_managerInstance[$instanceName];
+        $instanceObject = self::_getInstance($instanceName);
         return $instanceObject->clearErrors();
     }
 
@@ -233,13 +241,14 @@ class EventDispatcher
      *
      * @param string $instanceName
      * @return null|EventManagerInterface
+     * @throws \RuntimeException
      */
     protected static function _getInstance($instanceName = self::DEFAULT_INSTANCE)
     {
-        if (!array_key_exists($instanceName, self::$_managerInstance)) {
-            return null;
+        if (array_key_exists($instanceName, self::$_managerInstance)) {
+            return self::$_managerInstance[$instanceName];
         }
 
-        return self::$_managerInstance[$instanceName];
+        throw new \RuntimeException('Instance: ' . $instanceName . ' don\'t exists');
     }
 }
