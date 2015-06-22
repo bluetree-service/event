@@ -7,7 +7,7 @@
  * @author      Michał Adamiak    <chajr@bluetree.pl>
  * @copyright   chajr/bluetree
  */
-namespace Test;
+namespace ClassEvent\Test;
 
 use ClassEvent\Event\EventDispatcher;
 
@@ -19,6 +19,19 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
      * @var bool
      */
     public static $eventTriggered = 0;
+
+    /**
+     * test that dispatcher trigger exception if try to call method before initialization
+     */
+    public function testCallMethodIfDispatcherNotInitialized()
+    {
+        $this->setExpectedException(
+            'RuntimeException',
+            'Event Dispatcher must be initialized.'
+        );
+
+        EventDispatcher::getErrors();
+    }
 
     /**
      * test event initialize
@@ -76,10 +89,21 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
             'instance_name' => 'error_instance_1',
             'event_manager' => new IncorrectEventManager
         ]);
+    }
+
+    /**
+     * test that dispatcher throw exception if event manager is incorrect
+     */
+    public function testEventInitializeWithErrorSecond()
+    {
+        $this->setExpectedException(
+            'RuntimeException',
+            'Incorrect event manager instance.'
+        );
 
         EventDispatcher::init([
-            'instance_name' => 'error_instance_1',
-            'event_manager' => 'Test\IncorrectEventManager'
+            'instance_name' => 'error_instance_2',
+            'event_manager' => 'ClassEvent\Test\IncorrectEventManager'
         ]);
     }
 
@@ -108,7 +132,7 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
                 'test_event' => [
                     'object'    => 'ClassEvent\Event\BaseEvent',
                     'listeners' => [
-                        'Test\EventDispatcherTest::trigger',
+                        'ClassEvent\Test\EventDispatcherTest::trigger',
                         function ($attr, $event) {
                             self::$eventTriggered += $attr['value'];
                         }
@@ -182,12 +206,5 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
     public static function trigger()
     {
         self::$eventTriggered++;
-    }
-}
-
-class IncorrectEventManager
-{
-    public function __construct()
-    {
     }
 }

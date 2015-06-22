@@ -7,7 +7,7 @@
  * @author      Michał Adamiak    <chajr@bluetree.pl>
  * @copyright   chajr/bluetree
  */
-namespace Test;
+namespace ClassEvent\Test;
 
 use ClassEvent\Event\Base\Interfaces\EventInterface;
 use ClassEvent\Event\Base\EventManager;
@@ -124,7 +124,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
                 'test_event' => [
                     'object'    => 'ClassEvent\Event\BaseEvent',
                     'listeners' => [
-                        'Test\EventManagerTest::trigger',
+                        'ClassEvent\Test\EventManagerTest::trigger',
                         function ($attr, $event) {
                             self::$eventTriggered += $attr['value'];
                         }
@@ -149,7 +149,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
                 'test_event' => [
                     'object'    => 'ClassEvent\Event\BaseEvent',
                     'listeners' => [
-                        'Test\EventManagerTest::triggerStop',
+                        'ClassEvent\Test\EventManagerTest::triggerStop',
                         function ($attr, $event) {
                             self::$eventTriggered += $attr['value'];
                         }
@@ -174,7 +174,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
                 'test_event' => [
                     'object'    => 'ClassEvent\Event\BaseEvent',
                     'listeners' => [
-                        'Test\EventManagerTest::trigger'
+                        'ClassEvent\Test\EventManagerTest::trigger'
                     ]
                 ],
             ],
@@ -205,7 +205,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
                 'test_event' => [
                     'object'    => 'ClassEvent\Event\BaseEvent',
                     'listeners' => [
-                        'Test\EventManagerTest::triggerError',
+                        'ClassEvent\Test\EventManagerTest::triggerError',
                     ]
                 ],
             ],
@@ -238,7 +238,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
                 'test_event' => [
                     'object'    => 'ClassEvent\Event\BaseEvent',
                     'listeners' => [
-                        'Test\EventManagerTest::triggerError',
+                        'ClassEvent\Test\EventManagerTest::triggerError',
                     ]
                 ],
             ],
@@ -272,7 +272,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         $instance->setEventConfiguration([
             'events' => [
                 'invalid_object_event' => [
-                    'object'    => 'Test\InvalidEventObject',
+                    'object'    => 'ClassEvent\Test\InvalidEventObject',
                     'listeners' => []
                 ],
             ],
@@ -297,7 +297,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
                 'test_event' => [
                     'object'    => 'ClassEvent\Event\BaseEvent',
                     'listeners' => [
-                        'Test\EventManagerTest::triggerError',
+                        'ClassEvent\Test\EventManagerTest::triggerError',
                     ]
                 ],
             ],
@@ -415,5 +415,3 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         self::$eventTriggered++;
     }
 }
-
-class InvalidEventObject{};
