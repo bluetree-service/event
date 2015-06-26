@@ -55,19 +55,21 @@ class EventManager implements EventManagerInterface
      */
     public function __construct(array $options = [])
     {
-        $config = array_merge($this->_options, $options);
+        $this->_options = array_merge($this->_options, $options);
 
-        if ($config['from_file']) {
+        if ($this->_options['from_file']) {
             $this->_eventsConfig = $this->readEventConfiguration(
-                $config['events'],
-                $config['type']
+                $this->_options['events'],
+                $this->_options['type']
             );
         } else {
             $this->_eventsConfig = array_merge(
                 $this->_eventsConfig,
-                $config['events']
+                $this->_options['events']
             );
         }
+
+        unset($this->_options['events']);
     }
 
     /**
@@ -104,15 +106,15 @@ class EventManager implements EventManagerInterface
      */
     public function setEventConfiguration(array $config)
     {
-        $config = array_merge($this->_options, $config);
+        $this->_options = array_merge($this->_options, $config);
 
-        if ($config['from_file']) {
+        if ($this->_options['from_file']) {
             $configuration = $this->readEventConfiguration(
-                $config['events'],
-                $config['type']
+                $this->_options['events'],
+                $this->_options['type']
             );
         } else {
-            $configuration = $config['events'];
+            $configuration = $this->_options['events'];
         }
 
         $this->_eventsConfig = array_merge_recursive(
@@ -120,6 +122,7 @@ class EventManager implements EventManagerInterface
             $configuration
         );
 
+        unset($this->_options['events']);
         return $this;
     }
 
