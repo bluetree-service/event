@@ -38,11 +38,12 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
      */
     public function testEventInstanceCreation()
     {
+        $this->assertFalse(EventDispatcher::isInitialized());
         EventDispatcher::init();
         $this->assertNotFalse(EventDispatcher::isInitialized());
 
         EventDispatcher::init([
-            'instance_name' => 'instance_1'
+            'options' => ['instance_name' => 'instance_1']
         ]);
         $this->assertNotFalse(EventDispatcher::isInitialized('instance_1'));
 
@@ -52,8 +53,10 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         );
 
         EventDispatcher::init([
-            'instance_name' => 'instance_2',
-            'event_manager' => new \ClassEvent\Event\Base\EventManager
+            'options' => [
+                'instance_name' => 'instance_2',
+                'event_manager' => new \ClassEvent\Event\Base\EventManager
+            ]
         ]);
 
         $this->assertEquals(
@@ -86,8 +89,10 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         );
 
         EventDispatcher::init([
-            'instance_name' => 'error_instance_1',
-            'event_manager' => new IncorrectEventManager
+            'options' => [
+                'instance_name' => 'error_instance_1',
+                'event_manager' => new IncorrectEventManager
+            ]
         ]);
     }
 
@@ -102,8 +107,10 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         );
 
         EventDispatcher::init([
-            'instance_name' => 'error_instance_2',
-            'event_manager' => 'ClassEvent\Test\IncorrectEventManager'
+            'options' => [
+                'instance_name' => 'error_instance_2',
+                'event_manager' => 'ClassEvent\Test\IncorrectEventManager'
+            ]
         ]);
     }
 
@@ -195,8 +202,10 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
                     ]
                 ]
             ],
-            'type'      => 'array',
-            'from_file' => false,
+            'options' => [
+                'type'      => 'array',
+                'from_file' => false,
+            ]
         ];
     }
 

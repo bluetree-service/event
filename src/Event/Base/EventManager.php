@@ -42,7 +42,6 @@ class EventManager implements EventManagerInterface
      * @var array
      */
     protected $_options = [
-        'events'            => [],
         'type'              => 'array',
         'log_events'        => false,
         'from_file'         => false
@@ -52,21 +51,19 @@ class EventManager implements EventManagerInterface
      * create manage instance
      *
      * @param array $options
+     * @param array|string $events
      */
-    public function __construct(array $options = [])
+    public function __construct(array $options = [], $events = [])
     {
         $this->_options = array_merge($this->_options, $options);
 
         if ($this->_options['from_file']) {
-            $this->_eventsConfig = $this->readEventConfiguration(
-                $this->_options['events'],
+            $this->readEventConfiguration(
+                $events,
                 $this->_options['type']
             );
         } else {
-            $this->_eventsConfig = array_merge(
-                $this->_eventsConfig,
-                $this->_options['events']
-            );
+            $this->_eventsConfig = $events;
         }
 
         unset($this->_options['events']);
@@ -101,28 +98,16 @@ class EventManager implements EventManagerInterface
     /**
      * add event configuration into event manager
      *
-     * @param array $config
+     * @param array $events
      * @return $this
      */
-    public function setEventConfiguration(array $config)
+    public function setEventConfiguration(array $events)
     {
-        $this->_options = array_merge($this->_options, $config);
-
-        if ($this->_options['from_file']) {
-            $configuration = $this->readEventConfiguration(
-                $this->_options['events'],
-                $this->_options['type']
-            );
-        } else {
-            $configuration = $this->_options['events'];
-        }
-
         $this->_eventsConfig = array_merge_recursive(
             $this->_eventsConfig,
-            $configuration
+            $events
         );
 
-        unset($this->_options['events']);
         return $this;
     }
 
@@ -197,55 +182,54 @@ class EventManager implements EventManagerInterface
     /**
      * read configuration from file
      * 
-     * @param mixed $configuration
+     * @param mixed $path
      * @param string|null $type
-     * @return array
+     * @return $this
      */
-    public function readEventConfiguration($configuration, $type)
+    public function readEventConfiguration($path, $type)
     {
-        $config = [];
-
         if ($type) {
-            $config = $this->_configurationStrategy($configuration, $type);
+            $config = $this->_configurationStrategy($path, $type);
+            $this->setEventConfiguration($config);
         }
 
-        return $config;
+        return $this;
     }
 
     /**
      * call and read specified configuration
      *
-     * @param string $configuration
+     * @param string $path
      * @param string $type
      * @return array
      */
-    protected function _configurationStrategy($configuration, $type)
+    protected function _configurationStrategy($path, $type)
     {
-        if (!file_exists($configuration)) {
-            throw new \InvalidArgumentException('File ' . $configuration . 'don\'t exists.');
+        if (!file_exists($path)) {
+            throw new \InvalidArgumentException('File ' . $path . 'don\'t exists.');
         }
 
         $config = [];
 
         switch ($type) {
             case 'array':
-                $config = include_once($configuration);
+                $config = include_once($path);
                 break;
             case 'ini':
                 $reader = new Reader\Ini;
-                $config = $reader->fromFile($configuration);
+                $config = $reader->fromFile($path);
                 break;
             case 'xml':
                 $reader = new Reader\Xml;
-                $config = $reader->fromFile($configuration);
+                $config = $reader->fromFile($path);
                 break;
             case 'json':
                 $reader = new Reader\Json;
-                $config = $reader->fromFile($configuration);
+                $config = $reader->fromFile($path);
                 break;
             case 'yaml':
                 $reader = new Reader\Yaml(['Spyc','YAMLLoadString']);
-                $config = $reader->fromFile($configuration);
+                $config = $reader->fromFile($path);
                 break;
         }
 

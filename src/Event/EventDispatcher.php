@@ -38,12 +38,14 @@ class EventDispatcher
      * @var array
      */
     protected static $_defaultOptions = [
-        'events'            => [],
-        'type'              => 'array',
-        'from_file'         => false,
-        'log_events'        => false,
-        'instance_name'     => self::DEFAULT_INSTANCE,
-        'event_manager'     => 'ClassEvent\Event\Base\EventManager'
+        'events'    => [],
+        'options'   => [
+            'type'              => 'array',
+            'from_file'         => false,
+            'log_events'        => false,
+            'instance_name'     => self::DEFAULT_INSTANCE,
+            'event_manager'     => 'ClassEvent\Event\Base\EventManager'
+        ]
     ];
 
     /**
@@ -54,7 +56,7 @@ class EventDispatcher
     public static function init(array $options = [])
     {
         $options        = self::_setInstanceConfig($options);
-        $instanceName   = $options['instance_name'];
+        $instanceName   = $options['options']['instance_name'];
         $message        = 'Incorrect event manager instance.';
 
         if (array_key_exists($instanceName, self::$_managerInstance)) {
@@ -62,18 +64,21 @@ class EventDispatcher
         }
 
         switch (true) {
-            case is_string($options['event_manager']):
-                $reflection = new \ReflectionClass($options['event_manager']);
+            case is_string($options['options']['event_manager']):
+                $reflection = new \ReflectionClass($options['options']['event_manager']);
 
                 if (!$reflection->implementsInterface('ClassEvent\Event\Base\Interfaces\EventManagerInterface')) {
                     throw new \RuntimeException($message);
                 }
 
-                self::$_managerInstance[$instanceName]  = $reflection->newInstanceArgs($options);
+                self::$_managerInstance[$instanceName] = $reflection->newInstanceArgs([
+                    $options['options'],
+                    $options['events'],
+                ]);
                 break;
 
-            case $options['event_manager'] instanceof EventManagerInterface:
-                self::$_managerInstance[$instanceName] = $options['event_manager'];
+            case $options['options']['event_manager'] instanceof EventManagerInterface:
+                self::$_managerInstance[$instanceName] = $options['options']['event_manager'];
                 break;
 
             default:
@@ -135,9 +140,14 @@ class EventDispatcher
      */
     public static function setEventConfiguration(array $config)
     {
+        if (!isset($config['options']['instance_name'])) {
+            $config['options']['instance_name'] = self::DEFAULT_INSTANCE;
+        }
+
         self::_initException();
         $config = self::_setInstanceConfig($config);
-        self::_getInstance($config['instance_name'])->setEventConfiguration($config);
+        self::_getInstance($config['options']['instance_name'])
+            ->setEventConfiguration($config['events']);
     }
 
     /**
@@ -205,17 +215,17 @@ class EventDispatcher
     {
         $instanceName = self::DEFAULT_INSTANCE;
 
-        if (array_key_exists('instance_name', $config)) {
-            $instanceName = $config['instance_name'];
+        if (isset($config['options']['instance_name'])) {
+            $instanceName = $config['options']['instance_name'];
         }
 
-        if (array_key_exists($instanceName, self::$_instanceConfig)) {
+        if (isset(self::$_instanceConfig['options'][$instanceName])) {
             self::$_instanceConfig[$instanceName] = array_replace_recursive(
                 self::$_instanceConfig[$instanceName],
                 $config
             );
         } else {
-            self::$_instanceConfig[$instanceName] = array_merge(
+            self::$_instanceConfig[$instanceName] = array_replace_recursive(
                 self::$_defaultOptions,
                 $config
             );

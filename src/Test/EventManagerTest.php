@@ -23,82 +23,85 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * test event initialize
+     *
+     * @param array $events
+     * @param array $options
+     * @dataProvider configDataProvider
      */
-    public function testEventCreation()
+    public function testEventCreation($events, $options)
     {
         $instance = new EventManager;
         $this->assertTrue($instance instanceof EventManager);
         $this->assertFalse($instance->hasErrors());
 
-        $instance = new EventManager($this->getEventConfig());
-        $this->assertEquals(
-            $this->getEventConfig()['events'],
-            $instance->getEventConfiguration()
-        );
+        $instance = new EventManager($options, $events);
+        $this->assertEquals($events, $instance->getEventConfiguration());
     }
 
     /**
      * test read configuration
+     *
+     * @param array $events
+     * @dataProvider configDataProvider
      */
-    public function testSetEventManagerConfiguration()
+    public function testSetEventManagerConfiguration($events)
     {
         $eventManager = new EventManager;
-        $eventManager->setEventConfiguration($this->getEventConfig());
+        $eventManager->setEventConfiguration($events);
 
-        $this->assertEquals(
-            $this->getEventConfig()['events'],
-            $eventManager->getEventConfiguration()
-        );
+        $this->assertEquals($events, $eventManager->getEventConfiguration());
 
         $eventManager->setEventConfiguration([
-            'events' => [
-                'test_event_code' => [
-                    'listeners' => [
-                        'newListener'
-                    ]
+            'test_event_code' => [
+                'listeners' => [
+                    'newListener'
                 ]
             ]
         ]);
 
-        $config                                     = $this->getEventConfig()['events'];
-        $config['test_event_code']['listeners'][]   = 'newListener';
-        $this->assertEquals(
-            $config,
-            $eventManager->getEventConfiguration()
-        );
+        $events['test_event_code']['listeners'][] = 'newListener';
+        $this->assertEquals($events, $eventManager->getEventConfiguration());
 
-        $eventManager = new EventManager;
-        $eventManager->setEventConfiguration($this->getEventFileConfig('array'));
-        $this->assertEquals(
-            $this->getEventConfig()['events'],
-            $eventManager->getEventConfiguration()
-        );
+        unset($events['test_event_code']['listeners'][3]);
 
-        $eventManager = new EventManager;
-        $eventManager->setEventConfiguration($this->getEventFileConfig('json'));
-        $this->assertEquals(
-            $this->getEventConfig()['events'],
-            $eventManager->getEventConfiguration()
+        $eventManager   = new EventManager;
+        $eventManager->readEventConfiguration(
+            $this->getEventFileConfigPath('array'),
+            'array'
         );
+        $this->assertEquals($events, $eventManager->getEventConfiguration());
 
-        $eventManager = new EventManager;
-        $eventManager->setEventConfiguration($this->getEventFileConfig('ini'));
-        $this->assertEquals(
-            $this->getEventConfig()['events'],
-            $eventManager->getEventConfiguration()
+        $eventManager   = new EventManager;
+        $eventManager->readEventConfiguration(
+            $this->getEventFileConfigPath('json'),
+            'json'
         );
+        $this->assertEquals($events, $eventManager->getEventConfiguration());
 
-        $eventManager = new EventManager($this->getEventFileConfig('xml'));
-        $this->assertEquals(
-            $this->getEventConfig()['events'],
-            $eventManager->getEventConfiguration()
+        $eventManager   = new EventManager;
+        $eventManager->readEventConfiguration(
+            $this->getEventFileConfigPath('ini'),
+            'ini'
         );
+        $this->assertEquals($events, $eventManager->getEventConfiguration());
 
-        $eventManager = new EventManager($this->getEventFileConfig('yaml'));
-        $this->assertEquals(
-            $this->getEventConfig()['events'],
-            $eventManager->getEventConfiguration()
+        $eventManager = new EventManager(
+            [
+                'from_file' => true,
+                'type'      => 'xml'
+            ],
+            $this->getEventFileConfigPath('xml')
         );
+        $this->assertEquals($events, $eventManager->getEventConfiguration());
+
+        $eventManager = new EventManager(
+            [
+                'from_file' => true,
+                'type'      => 'yaml'
+            ],
+            $this->getEventFileConfigPath('yaml')
+        );
+        $this->assertEquals($events, $eventManager->getEventConfiguration());
     }
 
     /**
@@ -110,7 +113,10 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->setExpectedException('InvalidArgumentException');
 
-        $eventManager->setEventConfiguration($this->getEventFileConfig('txt'));
+        $eventManager->readEventConfiguration(
+            $this->getEventFileConfigPath('txt'),
+            'txt'
+        );
     }
 
     /**
@@ -120,16 +126,14 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     {
         $instance = new EventManager;
         $instance->setEventConfiguration([
-            'events' => [
-                'test_event' => [
-                    'object'    => 'ClassEvent\Event\BaseEvent',
-                    'listeners' => [
-                        'ClassEvent\Test\EventManagerTest::trigger',
-                        function ($attr, $event) {
-                            self::$eventTriggered += $attr['value'];
-                        }
-                    ]
-                ],
+            'test_event' => [
+                'object'    => 'ClassEvent\Event\BaseEvent',
+                'listeners' => [
+                    'ClassEvent\Test\EventManagerTest::trigger',
+                    function ($attr, $event) {
+                        self::$eventTriggered += $attr['value'];
+                    }
+                ]
             ],
         ]);
 
@@ -145,16 +149,14 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     {
         $instance = new EventManager;
         $instance->setEventConfiguration([
-            'events' => [
-                'test_event' => [
-                    'object'    => 'ClassEvent\Event\BaseEvent',
-                    'listeners' => [
-                        'ClassEvent\Test\EventManagerTest::triggerStop',
-                        function ($attr, $event) {
-                            self::$eventTriggered += $attr['value'];
-                        }
-                    ]
-                ],
+            'test_event' => [
+                'object'    => 'ClassEvent\Event\BaseEvent',
+                'listeners' => [
+                    'ClassEvent\Test\EventManagerTest::triggerStop',
+                    function ($attr, $event) {
+                        self::$eventTriggered += $attr['value'];
+                    }
+                ]
             ],
         ]);
 
@@ -170,13 +172,11 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     {
         $instance = new EventManager;
         $instance->setEventConfiguration([
-            'events' => [
-                'test_event' => [
-                    'object'    => 'ClassEvent\Event\BaseEvent',
-                    'listeners' => [
-                        'ClassEvent\Test\EventManagerTest::trigger'
-                    ]
-                ],
+            'test_event' => [
+                'object'    => 'ClassEvent\Event\BaseEvent',
+                'listeners' => [
+                    'ClassEvent\Test\EventManagerTest::trigger'
+                ]
             ],
         ]);
 
@@ -201,13 +201,11 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     {
         $instance = new EventManager;
         $instance->setEventConfiguration([
-            'events' => [
-                'test_event' => [
-                    'object'    => 'ClassEvent\Event\BaseEvent',
-                    'listeners' => [
-                        'ClassEvent\Test\EventManagerTest::triggerError',
-                    ]
-                ],
+            'test_event' => [
+                'object'    => 'ClassEvent\Event\BaseEvent',
+                'listeners' => [
+                    'ClassEvent\Test\EventManagerTest::triggerError',
+                ]
             ],
         ]);
 
@@ -234,20 +232,22 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     {
         $instance = new EventManager;
         $instance->setEventConfiguration([
-            'events' => [
-                'test_event' => [
-                    'object'    => 'ClassEvent\Event\BaseEvent',
-                    'listeners' => [
-                        'ClassEvent\Test\EventManagerTest::triggerError',
-                    ]
-                ],
+            'test_event' => [
+                'object'    => 'ClassEvent\Event\BaseEvent',
+                'listeners' => [
+                    'ClassEvent\Test\EventManagerTest::trigger',
+                ]
             ],
         ]);
+
+        /** use static method to avoid launch increment and store in EventManager instance */
+        $this->assertEquals(5, \ClassEvent\Event\BaseEvent::getLaunchCount());
 
         $instance->triggerEvent('test_event');
         $instance->triggerEvent('test_event');
 
         $this->assertEquals(6, $instance->getEventObject('test_event')->getLaunchCount());
+        $this->assertEquals(6, \ClassEvent\Event\BaseEvent::getLaunchCount());
     }
 
     /**
@@ -270,11 +270,9 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         $instance = new EventManager;
 
         $instance->setEventConfiguration([
-            'events' => [
-                'invalid_object_event' => [
-                    'object'    => 'ClassEvent\Test\InvalidEventObject',
-                    'listeners' => []
-                ],
+            'invalid_object_event' => [
+                'object'    => 'ClassEvent\Test\InvalidEventObject',
+                'listeners' => []
             ],
         ]);
 
@@ -293,13 +291,11 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($instance->getAllEvents());
 
         $instance->setEventConfiguration([
-            'events' => [
-                'test_event' => [
-                    'object'    => 'ClassEvent\Event\BaseEvent',
-                    'listeners' => [
-                        'ClassEvent\Test\EventManagerTest::triggerError',
-                    ]
-                ],
+            'test_event' => [
+                'object'    => 'ClassEvent\Event\BaseEvent',
+                'listeners' => [
+                    'ClassEvent\Test\EventManagerTest::triggerError',
+                ]
             ],
         ]);
         $this->assertEmpty($instance->getAllEvents());
@@ -322,6 +318,14 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($instance->isLogEnabled());
         $instance->enableEventLog();
         $this->assertTrue($instance->isLogEnabled());
+
+        $instance = new EventManager([
+            'log_events' => true
+        ]);
+
+        $this->assertTrue($instance->isLogEnabled());
+        $instance->disableEventLog();
+        $this->assertFalse($instance->isLogEnabled());
     }
 
     /**
@@ -349,21 +353,25 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
      *
      * @return array
      */
-    public function getEventConfig()
+    public function configDataProvider()
     {
         return [
-            'events' => [
-                'test_event_code' => [
-                    'object'    => 'ClassEvent\Event\BaseEvent',
-                    'listeners' => [
-                        'ClassOne::method',
-                        'ClassSecond::method',
-                        'someFunction',
+            [
+                'events' => [
+                    'test_event_code' => [
+                        'object'    => 'ClassEvent\Event\BaseEvent',
+                        'listeners' => [
+                            'ClassOne::method',
+                            'ClassSecond::method',
+                            'someFunction',
+                        ]
                     ]
+                ],
+                'options' => [
+                    'type'      => 'array',
+                    'from_file' => false,
                 ]
-            ],
-            'type'      => 'array',
-            'from_file' => false,
+            ]
         ];
     }
 
@@ -373,18 +381,14 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
      * @param string $type
      * @return array
      */
-    public function getEventFileConfig($type)
+    public function getEventFileConfigPath($type)
     {
         $extension = $type;
         if ($type === 'array') {
             $extension = 'php';
         }
 
-        return [
-            'events'    => dirname(__FILE__) . '/testConfig/config.' . $extension,
-            'from_file' => true,
-            'type'      => $type,
-        ];
+        return dirname(__FILE__) . '/testConfig/config.' . $extension;
     }
 
     /**
