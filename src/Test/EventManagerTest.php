@@ -22,6 +22,25 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     public static $eventTriggered = 0;
 
     /**
+     * store generated log file path
+     *
+     * @var string
+     */
+    protected $_logPath;
+
+    /**
+     * actions launched before test starts
+     */
+    protected function setUp()
+    {
+        $this->_logPath = dirname(__FILE__) . '/log.log';
+
+        if (file_exists($this->_logPath)) {
+            unlink($this->_logPath);
+        }
+    }
+
+    /**
      * test event initialize
      *
      * @param array $events
@@ -343,6 +362,33 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $instance->getAllEvents());
     }
 
+    /**
+     * test that log file was created correctly
+     */
+    public function testEventLog()
+    {
+        $instance = new EventManager([
+            'log_all_events'    => true,
+            'log_path'          =>  $this->_logPath,
+            'log_object'        => false,
+        ]);
+        $instance->setEventConfiguration([
+            'test_event' => [
+                'object'    => 'ClassEvent\Event\BaseEvent',
+                'listeners' => [
+                    'ClassEvent\Test\EventManagerTest::trigger',
+                    'ClassEvent\Test\EventManagerTest::triggerError',
+                    function () {
+
+                    }
+                ]
+            ],
+        ]);
+
+        $instance->triggerEvent('test_event');
+        $this->assertTrue(file_exists($this->_logPath));
+    }
+
     public function testErrorHandling()
     {
 
@@ -417,5 +463,15 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     {
         $event->stopPropagation();
         self::$eventTriggered++;
+    }
+
+    /**
+     * actions launched after test was finished
+     */
+    protected function tearDown()
+    {
+        if (file_exists($this->_logPath)) {
+            unlink($this->_logPath);
+        }
     }
 }

@@ -5,9 +5,14 @@ namespace ClassEvent\Event\Base;
 use ClassEvent\Event\Base\Interfaces\EventManagerInterface;
 use ClassEvent\Event\Base\Interfaces\EventInterface;
 use Zend\Config\Reader;
+use ClassEvent\Event\Log;
 
 class EventManager implements EventManagerInterface
 {
+    const EVENT_STATUS_OK       = 'ok';
+    const EVENT_STATUS_ERROR    = 'error';
+    const EVENT_STATUS_BREAK    = 'propagation_stop';
+
     /**
      * store all loaded configuration
      *
@@ -23,8 +28,6 @@ class EventManager implements EventManagerInterface
     protected $_events = [];
 
     /**
-     * 
-     *
      * @var bool
      */
     protected $_hasErrors = false;
@@ -37,6 +40,13 @@ class EventManager implements EventManagerInterface
     protected $_errorList = [];
 
     /**
+     * store logger instance
+     *
+     * @var Log\LogInterface
+     */
+    protected $_loggerInstance = null;
+
+    /**
      * store default options for event manager
      *
      * @var array
@@ -44,8 +54,18 @@ class EventManager implements EventManagerInterface
     protected $_options = [
         'type'              => 'array',
         'log_events'        => false,
-        'from_file'         => false
+        'log_all_events'    => false,
+        'from_file'         => false,
+        'log_path'          => false,
+        'log_object'        => false,
     ];
+
+    /**
+     * store all event names to log
+     *
+     * @var array
+     */
+    protected $_logEvents = [];
 
     /**
      * create manage instance
@@ -126,14 +146,19 @@ class EventManager implements EventManagerInterface
         foreach ($this->_eventsConfig as $listener) {
             foreach ($listener['listeners'] as $eventListener) {
                 if ($event->isPropagationStopped()) {
+                    $this->_logEvent($name, $eventListener, self::EVENT_STATUS_BREAK);
                     break;
                 }
 
                 try {
                     $this->_callFunction($eventListener, $data, $event);
+                    $status = self::EVENT_STATUS_OK;
                 } catch (\Exception $e) {
                     $this->addError($e);
+                    $status = self::EVENT_STATUS_ERROR;
                 }
+
+                $this->_logEvent($name, $eventListener, $status);
             }
         }
 
@@ -279,11 +304,35 @@ class EventManager implements EventManagerInterface
     }
 
     /**
-     * @todo log all events or single event
+     * log given events or all events
+     * to log all events use 'all' keyword
+     * 
+     * @param array|string $events
+     * @return $this
      */
-    public function logEvent()
+    public function logEvent($events = [])
     {
-        
+        if (!$this->isLogEnabled()) {
+            return $this;
+        }
+
+        if ($events === 'all') {
+            $this->_options['log_all_events'] = true;
+            return $this;
+        }
+
+        if (!is_array($events)) {
+            return $this;
+        }
+
+        $this->_options['log_all_events'] = false;
+        foreach ($events as $event) {
+            if (!in_array($this->_logEvents, $event)) {
+                $this->_logEvents[] = $event;
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -344,6 +393,65 @@ class EventManager implements EventManagerInterface
             'trace'     => $exception->getTraceAsString(),
         ];
         $this->_hasErrors = true;
+
+        return $this;
+    }
+
+    /**
+     * check that event data can be logged and create log message
+     *
+     * @param string $name
+     * @param mixed $eventListener
+     * @param bool $status
+     * @return $this
+     */
+    protected function _logEvent($name, $eventListener, $status)
+    {
+        if ($this->_options['log_all_events'] || in_array($name, $this->_logEvents)) {
+            $this->_createLogObject();
+
+            switch (true) {
+                case is_string($eventListener):
+                    $data = $eventListener;
+                    break;
+                case $eventListener instanceof \Closure:
+                    $data = 'Closure';
+                    break;
+                case is_object($eventListener):
+                    $data = get_class($eventListener);
+                    break;
+                default:
+                    $data = 'unknown';
+                    break;
+            }
+
+            $this->_loggerInstance->makeLog([
+                'event_name'    => $name,
+                'log_path'      => $this->_options['log_path'],
+                'listener'      => $data,
+                'status'        => $status
+            ]);
+        }
+
+        return $this;
+    }
+
+    /**
+     * create log object instance
+     *
+     * @return $this
+     */
+    protected function _createLogObject()
+    {
+        if (!$this->_loggerInstance) {
+            if (!$this->_options['log_object']
+                && $this->_options['log_object'] instanceof Log\LogInterface
+            ) {
+                $this->_loggerInstance = $this->_options['log_object'];
+            } else {
+                $this->_loggerInstance = new Log\Log;
+            }
+        }
 
         return $this;
     }

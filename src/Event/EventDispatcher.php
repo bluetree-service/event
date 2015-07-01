@@ -44,7 +44,9 @@ class EventDispatcher
             'from_file'         => false,
             'log_events'        => false,
             'instance_name'     => self::DEFAULT_INSTANCE,
-            'event_manager'     => 'ClassEvent\Event\Base\EventManager'
+            'event_manager'     => 'ClassEvent\Event\Base\EventManager',
+            'log_all_events'    => false,
+            'log_path'          => false,
         ]
     ];
 
