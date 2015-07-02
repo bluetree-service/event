@@ -389,7 +389,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * check calling additional log object and listner as array
+     * check calling additional log object and listener as array
      */
     public function testEventLogWithExternalObjects()
     {
@@ -412,7 +412,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * test log event with direct given all events or specified event key
+     * test log event with direct given all events
      */
     public function testEventLogWithGivenEvents()
     {
@@ -439,9 +439,17 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
 
         $instance->triggerEvent('test_event');
         $this->assertTrue(file_exists($this->_logPath));
+    }
 
+
+    /**
+     * test log event with direct given specified event key
+     */
+    public function testEventLogWithSpecifiedEvents()
+    {
         $instance = new EventManager([
-            'log_path' =>  $this->_logPath
+            'log_path'          =>  $this->_logPath,
+            'log_all_events'    => true
         ]);
 
         $instance->logEvent('test_event');
