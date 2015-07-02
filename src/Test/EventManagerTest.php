@@ -370,7 +370,6 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         $instance = new EventManager([
             'log_all_events'    => true,
             'log_path'          =>  $this->_logPath,
-            'log_object'        => false,
         ]);
         $instance->setEventConfiguration([
             'test_event' => [
@@ -389,9 +388,75 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(file_exists($this->_logPath));
     }
 
-    public function testErrorHandling()
+    /**
+     * check calling additional log object and listner as array
+     */
+    public function testEventLogWithExternalObjects()
     {
+        $instance = new EventManager([
+            'log_all_events'    => true,
+            'log_path'          =>  $this->_logPath,
+            'log_object'        => 'ClassEvent\Event\Log\Log',
+        ]);
+        $instance->setEventConfiguration([
+            'test_event' => [
+                'object'    => 'ClassEvent\Event\BaseEvent',
+                'listeners' => [
+                    [new \ClassEvent\Test\EventManagerTest, 'trigger']
+                ]
+            ],
+        ]);
 
+        $instance->triggerEvent('test_event');
+        $this->assertTrue(file_exists($this->_logPath));
+    }
+
+    /**
+     * test log event with direct given all events or specified event key
+     */
+    public function testEventLogWithGivenEvents()
+    {
+        $instance = new EventManager([
+            'log_path' =>  $this->_logPath
+        ]);
+
+        $instance->logEvent('all');
+
+        $instance->setEventConfiguration([
+            'test_event' => [
+                'object'    => 'ClassEvent\Event\BaseEvent',
+                'listeners' => [
+                    'ClassEvent\Test\EventManagerTest::trigger',
+                ]
+            ],
+        ]);
+
+        $instance->triggerEvent('test_event');
+        $this->assertFalse(file_exists($this->_logPath));
+        
+        $instance->enableEventLog();
+        $instance->logEvent('all');
+
+        $instance->triggerEvent('test_event');
+        $this->assertTrue(file_exists($this->_logPath));
+
+        $instance = new EventManager([
+            'log_path' =>  $this->_logPath
+        ]);
+
+        $instance->logEvent('test_event');
+
+        $instance->setEventConfiguration([
+            'test_event' => [
+                'object'    => 'ClassEvent\Event\BaseEvent',
+                'listeners' => [
+                    'ClassEvent\Test\EventManagerTest::trigger',
+                ]
+            ],
+        ]);
+
+        $instance->triggerEvent('test_event');
+        $this->assertTrue(file_exists($this->_logPath));
     }
 
     /**

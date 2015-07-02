@@ -409,6 +409,7 @@ class EventManager implements EventManagerInterface
     {
         if ($this->_options['log_all_events'] || in_array($name, $this->_logEvents)) {
             $this->_createLogObject();
+            $data = 'unknown';
 
             switch (true) {
                 case is_string($eventListener):
@@ -417,11 +418,8 @@ class EventManager implements EventManagerInterface
                 case $eventListener instanceof \Closure:
                     $data = 'Closure';
                     break;
-                case is_object($eventListener):
-                    $data = get_class($eventListener);
-                    break;
-                default:
-                    $data = 'unknown';
+                case is_array($eventListener):
+                    $data = get_class($eventListener[0]) . '::' . $eventListener[1];
                     break;
             }
 
