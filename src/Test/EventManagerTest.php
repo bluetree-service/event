@@ -368,8 +368,8 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     public function testEventLog()
     {
         $instance = new EventManager([
-            'log_all_events'    => true,
-            'log_path'          =>  $this->_logPath,
+            'log_events'    => true,
+            'log_path'      => $this->_logPath,
         ]);
         $instance->setEventConfiguration([
             'test_event' => [
@@ -384,8 +384,9 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
             ],
         ]);
 
+        $this->assertFileNotExists($this->_logPath);
         $instance->triggerEvent('test_event');
-        $this->assertTrue(file_exists($this->_logPath));
+        $this->assertFileExists($this->_logPath);
     }
 
     /**
@@ -398,6 +399,9 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
             'log_path'          =>  $this->_logPath,
             'log_object'        => 'ClassEvent\Event\Log\Log',
         ]);
+
+        $instance->enableEventLog();
+
         $instance->setEventConfiguration([
             'test_event' => [
                 'object'    => 'ClassEvent\Event\BaseEvent',
@@ -408,7 +412,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $instance->triggerEvent('test_event');
-        $this->assertTrue(file_exists($this->_logPath));
+        $this->assertFileExists($this->_logPath);
     }
 
     /**
@@ -420,7 +424,9 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
             'log_path' =>  $this->_logPath
         ]);
 
-        $instance->logEvent('all');
+        $instance->enableEventLog()->logAllEvents();
+
+        $this->assertTrue($instance->isLogAllEventsEnabled());
 
         $instance->setEventConfiguration([
             'test_event' => [
@@ -432,13 +438,7 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $instance->triggerEvent('test_event');
-        $this->assertFalse(file_exists($this->_logPath));
-        
-        $instance->enableEventLog();
-        $instance->logEvent('all');
-
-        $instance->triggerEvent('test_event');
-        $this->assertTrue(file_exists($this->_logPath));
+        $this->assertFileExists($this->_logPath);
     }
 
 
@@ -449,10 +449,11 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
     {
         $instance = new EventManager([
             'log_path'          =>  $this->_logPath,
-            'log_all_events'    => true
+            'log_all_events'    => false
         ]);
 
-        $instance->logEvent('test_event');
+        $instance->enableEventLog();
+        $instance->logEvent(['test_event']);
 
         $instance->setEventConfiguration([
             'test_event' => [
@@ -463,8 +464,12 @@ class EventManagerTest extends \PHPUnit_Framework_TestCase
             ],
         ]);
 
+        $this->assertEquals(
+            ['test_event'],
+            $instance->getAllEventsToLog()
+        );
         $instance->triggerEvent('test_event');
-        $this->assertTrue(file_exists($this->_logPath));
+        $this->assertFileExists($this->_logPath);
     }
 
     /**

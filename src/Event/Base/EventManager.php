@@ -54,7 +54,7 @@ class EventManager implements EventManagerInterface
     protected $_options = [
         'type'              => 'array',
         'log_events'        => false,
-        'log_all_events'    => false,
+        'log_all_events'    => true,
         'from_file'         => false,
         'log_path'          => false,
         'log_object'        => false,
@@ -230,11 +230,11 @@ class EventManager implements EventManagerInterface
      */
     protected function _configurationStrategy($path, $type)
     {
+        $config = [];
+
         if (!file_exists($path)) {
             throw new \InvalidArgumentException('File ' . $path . 'don\'t exists.');
         }
-
-        $config = [];
 
         switch ($type) {
             case 'array':
@@ -307,32 +307,50 @@ class EventManager implements EventManagerInterface
      * log given events or all events
      * to log all events use 'all' keyword
      * 
-     * @param array|string $events
+     * @param array $events
      * @return $this
      */
-    public function logEvent($events = [])
+    public function logEvent(array $events = [])
     {
-        if (!$this->isLogEnabled()) {
-            return $this;
-        }
-
-        if ($events === 'all') {
-            $this->_options['log_all_events'] = true;
-            return $this;
-        }
-
-        if (!is_array($events)) {
-            return $this;
-        }
-
-        $this->_options['log_all_events'] = false;
         foreach ($events as $event) {
-            if (!in_array($this->_logEvents, $event)) {
+            if (!in_array($event, $this->_logEvents)) {
                 $this->_logEvents[] = $event;
             }
         }
 
         return $this;
+    }
+
+    /**
+     * enable or disable log all events
+     *
+     * @param bool $log
+     * @return $this
+     */
+    public function logAllEvents($log = true)
+    {
+        $this->_options['log_all_events'] = (bool)$log;
+        return $this;
+    }
+
+    /**
+     * get information that all event log is enabled or disabled
+     *
+     * @return bool
+     */
+    public function isLogAllEventsEnabled()
+    {
+        return $this->_options['log_all_events'];
+    }
+
+    /**
+     * return list of all events to log
+     *
+     * @return array
+     */
+    public function getAllEventsToLog()
+    {
+        return $this->_logEvents;
     }
 
     /**
@@ -407,7 +425,11 @@ class EventManager implements EventManagerInterface
      */
     protected function _logEvent($name, $eventListener, $status)
     {
-        if ($this->_options['log_all_events'] || in_array($name, $this->_logEvents)) {
+        if ($this->_options['log_events']
+            && ($this->_options['log_all_events']
+                || in_array($name, $this->_logEvents)
+            )
+        ) {
             $this->_createLogObject();
             $data = 'unknown';
 
