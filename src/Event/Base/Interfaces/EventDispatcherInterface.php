@@ -2,7 +2,7 @@
 
 namespace ClassEvent\Event\Base\Interfaces;
 
-interface EventManagerInterface
+interface EventDispatcherInterface
 {
     public function __construct(array $options = [], $events = []);
     public function getEventObject($eventName);

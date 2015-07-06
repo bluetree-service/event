@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <phpunit bootstrap="vendor/autoload.php" colors="true">
     <testsuites>
-        <testsuite name="dispatcher">
-            <directory>src/Test/EventDispatcherTest.php</directory>
+        <testsuite name="facade">
+            <file>src/Test/EventFacadeTest.php</file>
         </testsuite>
-        <testsuite name="manager">
-            <directory>src/Test/EventManagerTest.php</directory>
+        <testsuite name="dispatcher">
+            <file>src/Test/EventDispatcherTest.php</file>
         </testsuite>
     </testsuites>
 </phpunit>

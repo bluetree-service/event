@@ -2,7 +2,7 @@
 
 namespace ClassEvent\Test;
 
-class IncorrectEventManager
+class IncorrectEventDispatcher
 {
     public function __construct()
     {

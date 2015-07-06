@@ -2,12 +2,12 @@
 
 namespace ClassEvent\Event\Base;
 
-use ClassEvent\Event\Base\Interfaces\EventManagerInterface;
+use ClassEvent\Event\Base\Interfaces\EventDispatcherInterface;
 use ClassEvent\Event\Base\Interfaces\EventInterface;
 use Zend\Config\Reader;
 use ClassEvent\Event\Log;
 
-class EventManager implements EventManagerInterface
+class EventDispatcher implements EventDispatcherInterface
 {
     const EVENT_STATUS_OK       = 'ok';
     const EVENT_STATUS_ERROR    = 'error';
@@ -47,7 +47,7 @@ class EventManager implements EventManagerInterface
     protected $_loggerInstance = null;
 
     /**
-     * store default options for event manager
+     * store default options for event dispatcher
      *
      * @var array
      */
@@ -116,7 +116,7 @@ class EventManager implements EventManagerInterface
     }
 
     /**
-     * add event configuration into event manager
+     * add event configuration into event dispatcher
      *
      * @param array $events
      * @return $this
@@ -364,7 +364,7 @@ class EventManager implements EventManagerInterface
     }
 
     /**
-     * return all event manager errors
+     * return all event dispatcher errors
      *
      * @return array
      */
@@ -374,7 +374,7 @@ class EventManager implements EventManagerInterface
     }
 
     /**
-     * return information that event manager has some errors
+     * return information that event dispatcher has some errors
      *
      * @return bool
      */
@@ -384,7 +384,7 @@ class EventManager implements EventManagerInterface
     }
 
     /**
-     * clear all event manager errors
+     * clear all event dispatcher errors
      *
      * @return $this
      */

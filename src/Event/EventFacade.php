@@ -2,9 +2,9 @@
 
 namespace ClassEvent\Event;
 
-use ClassEvent\Event\Base\Interfaces\EventManagerInterface;
+use ClassEvent\Event\Base\Interfaces\EventDispatcherInterface;
 
-class EventDispatcher
+class EventFacade
 {
     /**
      * default instance name
@@ -12,18 +12,18 @@ class EventDispatcher
     const DEFAULT_INSTANCE = 'default';
 
     /**
-     * store information that event manager was initialized
+     * store information that event dispatcher was initialized
      *
      * @var bool
      */
     protected static $_initialized = false;
 
     /**
-     * store all called event manager instances
+     * store all called event dispatcher instances
      *
      * @var array
      */
-    protected static $_managerInstance = [];
+    protected static $_dispatcherInstance = [];
 
     /**
      * store all instances default configuration
@@ -44,7 +44,7 @@ class EventDispatcher
             'from_file'         => false,
             'log_events'        => false,
             'instance_name'     => self::DEFAULT_INSTANCE,
-            'event_manager'     => 'ClassEvent\Event\Base\EventManager',
+            'event_dispatcher'  => 'ClassEvent\Event\Base\EventDispatcher',
             'log_all_events'    => false,
             'log_path'          => false,
         ]
@@ -59,28 +59,28 @@ class EventDispatcher
     {
         $options        = self::_setInstanceConfig($options);
         $instanceName   = $options['options']['instance_name'];
-        $message        = 'Incorrect event manager instance.';
+        $message        = 'Incorrect event dispatcher instance.';
 
-        if (array_key_exists($instanceName, self::$_managerInstance)) {
+        if (array_key_exists($instanceName, self::$_dispatcherInstance)) {
             return;
         }
 
         switch (true) {
-            case is_string($options['options']['event_manager']):
-                $reflection = new \ReflectionClass($options['options']['event_manager']);
+            case is_string($options['options']['event_dispatcher']):
+                $reflection = new \ReflectionClass($options['options']['event_dispatcher']);
 
-                if (!$reflection->implementsInterface('ClassEvent\Event\Base\Interfaces\EventManagerInterface')) {
+                if (!$reflection->implementsInterface('ClassEvent\Event\Base\Interfaces\EventDispatcherInterface')) {
                     throw new \RuntimeException($message);
                 }
 
-                self::$_managerInstance[$instanceName] = $reflection->newInstanceArgs([
+                self::$_dispatcherInstance[$instanceName] = $reflection->newInstanceArgs([
                     $options['options'],
                     $options['events'],
                 ]);
                 break;
 
-            case $options['options']['event_manager'] instanceof EventManagerInterface:
-                self::$_managerInstance[$instanceName] = $options['options']['event_manager'];
+            case $options['options']['event_dispatcher'] instanceof EventDispatcherInterface:
+                self::$_dispatcherInstance[$instanceName] = $options['options']['event_dispatcher'];
                 break;
 
             default:
@@ -112,7 +112,7 @@ class EventDispatcher
      */
     public static function isInitialized($instance = self::DEFAULT_INSTANCE)
     {
-        $instanceExists = array_key_exists($instance, self::$_managerInstance);
+        $instanceExists = array_key_exists($instance, self::$_dispatcherInstance);
 
         return self::$_initialized && $instanceExists;
     }
@@ -130,7 +130,7 @@ class EventDispatcher
      */
     public static function getCalledEvents($instanceName = self::DEFAULT_INSTANCE)
     {
-        /** @var EventManagerInterface $instanceObject */
+        /** @var EventDispatcherInterface $instanceObject */
         $instanceObject = self::_getInstance($instanceName);
         return $instanceObject->getAllEvents();
     }
@@ -160,13 +160,13 @@ class EventDispatcher
      */
     public static function getEventConfiguration($instanceName = self::DEFAULT_INSTANCE)
     {
-        /** @var EventManagerInterface $instanceObject */
+        /** @var EventDispatcherInterface $instanceObject */
         $instanceObject = self::_getInstance($instanceName);
         return $instanceObject->getEventConfiguration();
     }
 
     /**
-     * return all event manager errors
+     * return all event dispatcher errors
      *
      * @param string $instanceName
      * @return array
@@ -174,13 +174,13 @@ class EventDispatcher
     public static function getErrors($instanceName = self::DEFAULT_INSTANCE)
     {
         self::_initException();
-        /** @var EventManagerInterface $instanceObject */
+        /** @var EventDispatcherInterface $instanceObject */
         $instanceObject = self::_getInstance($instanceName);
         return $instanceObject->getErrors();
     }
 
     /**
-     * return information that event manager has some errors
+     * return information that event dispatcher has some errors
      *
      * @param string $instanceName
      * @return bool
@@ -188,13 +188,13 @@ class EventDispatcher
     public static function hasErrors($instanceName = self::DEFAULT_INSTANCE)
     {
         self::_initException();
-        /** @var EventManagerInterface $instanceObject */
+        /** @var EventDispatcherInterface $instanceObject */
         $instanceObject = self::_getInstance($instanceName);
         return $instanceObject->hasErrors();
     }
 
     /**
-     * clear all event manager errors
+     * clear all event dispatcher errors
      *
      * @param string $instanceName
      * @return $this
@@ -202,7 +202,7 @@ class EventDispatcher
     public static function clearErrors($instanceName = self::DEFAULT_INSTANCE)
     {
         self::_initException();
-        /** @var EventManagerInterface $instanceObject */
+        /** @var EventDispatcherInterface $instanceObject */
         $instanceObject = self::_getInstance($instanceName);
         return $instanceObject->clearErrors();
     }
@@ -249,16 +249,16 @@ class EventDispatcher
     }
 
     /**
-     * return event manager instance object
+     * return event dispatcher instance object
      *
      * @param string $instanceName
-     * @return null|EventManagerInterface
+     * @return null|EventDispatcherInterface
      * @throws \RuntimeException
      */
     protected static function _getInstance($instanceName = self::DEFAULT_INSTANCE)
     {
-        if (array_key_exists($instanceName, self::$_managerInstance)) {
-            return self::$_managerInstance[$instanceName];
+        if (array_key_exists($instanceName, self::$_dispatcherInstance)) {
+            return self::$_dispatcherInstance[$instanceName];
         }
 
         throw new \RuntimeException('Instance: ' . $instanceName . ' don\'t exists');
