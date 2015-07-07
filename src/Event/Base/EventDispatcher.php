@@ -154,7 +154,7 @@ class EventDispatcher implements EventDispatcherInterface
                     $this->_callFunction($eventListener, $data, $event);
                     $status = self::EVENT_STATUS_OK;
                 } catch (\Exception $e) {
-                    $this->addError($e);
+                    $this->_addError($e);
                     $status = self::EVENT_STATUS_ERROR;
                 }
 
@@ -402,7 +402,7 @@ class EventDispatcher implements EventDispatcherInterface
      * @param \Exception $exception
      * @return $this
      */
-    public function addError(\Exception $exception)
+    public function _addError(\Exception $exception)
     {
         $this->_errorList[$exception->getCode()] = [
             'message'   => $exception->getMessage(),

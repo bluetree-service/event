@@ -12,7 +12,6 @@ interface EventDispatcherInterface
     public function getErrors();
     public function hasErrors();
     public function clearErrors();
-    public function addError(\Exception $e);
     public function setEventConfiguration(array $config);
     public function getEventConfiguration();
     public function getAllEvents();
