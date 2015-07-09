@@ -397,7 +397,7 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         $instance = new EventDispatcher([
             'log_all_events'    => true,
             'log_path'          =>  $this->_logPath,
-            'log_object'        => 'ClassEvent\Event\Log\Log',
+            'log_object'        => (new \ClassEvent\Event\Log\Log),
         ]);
 
         $instance->enableEventLog();

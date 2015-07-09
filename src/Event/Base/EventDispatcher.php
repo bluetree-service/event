@@ -464,7 +464,7 @@ class EventDispatcher implements EventDispatcherInterface
     protected function _createLogObject()
     {
         if (!$this->_loggerInstance) {
-            if (!$this->_options['log_object']
+            if ($this->_options['log_object']
                 && $this->_options['log_object'] instanceof Log\LogInterface
             ) {
                 $this->_loggerInstance = $this->_options['log_object'];
