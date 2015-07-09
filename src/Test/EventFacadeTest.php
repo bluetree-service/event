@@ -42,9 +42,7 @@ class EventFacadeTest extends \PHPUnit_Framework_TestCase
         EventFacade::init();
         $this->assertNotFalse(EventFacade::isInitialized());
 
-        EventFacade::init([
-            'options' => ['instance_name' => 'instance_1']
-        ]);
+        EventFacade::init([], 'instance_1');
         $this->assertNotFalse(EventFacade::isInitialized('instance_1'));
 
         $this->assertEquals(
@@ -52,12 +50,14 @@ class EventFacadeTest extends \PHPUnit_Framework_TestCase
             EventFacade::getEventConfiguration()
         );
 
-        EventFacade::init([
-            'options' => [
-                'instance_name' => 'instance_2',
-                'event_dispatcher' => new \ClassEvent\Event\Base\EventDispatcher
-            ]
-        ]);
+        EventFacade::init(
+            [
+                'options' => [
+                    'event_dispatcher' => new \ClassEvent\Event\Base\EventDispatcher
+                ]
+            ],
+            'instance_2'
+        );
 
         $this->assertEquals(
             [],
@@ -88,12 +88,14 @@ class EventFacadeTest extends \PHPUnit_Framework_TestCase
             'Incorrect event dispatcher instance.'
         );
 
-        EventFacade::init([
-            'options' => [
-                'instance_name' => 'error_instance_1',
-                'event_dispatcher' => new IncorrectEventDispatcher
-            ]
-        ]);
+        EventFacade::init(
+            [
+                'options' => [
+                    'event_dispatcher' => new IncorrectEventDispatcher
+                ]
+            ],
+            'error_instance_1'
+        );
     }
 
     /**
@@ -106,12 +108,14 @@ class EventFacadeTest extends \PHPUnit_Framework_TestCase
             'Incorrect event dispatcher instance.'
         );
 
-        EventFacade::init([
-            'options' => [
-                'instance_name' => 'error_instance_2',
-                'event_dispatcher' => 'ClassEvent\Test\IncorrectEventDispatcher'
-            ]
-        ]);
+        EventFacade::init(
+            [
+                'options' => [
+                    'event_dispatcher' => 'ClassEvent\Test\IncorrectEventDispatcher'
+                ]
+            ],
+            'error_instance_2'
+        );
     }
 
     /**
@@ -175,13 +179,29 @@ class EventFacadeTest extends \PHPUnit_Framework_TestCase
 
     /**
      * test dispatcher error handling
-     * 
-     * @todo create error and clear
      */
     public function testErrorHandling()
     {
-        $this->assertEquals([], EventFacade::getErrors());
+        EventFacade::init();
+        EventFacade::setEventConfiguration([
+            'test_event' => [
+                'object'    => 'ClassEvent\Event\BaseEvent',
+                'listeners' => [
+                    'ClassEvent\Test\EventDispatcherTest::triggerError',
+                ]
+            ],
+        ]);
+
         $this->assertFalse(EventFacade::hasErrors());
+        $this->assertEquals([], EventFacade::getErrors());
+
+        EventFacade::triggerEvent('test_event');
+
+        $this->assertTrue(EventFacade::hasErrors());
+
+        EventFacade::clearErrors();
+        $this->assertFalse(EventFacade::hasErrors());
+        $this->assertEquals([], EventFacade::getErrors());
     }
 
     /**

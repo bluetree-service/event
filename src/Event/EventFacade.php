@@ -43,7 +43,6 @@ class EventFacade
             'type'              => 'array',
             'from_file'         => false,
             'log_events'        => false,
-            'instance_name'     => self::DEFAULT_INSTANCE,
             'event_dispatcher'  => 'ClassEvent\Event\Base\EventDispatcher',
             'log_all_events'    => false,
             'log_path'          => false,
@@ -54,12 +53,12 @@ class EventFacade
      * initialize event dispatch instance
      *
      * @param array $options
+     * @param string $instanceName
      */
-    public static function init(array $options = [])
+    public static function init(array $options = [], $instanceName = self::DEFAULT_INSTANCE)
     {
-        $options        = self::_setInstanceConfig($options);
-        $instanceName   = $options['options']['instance_name'];
-        $message        = 'Incorrect event dispatcher instance.';
+        $options    = self::_setInstanceConfig($options, $instanceName);
+        $message    = 'Incorrect event dispatcher instance.';
 
         if (array_key_exists($instanceName, self::$_dispatcherInstance)) {
             return;
@@ -138,17 +137,14 @@ class EventFacade
     /**
      * allow to add event configuration after initialize event dispatcher
      *
-     * @param array $config
+     * @param array $eventConfig
+     * @param string $instance
      */
-    public static function setEventConfiguration(array $config)
+    public static function setEventConfiguration(array $eventConfig, $instance = self::DEFAULT_INSTANCE)
     {
-        if (!isset($config['options']['instance_name'])) {
-            $config['options']['instance_name'] = self::DEFAULT_INSTANCE;
-        }
-
         self::_initException();
-        $config = self::_setInstanceConfig($config);
-        self::_getInstance($config['options']['instance_name'])
+        $config = self::_setInstanceConfig($eventConfig, $instance);
+        self::_getInstance($instance)
             ->setEventConfiguration($config['events']);
     }
 
@@ -211,16 +207,11 @@ class EventFacade
      * allow to set configuration for given instance
      *
      * @param array $config
+     * @param string $instanceName
      * @return array
      */
-    protected static function _setInstanceConfig(array $config)
+    protected static function _setInstanceConfig(array $config, $instanceName)
     {
-        $instanceName = self::DEFAULT_INSTANCE;
-
-        if (isset($config['options']['instance_name'])) {
-            $instanceName = $config['options']['instance_name'];
-        }
-
         if (isset(self::$_instanceConfig['options'][$instanceName])) {
             self::$_instanceConfig[$instanceName] = array_replace_recursive(
                 self::$_instanceConfig[$instanceName],
