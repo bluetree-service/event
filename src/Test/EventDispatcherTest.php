@@ -260,13 +260,13 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         ]);
 
         /** use static method to avoid launch increment and store in EventDispatcher instance */
+        $this->assertEquals(4, \ClassEvent\Event\BaseEvent::getLaunchCount());
+
+        $instance->triggerEvent('test_event');
+        $instance->triggerEvent('test_event');
+
+        $this->assertEquals(5, $instance->getEventObject('test_event')->getLaunchCount());
         $this->assertEquals(5, \ClassEvent\Event\BaseEvent::getLaunchCount());
-
-        $instance->triggerEvent('test_event');
-        $instance->triggerEvent('test_event');
-
-        $this->assertEquals(6, $instance->getEventObject('test_event')->getLaunchCount());
-        $this->assertEquals(6, \ClassEvent\Event\BaseEvent::getLaunchCount());
     }
 
     /**
