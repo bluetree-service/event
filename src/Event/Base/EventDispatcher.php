@@ -431,12 +431,8 @@ class EventDispatcher implements EventDispatcherInterface
             )
         ) {
             $this->_createLogObject();
-            $data = 'unknown';
 
             switch (true) {
-                case is_string($eventListener):
-                    $data = $eventListener;
-                    break;
                 case $eventListener instanceof \Closure:
                     $data = 'Closure';
                     break;
@@ -444,6 +440,7 @@ class EventDispatcher implements EventDispatcherInterface
                     $data = get_class($eventListener[0]) . '::' . $eventListener[1];
                     break;
                 default:
+                    $data = $eventListener;
                     break;
             }
 
