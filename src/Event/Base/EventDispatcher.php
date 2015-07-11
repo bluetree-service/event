@@ -443,6 +443,8 @@ class EventDispatcher implements EventDispatcherInterface
                 case is_array($eventListener):
                     $data = get_class($eventListener[0]) . '::' . $eventListener[1];
                     break;
+                default:
+                    break;
             }
 
             $this->_loggerInstance->makeLog([
