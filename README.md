@@ -1,5 +1,4 @@
-ClassEvent
-============
+# ClassEvent
 
 [![Build Status](https://travis-ci.org/chajr/class-event.svg)](https://travis-ci.org/chajr/class-event)
 [![Coverage Status](https://coveralls.io/repos/chajr/class-event/badge.svg?branch=master&service=github)](https://coveralls.io/github/chajr/class-event?branch=master)
@@ -8,7 +7,20 @@ ClassEvent
 
 Simple PHP event handling mechanism
 
-Change log
---------------
+## Installation
+
+
+## Documentation
+
+### Basic usage
+
+### EventConfiguration
+
+### Event Object
+
+### Event Log
+
+## Change log
+
 All release version changes:  
-[Change log](https://github.com/chajr/class-event/wiki/Change-log "Change log")
+[Change log](https://github.com/chajr/class-event/doc/changelog.md "Change log")
