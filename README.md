@@ -8,10 +8,10 @@
 Simple PHP event handling mechanism
 
 ### Included libraries
-* **ClassEvent\Base\Event** - 
-* **ClassEvent\Base\EventDispatcher** - 
-* **ClassEvent\BaseEvent** - 
-* **ClassEvent\Log\Log** - 
+* **ClassEvent\Base\Event** - Abstract class to store event statement
+* **ClassEvent\Base\EventDispatcher** - Main event class, allow to manage events and listeners
+* **ClassEvent\BaseEvent** - Simple event object to store event statement
+* **ClassEvent\Log\Log** - Allow to save trigger event information into log file
 
 ## Documentation
 
