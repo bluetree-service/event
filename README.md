@@ -27,6 +27,9 @@ Simple PHP event handling mechanism
 ### Event Log
 [Log each or specified event trigger](https://github.com/chajr/class-event/doc/event_log.md)
 
+### Errors
+[Event listeners errors](https://github.com/chajr/class-event/doc/errors.md)
+
 ## Install via Composer
 To use _ClassEvent_ you can just download package and place it in your code. But recommended
 way to use _ClassEvent_ is install it via Composer. To include _ClassEvent_
