@@ -304,8 +304,7 @@ class EventDispatcher implements EventDispatcherInterface
     }
 
     /**
-     * log given events or all events
-     * to log all events use 'all' keyword
+     * log given events
      * 
      * @param array $events
      * @return $this

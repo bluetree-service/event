@@ -28,6 +28,7 @@ and last to check that option is on or off.
 * **isLogEnabled** - Return value of *log_events* option
 * **logAllEvents** - Set *log_all_events* option to given parameter (will be split into separate methods in future)
 * **isLogAllEventsEnabled** - Return value of *log_all_events* option
+* **logEvent** - Allow to log specified events
 
 ## Event configuration
 To store event listeners for specified event code and object to store event statement
