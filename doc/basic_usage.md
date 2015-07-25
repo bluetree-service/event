@@ -46,3 +46,9 @@ $eventDispatcher->triggerEvent(
     ]
 );
 ```
+### Add listener by method
+Their is also possibility to set listeners via special method. To do that use
+`addEventListener` method that take two attributes. First is event code and
+second list of listeners.  
+If EventObject don't exists for given event code than default EventObject will be
+used.
