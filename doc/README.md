@@ -1,12 +1,5 @@
 # ClassEvent
 
-[![Build Status](https://travis-ci.org/chajr/class-event.svg)](https://travis-ci.org/chajr/class-event)
-[![Coverage Status](https://coveralls.io/repos/chajr/class-event/badge.svg?branch=master&service=github)](https://coveralls.io/github/chajr/class-event?branch=master)
-[![Dependency Status](https://www.versioneye.com/user/projects/556f62a9643934001e220000/badge.svg?style=flat)](https://www.versioneye.com/user/projects/556f62a9643934001e220000)
-[![Documentation Status](https://readthedocs.org/projects/class-event/badge/?version=latest)](https://readthedocs.org/projects/class-event/?badge=latest)
-
-Simple PHP event handling mechanism
-
 ### Included libraries
 * **ClassEvent\Base\Event** - Abstract class to store event statement
 * **ClassEvent\Base\EventDispatcher** - Main event class, allow to manage events and listeners
@@ -65,5 +58,3 @@ All release version changes:
 This bundle is released under the Apache license.  
 [Apache license](https://github.com/chajr/class-event/LICENSE "Apache license")
 
-## Travis Information
-[Travis CI Build Info](https://travis-ci.org/chajr/class-event)
