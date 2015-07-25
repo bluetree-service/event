@@ -1,10 +1,4 @@
 <?php
-/**
- * @todo tags
- * @todo last trigger
- * @todo tracer
- * @todo log event
- */
 
 namespace ClassEvent\Event\Base;
 
