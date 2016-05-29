@@ -15,6 +15,11 @@ use ClassEvent\Event\Base\EventDispatcher;
 class EventDispatcherTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * name of test event log file
+     */
+    const EVENT_LOG_NAME = '/events.log';
+
+    /**
      * store information that even was triggered
      *
      * @var bool
@@ -33,10 +38,10 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->_logPath = dirname(__FILE__) . '/log.log';
+        $this->_logPath = dirname(__FILE__) . '/log';
 
-        if (file_exists($this->_logPath)) {
-            unlink($this->_logPath);
+        if (file_exists($this->_logPath . self::EVENT_LOG_NAME)) {
+            unlink($this->_logPath . self::EVENT_LOG_NAME);
         }
     }
 
@@ -384,9 +389,9 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
             ],
         ]);
 
-        $this->assertFileNotExists($this->_logPath);
+        $this->assertFileNotExists($this->_logPath . self::EVENT_LOG_NAME);
         $instance->triggerEvent('test_event');
-        $this->assertFileExists($this->_logPath);
+        $this->assertFileExists($this->_logPath . self::EVENT_LOG_NAME);
     }
 
     /**
@@ -397,7 +402,7 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         $instance = new EventDispatcher([
             'log_all_events'    => true,
             'log_path'          =>  $this->_logPath,
-            'log_object'        => (new \ClassEvent\Event\Log\Log),
+            'log_object'        => (new \SimpleLog\Log),
         ]);
 
         $instance->enableEventLog();
@@ -548,8 +553,8 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        if (file_exists($this->_logPath)) {
-            unlink($this->_logPath);
+        if (file_exists($this->_logPath . self::EVENT_LOG_NAME)) {
+            unlink($this->_logPath . self::EVENT_LOG_NAME);
         }
     }
 }

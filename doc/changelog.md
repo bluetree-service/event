@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## 0.1.3 - 2016-29-05
+### Changed
+* Moved log maker into separate library
+* `triggerEvent` second argument must be an array type
+
 ## 0.1.2 - 2015-25-07
 ### Added
 * Complete documentation

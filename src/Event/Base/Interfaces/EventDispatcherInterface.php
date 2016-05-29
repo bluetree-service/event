@@ -6,7 +6,7 @@ interface EventDispatcherInterface
 {
     public function __construct(array $options = [], $events = []);
     public function getEventObject($eventName);
-    public function triggerEvent($name, $data = []);
+    public function triggerEvent($name, array $data = []);
     public function readEventConfiguration($configuration, $type);
     public function logEvent();
     public function getErrors();

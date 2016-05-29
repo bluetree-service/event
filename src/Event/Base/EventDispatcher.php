@@ -5,7 +5,7 @@ namespace ClassEvent\Event\Base;
 use ClassEvent\Event\Base\Interfaces\EventDispatcherInterface;
 use ClassEvent\Event\Base\Interfaces\EventInterface;
 use Zend\Config\Reader;
-use ClassEvent\Event\Log;
+use SimpleLog\Log;
 
 class EventDispatcher implements EventDispatcherInterface
 {
@@ -42,7 +42,7 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * store logger instance
      *
-     * @var Log\LogInterface
+     * @var \SimpleLog\LogInterface
      */
     protected $_loggerInstance = null;
 
@@ -102,8 +102,8 @@ class EventDispatcher implements EventDispatcherInterface
         }
 
         if (!array_key_exists($eventName, $this->_events)) {
-            $namespace                  = $this->_eventsConfig[$eventName]['object'];
-            $instance                   = new $namespace;
+            $namespace = $this->_eventsConfig[$eventName]['object'];
+            $instance = new $namespace;
 
             if (!($instance instanceof EventInterface)) {
                 throw new \LogicException('Invalid interface of event object');
@@ -138,7 +138,7 @@ class EventDispatcher implements EventDispatcherInterface
      * @param array $data
      * @return $this
      */
-    public function triggerEvent($name, $data = [])
+    public function triggerEvent($name, array $data = [])
     {
         /** @var EventInterface $event */
         $event = $this->getEventObject($name);
@@ -177,7 +177,7 @@ class EventDispatcher implements EventDispatcherInterface
     {
         if (!array_key_exists($eventName, $this->_eventsConfig)) {
             $this->_eventsConfig[$eventName] = [
-                'object'    => 'ClassEvent\Event\BaseEvent',
+                'object' => 'ClassEvent\Event\BaseEvent',
                 'listeners' => $listeners,
             ];
         }
@@ -443,12 +443,17 @@ class EventDispatcher implements EventDispatcherInterface
                     break;
             }
 
-            $this->_loggerInstance->makeLog([
-                'event_name'    => $name,
-                'log_path'      => $this->_options['log_path'],
-                'listener'      => $data,
-                'status'        => $status
-            ]);
+            $this->_loggerInstance->makeLog(
+                [
+                    'event_name' => $name,
+                    'listener' => $data,
+                    'status' => $status
+                ],
+                [
+                    'log_path' => $this->_options['log_path'],
+                    'type' => 'events',
+                ]
+            );
         }
 
         return $this;
@@ -463,11 +468,11 @@ class EventDispatcher implements EventDispatcherInterface
     {
         if (!$this->_loggerInstance) {
             if ($this->_options['log_object']
-                && $this->_options['log_object'] instanceof Log\LogInterface
+                && $this->_options['log_object'] instanceof \SimpleLog\LogInterface
             ) {
                 $this->_loggerInstance = $this->_options['log_object'];
             } else {
-                $this->_loggerInstance = new Log\Log;
+                $this->_loggerInstance = new Log;
             }
         }
 
