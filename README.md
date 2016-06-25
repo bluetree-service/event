@@ -7,6 +7,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/bluetree-service/event/badge.svg?branch=master)](https://coveralls.io/github/bluetree-service/event?branch=master)
 [![Dependency Status](https://www.versioneye.com/user/projects/556f62a9643934001e220000/badge.svg?style=flat)](https://www.versioneye.com/user/projects/556f62a9643934001e220000)
 [![Documentation Status](https://readthedocs.org/projects/class-event/badge/?version=latest)](https://readthedocs.org/projects/class-event/?badge=latest)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/1487084a-8f8d-4d4e-962d-59f036a67096/mini.png)](https://insight.sensiolabs.com/projects/1487084a-8f8d-4d4e-962d-59f036a67096)
 
 Simple PHP event handling mechanism
 
