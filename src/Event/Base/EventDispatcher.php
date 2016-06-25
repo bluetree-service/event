@@ -146,19 +146,19 @@ class EventDispatcher implements EventDispatcherInterface
         foreach ($this->_eventsConfig as $listener) {
             foreach ($listener['listeners'] as $eventListener) {
                 if ($event->isPropagationStopped()) {
-                    $this->_logEvent($name, $eventListener, self::EVENT_STATUS_BREAK);
+                    $this->makeLogEvent($name, $eventListener, self::EVENT_STATUS_BREAK);
                     break;
                 }
 
                 try {
-                    $this->_callFunction($eventListener, $data, $event);
+                    $this->callFunction($eventListener, $data, $event);
                     $status = self::EVENT_STATUS_OK;
                 } catch (\Exception $e) {
-                    $this->_addError($e);
+                    $this->addError($e);
                     $status = self::EVENT_STATUS_ERROR;
                 }
 
-                $this->_logEvent($name, $eventListener, $status);
+                $this->makeLogEvent($name, $eventListener, $status);
             }
         }
 
@@ -197,7 +197,7 @@ class EventDispatcher implements EventDispatcherInterface
      * @param array $data
      * @param EventInterface $event
      */
-    protected function _callFunction($listener, array $data, EventInterface $event)
+    protected function callFunction($listener, array $data, EventInterface $event)
     {
         if (is_callable($listener)) {
             call_user_func_array($listener, [$data, $event]);
@@ -214,7 +214,7 @@ class EventDispatcher implements EventDispatcherInterface
     public function readEventConfiguration($path, $type)
     {
         if ($type) {
-            $config = $this->_configurationStrategy($path, $type);
+            $config = $this->configurationStrategy($path, $type);
             $this->setEventConfiguration($config);
         }
 
@@ -228,7 +228,7 @@ class EventDispatcher implements EventDispatcherInterface
      * @param string $type
      * @return array
      */
-    protected function _configurationStrategy($path, $type)
+    protected function configurationStrategy($path, $type)
     {
         $config = [];
 
@@ -401,7 +401,7 @@ class EventDispatcher implements EventDispatcherInterface
      * @param \Exception $exception
      * @return $this
      */
-    public function _addError(\Exception $exception)
+    public function addError(\Exception $exception)
     {
         $this->_errorList[$exception->getCode()] = [
             'message'   => $exception->getMessage(),
@@ -422,14 +422,14 @@ class EventDispatcher implements EventDispatcherInterface
      * @param bool $status
      * @return $this
      */
-    protected function _logEvent($name, $eventListener, $status)
+    protected function makeLogEvent($name, $eventListener, $status)
     {
         if ($this->_options['log_events']
             && ($this->_options['log_all_events']
                 || in_array($name, $this->_logEvents)
             )
         ) {
-            $this->_createLogObject();
+            $this->createLogObject();
 
             switch (true) {
                 case $eventListener instanceof \Closure:
@@ -464,7 +464,7 @@ class EventDispatcher implements EventDispatcherInterface
      *
      * @return $this
      */
-    protected function _createLogObject()
+    protected function createLogObject()
     {
         if (!$this->_loggerInstance) {
             if ($this->_options['log_object']

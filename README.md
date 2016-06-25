@@ -1,9 +1,9 @@
 # ClassEvent
 
 [![Build Status](https://travis-ci.org/bluetree-service/event.svg)](https://travis-ci.org/bluetree-service/event)
-[![Latest Stable Version](https://poser.pugx.org/bluetree-service/event/v/stable.svg)](https://packagist.org/packages/bluetree-service/event)
-[![Total Downloads](https://poser.pugx.org/bluetree-service/event/downloads.svg)](https://packagist.org/packages/bluetree-service/event)
-[![License](https://poser.pugx.org/bluetree-service/event/license.svg)](https://packagist.org/packages/bluetree-service/event)
+[![Latest Stable Version](https://poser.pugx.org/chajr/class-event/v/stable.svg)](https://packagist.org/packages/chajr/class-event)
+[![Total Downloads](https://poser.pugx.org/chajr/class-event/downloads.svg)](https://packagist.org/packages/chajr/class-event)
+[![License](https://poser.pugx.org/chajr/class-event/license.svg)](https://packagist.org/packages/chajr/class-event)
 [![Coverage Status](https://coveralls.io/repos/github/bluetree-service/event/badge.svg?branch=master)](https://coveralls.io/github/bluetree-service/event?branch=master)
 [![Dependency Status](https://www.versioneye.com/user/projects/556f62a9643934001e220000/badge.svg?style=flat)](https://www.versioneye.com/user/projects/556f62a9643934001e220000)
 [![Documentation Status](https://readthedocs.org/projects/class-event/badge/?version=latest)](https://readthedocs.org/projects/class-event/?badge=latest)
