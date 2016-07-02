@@ -1,7 +1,16 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## 0.1.3 - 2016-29-05
+## 0.1.4.1 - 2016-
+### Changed
+* Documentation update
+
+## 0.1.4.0 - 2016-25-06
+### Changed
+* Fixed code style
+* Added SensioLabs widget
+
+## 0.1.3.0 - 2016-29-05
 ### Changed
 * Moved log maker into separate library
 * `triggerEvent` second argument must be an array type

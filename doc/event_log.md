@@ -6,6 +6,11 @@ All logs by default are stored in specified log file given in configuration.
 To do that you can use `log_events` config given into `__constructor` or special
 method `enableEventLog`. That allow lo log events, by default log all events.
 
+Event is using by default `bluetree-service/simple-log` library in the newest
+available version.  
+But you can implement some other libraries, which must be consistent with
+`\SimpleLog\LogInterface`.
+
 ## Log all events
 Basic and simplest method is to log all events listeners. To do that you can use
 `log_all_events` config given into `__constructor` or special method `logAllEvents`.  
@@ -29,11 +34,13 @@ Default log has specified format, that contains such information as:
 3. Current launched listener
 4. Status of listener execution
 
-### Log message example
+### Log message example (for `SimpleLog`)
 
 ```
-EVENT: test_event - 14:58:13 - 25-07-2015
-Listener: ClassEvent\Test\EventDispatcherTest::trigger -> ok
+28-06-2016 - 09:39:09
+- event_name: test_event
+- listener: ClassEvent\Test\EventDispatcherTest::trigger
+- status: ok
 -----------------------------------------------------------
 ```
 
@@ -58,3 +65,6 @@ have one public method `makeLog` that get array of parameters to log event.
 * **logAllEvents** - turn on or off log all events by boolean value (must be off to log specified events)
 * **isLogAllEventsEnabled** - return status of log all events (true | false)
 * **getAllEventsToLog** - return list of events to log
+
+Remember that log file is stored in `SimpleLog` default path. To change it
+set up `log_path` parameter. More details in [config](https://github.com/bluetree-service/event/doc/configuration.md) documentation.

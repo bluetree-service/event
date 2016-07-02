@@ -16,7 +16,7 @@ Available options:
 3. **log_events** - Allow to log events to log file (`true` | `false` default: `false`)
 4. **log_all_events** - Allow to log all events to log file, otherwise log only specified one (`true` | `false` default: `true`)
 5. **log_path** - Path to log file
-6. **log_object** - Namespace of class to handle log, default is: `ClassEvent\Event\Log\Log` (Must be instance of `ClassEvent\Event\Log\LogInterface`)
+6. **log_object** - Namespace of class to handle log, default is: `\SimpleLog\Log` (Must be instance of `\SimpleLog\LogInterface`)
 
 ## Configuration via methods
 Some of configuration options can be changed by some special methods. There are

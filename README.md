@@ -20,19 +20,19 @@ Simple PHP event handling mechanism
 ## Documentation
 
 ### Basic usage
-[Basic usage](https://github.com/chajr/class-event/doc/basic_usage.md)
+[Basic usage](https://github.com/bluetree-service/event/doc/basic_usage.md)
 
 ### Event Configuration
-[Load Event Configuration](https://github.com/chajr/class-event/doc/configuration.md)
+[Load Event Configuration](https://github.com/bluetree-service/event/doc/configuration.md)
 
 ### Event Object
-[Store Event statement in Event Object](https://github.com/chajr/class-event/doc/event_object.md)
+[Store Event statement in Event Object](https://github.com/bluetree-service/event/doc/event_object.md)
 
 ### Event Log
-[Log each or specified event trigger](https://github.com/chajr/class-event/doc/event_log.md)
+[Log each or specified event trigger](https://github.com/bluetree-service/event/doc/event_log.md)
 
 ### Errors
-[Event listeners errors](https://github.com/chajr/class-event/doc/errors.md)
+[Event listeners errors](https://github.com/bluetree-service/event/doc/errors.md)
 
 ## Install via Composer
 To use _ClassEvent_ you can just download package and place it in your code. But recommended
@@ -63,11 +63,11 @@ libraries paste into `composer.json`:
 
 ## Change log
 All release version changes:  
-[Change log](https://github.com/chajr/class-event/doc/changelog.md "Change log")
+[Change log](https://github.com/bluetree-service/event/doc/changelog.md "Change log")
 
 ## License
 This bundle is released under the Apache license.  
-[Apache license](https://github.com/chajr/class-event/LICENSE "Apache license")
+[Apache license](https://github.com/bluetree-service/event/LICENSE "Apache license")
 
 ## Travis Information
 [Travis CI Build Info](https://travis-ci.org/chajr/class-event)
