@@ -39,7 +39,7 @@ Default log has specified format, that contains such information as:
 ```
 28-06-2016 - 09:39:09
 - event_name: test_event
-- listener: ClassEvent\Test\EventDispatcherTest::trigger
+- listener: BlueEvent\Test\EventDispatcherTest::trigger
 - status: ok
 -----------------------------------------------------------
 ```

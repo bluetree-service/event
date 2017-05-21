@@ -1,6 +1,6 @@
 <?php
 
-namespace ClassEvent\Test;
+namespace BlueEvent\Test;
 
 class InvalidEventObject
 {

@@ -8,7 +8,7 @@ on each event trigger.
 $eventDispatcher = new EventDispatcher;
 $eventDispatcher->setEventConfiguration([
     'event_code' => [
-        'object'    => 'ClassEvent\Event\BaseEvent',
+        'object'    => 'BlueEvent\Event\BaseEvent',
         'listeners' => [
             function ($attr, $event) {
                 echo 'Listener was executed';
@@ -34,7 +34,7 @@ All listeners on list are executed after trigger event in order that is the same
 as the listeners on the list.  
 Each listener get two parameters. First is array of additional parameters that was
 given in `triggerEvent` method. Second is instance of Event object, that was given
-in `object` key on event configuration or `ClassEvent\Event\BaseEvent` when that
+in `object` key on event configuration or `BlueEvent\Event\BaseEvent` when that
 object was not specified.  
 
 ```php

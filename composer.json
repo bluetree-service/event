@@ -1,5 +1,5 @@
 {
-  "name": "chajr/class-event",
+  "name": "bluetree-service/event",
   "type": "library",
   "license": "Apache-2.0",
   "description": "Simple PHP event handling mechanism",
@@ -15,17 +15,18 @@
   ],
   "require": {
     "php": ">=5.4.0",
-    "bluetree-service/simple-log": "*.*.*",
+    "bluetree-service/simple-log": "v0.5.0.1",
     "zendframework/zend-config": "2.5.*",
     "zendframework/zend-json": "2.5.*",
     "mustangostang/spyc": "0.5.*"
   },
   "require-dev": {
-    "satooshi/php-coveralls": "0.6.*"
+    "satooshi/php-coveralls": "1.0.*",
+    "sebastianbergmann/phpunit": "6.1.*"
   },
   "autoload": {
     "psr-4": {
-      "ClassEvent\\": "src/"
+      "BlueEvent\\": "src/"
     }
   }
 }

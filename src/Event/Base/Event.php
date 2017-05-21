@@ -1,8 +1,8 @@
 <?php
 
-namespace ClassEvent\Event\Base;
+namespace BlueEvent\Event\Base;
 
-use ClassEvent\Event\Base\Interfaces\EventInterface;
+use BlueEvent\Event\Base\Interfaces\EventInterface;
 
 abstract class Event implements EventInterface
 {

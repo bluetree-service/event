@@ -1,8 +1,8 @@
 <?php
 
-namespace ClassEvent\Event;
+namespace BlueEvent\Event;
 
-use ClassEvent\Event\Base\Event;
+use BlueEvent\Event\Base\Event;
 
 class BaseEvent extends Event
 {

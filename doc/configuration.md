@@ -39,7 +39,7 @@ Event configuration must have event code, as key for another array. Event code
 is used to recognize event trigger and store configuration. On next level configurations
 has two keys `object` (optional) and `listeners`. First one define namespace
 of class that will be used to store event statement. That value is optional, when
-it not defined, the will be used `ClassEvent\Event\BaseEvent`.  
+it not defined, the will be used `BlueEvent\Event\BaseEvent`.  
 Last one `listeners` define all event listeners as array. Listeners are methods
 or functions (everything that can be called by `call_user_func`) that will be
 launch each time when event code was triggered.  

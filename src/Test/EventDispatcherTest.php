@@ -2,17 +2,18 @@
 /**
  * test Event Dispatcher class
  *
- * @package     ClassEvent
+ * @package     BlueEvent
  * @subpackage  Test
  * @author      Michał Adamiak    <chajr@bluetree.pl>
  * @copyright   chajr/bluetree
  */
-namespace ClassEvent\Test;
+namespace BlueEvent\Test;
 
-use ClassEvent\Event\Base\Interfaces\EventInterface;
-use ClassEvent\Event\Base\EventDispatcher;
+use BlueEvent\Event\Base\Interfaces\EventInterface;
+use BlueEvent\Event\Base\EventDispatcher;
+use PHPUnit\Framework\TestCase;
 
-class EventDispatcherTest extends \PHPUnit_Framework_TestCase
+class EventDispatcherTest extends TestCase
 {
     /**
      * name of test event log file
@@ -55,7 +56,7 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
     public function testEventCreation($events, $options)
     {
         $instance = new EventDispatcher;
-        $this->assertInstanceOf('ClassEvent\Event\Base\EventDispatcher', $instance);
+        $this->assertInstanceOf('BlueEvent\Event\Base\EventDispatcher', $instance);
         $this->assertFalse($instance->hasErrors());
 
         $instance = new EventDispatcher($options, $events);
@@ -130,12 +131,12 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
 
     /**
      * check for error if configuration file don't exists
+     *
+     * @expectedException \InvalidArgumentException
      */
     public function testTryToLoadConfigFromMissingFile()
     {
         $EventDispatcher = new EventDispatcher;
-
-        $this->setExpectedException('InvalidArgumentException');
 
         $EventDispatcher->readEventConfiguration(
             $this->getEventFileConfigPath('txt'),
@@ -151,9 +152,9 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         $instance = new EventDispatcher;
         $instance->setEventConfiguration([
             'test_event' => [
-                'object'    => 'ClassEvent\Event\BaseEvent',
+                'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    'ClassEvent\Test\EventDispatcherTest::trigger',
+                    'BlueEvent\Test\EventDispatcherTest::trigger',
                     function ($attr, $event) {
                         self::$eventTriggered += $attr['value'];
                     }
@@ -174,9 +175,9 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         $instance = new EventDispatcher;
         $instance->setEventConfiguration([
             'test_event' => [
-                'object'    => 'ClassEvent\Event\BaseEvent',
+                'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    'ClassEvent\Test\EventDispatcherTest::triggerStop',
+                    'BlueEvent\Test\EventDispatcherTest::triggerStop',
                     function ($attr, $event) {
                         self::$eventTriggered += $attr['value'];
                     }
@@ -197,9 +198,9 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         $instance = new EventDispatcher;
         $instance->setEventConfiguration([
             'test_event' => [
-                'object'    => 'ClassEvent\Event\BaseEvent',
+                'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    'ClassEvent\Test\EventDispatcherTest::trigger'
+                    'BlueEvent\Test\EventDispatcherTest::trigger'
                 ]
             ],
         ]);
@@ -226,9 +227,9 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         $instance = new EventDispatcher;
         $instance->setEventConfiguration([
             'test_event' => [
-                'object'    => 'ClassEvent\Event\BaseEvent',
+                'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    'ClassEvent\Test\EventDispatcherTest::triggerError',
+                    'BlueEvent\Test\EventDispatcherTest::triggerError',
                 ]
             ],
         ]);
@@ -257,37 +258,39 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         $instance = new EventDispatcher;
         $instance->setEventConfiguration([
             'test_event' => [
-                'object'    => 'ClassEvent\Event\BaseEvent',
+                'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    'ClassEvent\Test\EventDispatcherTest::trigger',
+                    'BlueEvent\Test\EventDispatcherTest::trigger',
                 ]
             ],
         ]);
 
         /** use static method to avoid launch increment and store in EventDispatcher instance */
-        $this->assertEquals(4, \ClassEvent\Event\BaseEvent::getLaunchCount());
+        $this->assertEquals(4, \BlueEvent\Event\BaseEvent::getLaunchCount());
 
         $instance->triggerEvent('test_event');
         $instance->triggerEvent('test_event');
 
         $this->assertEquals(5, $instance->getEventObject('test_event')->getLaunchCount());
-        $this->assertEquals(5, \ClassEvent\Event\BaseEvent::getLaunchCount());
+        $this->assertEquals(5, \BlueEvent\Event\BaseEvent::getLaunchCount());
     }
 
     /**
      * test that event dispatcher throw an exception if we try to get none existing event object
+     *
+     * @expectedException \InvalidArgumentException
      */
     public function testGetNoneExistingObject()
     {
         $instance = new EventDispatcher;
-
-        $this->setExpectedException('InvalidArgumentException', 'Event is not defined.');
 
         $instance->getEventObject('none_existing_event');
     }
 
     /**
      * check for error if invalid object was declared as listener
+     *
+     * @expectedException \LogicException
      */
     public function testGetInvalidEventObject()
     {
@@ -295,12 +298,10 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
 
         $instance->setEventConfiguration([
             'invalid_object_event' => [
-                'object'    => 'ClassEvent\Test\InvalidEventObject',
+                'object'    => 'BlueEvent\Test\InvalidEventObject',
                 'listeners' => []
             ],
         ]);
-
-        $this->setExpectedException('LogicException', 'Invalid interface of event object');
 
         $instance->getEventObject('invalid_object_event');
     }
@@ -316,9 +317,9 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
 
         $instance->setEventConfiguration([
             'test_event' => [
-                'object'    => 'ClassEvent\Event\BaseEvent',
+                'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    'ClassEvent\Test\EventDispatcherTest::triggerError',
+                    'BlueEvent\Test\EventDispatcherTest::triggerError',
                 ]
             ],
         ]);
@@ -378,10 +379,10 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
         ]);
         $instance->setEventConfiguration([
             'test_event' => [
-                'object'    => 'ClassEvent\Event\BaseEvent',
+                'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    'ClassEvent\Test\EventDispatcherTest::trigger',
-                    'ClassEvent\Test\EventDispatcherTest::triggerError',
+                    'BlueEvent\Test\EventDispatcherTest::trigger',
+                    'BlueEvent\Test\EventDispatcherTest::triggerError',
                     function () {
 
                     }
@@ -409,9 +410,9 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
 
         $instance->setEventConfiguration([
             'test_event' => [
-                'object'    => 'ClassEvent\Event\BaseEvent',
+                'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    [new \ClassEvent\Test\EventDispatcherTest, 'trigger']
+                    [new \BlueEvent\Test\EventDispatcherTest, 'trigger']
                 ]
             ],
         ]);
@@ -435,9 +436,9 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
 
         $instance->setEventConfiguration([
             'test_event' => [
-                'object'    => 'ClassEvent\Event\BaseEvent',
+                'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    'ClassEvent\Test\EventDispatcherTest::trigger',
+                    'BlueEvent\Test\EventDispatcherTest::trigger',
                 ]
             ],
         ]);
@@ -462,9 +463,9 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
 
         $instance->setEventConfiguration([
             'test_event' => [
-                'object'    => 'ClassEvent\Event\BaseEvent',
+                'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    'ClassEvent\Test\EventDispatcherTest::trigger',
+                    'BlueEvent\Test\EventDispatcherTest::trigger',
                 ]
             ],
         ]);
@@ -488,7 +489,7 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
             [
                 'events' => [
                     'test_event_code' => [
-                        'object'    => 'ClassEvent\Event\BaseEvent',
+                        'object'    => 'BlueEvent\Event\BaseEvent',
                         'listeners' => [
                             'ClassOne::method',
                             'ClassSecond::method',
@@ -508,7 +509,7 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
      * config data for test from file
      *
      * @param string $type
-     * @return array
+     * @return string
      */
     public function getEventFileConfigPath($type)
     {

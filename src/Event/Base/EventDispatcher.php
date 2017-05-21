@@ -1,9 +1,9 @@
 <?php
 
-namespace ClassEvent\Event\Base;
+namespace BlueEvent\Event\Base;
 
-use ClassEvent\Event\Base\Interfaces\EventDispatcherInterface;
-use ClassEvent\Event\Base\Interfaces\EventInterface;
+use BlueEvent\Event\Base\Interfaces\EventDispatcherInterface;
+use BlueEvent\Event\Base\Interfaces\EventInterface;
 use Zend\Config\Reader;
 use SimpleLog\Log;
 
@@ -177,7 +177,7 @@ class EventDispatcher implements EventDispatcherInterface
     {
         if (!array_key_exists($eventName, $this->_eventsConfig)) {
             $this->_eventsConfig[$eventName] = [
-                'object' => 'ClassEvent\Event\BaseEvent',
+                'object' => 'BlueEvent\Event\BaseEvent',
                 'listeners' => $listeners,
             ];
         }
