@@ -22,7 +22,7 @@
   },
   "require-dev": {
     "satooshi/php-coveralls": "1.0.*",
-    "sebastianbergmann/phpunit": "6.1.*"
+    "phpunit/phpunit": "6.1.*"
   },
   "autoload": {
     "psr-4": {
