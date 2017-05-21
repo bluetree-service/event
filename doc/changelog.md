@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## 0.2.2.0 - 2017-21-05
+### Changed
+* PhpUnit downgrade
+
 ## 0.2.1.0 - 2017-21-05
 ### Changed
 * Fixed PhpUnit version
