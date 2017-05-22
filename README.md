@@ -43,7 +43,7 @@ libraries paste into `composer.json`:
 ```json
 {
     "require": {
-        "chajr/class-event": "version_number"
+        "bluetree-service/event": "version_number"
     }
 }
 ```
