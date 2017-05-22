@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## 0.2.2.1 - 2017-21-05
+### Changed
+* Removed support of PHP 5.4 from travis
+
 ## 0.2.2.0 - 2017-21-05
 ### Changed
 * PhpUnit downgrade
