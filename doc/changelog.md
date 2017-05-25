@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## 0.3.0.0 - 2017-25-05
+### Changed
+* One method to return event dispatcher configuration
+* Code convention changes
+* Documentation update
+* Updated dependencies
+
 ## 0.2.2.2 - 2017-22-05
 ### Changed
 * Some documentation and changelog update

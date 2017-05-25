@@ -25,9 +25,8 @@ and last to check that option is on or off.
 
 * **enableEventLog** - Set *log_events* option to `true`
 * **disableEventLog** - Set *log_events* option to `false`
-* **isLogEnabled** - Return value of *log_events* option
+* **getConfiguration** - Return `EventDispatcher` configuration or single option if key is given as value
 * **logAllEvents** - Set *log_all_events* option to given parameter (will be split into separate methods in future)
-* **isLogAllEventsEnabled** - Return value of *log_all_events* option
 * **logEvent** - Allow to log specified events
 
 ## Event configuration

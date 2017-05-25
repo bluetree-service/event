@@ -18,40 +18,40 @@ class EventDispatcher implements EventDispatcherInterface
      *
      * @var array
      */
-    protected $_eventsConfig = [];
+    protected $eventsConfig = [];
 
     /**
      * store all called events
      *
      * @var array
      */
-    protected $_events = [];
+    protected $events = [];
 
     /**
      * @var bool
      */
-    protected $_hasErrors = false;
+    protected $hasErrors = false;
 
     /**
      * store all errors
      *
      * @var
      */
-    protected $_errorList = [];
+    protected $errorList = [];
 
     /**
      * store logger instance
      *
      * @var \SimpleLog\LogInterface
      */
-    protected $_loggerInstance = null;
+    protected $loggerInstance = null;
 
     /**
      * store default options for event dispatcher
      *
      * @var array
      */
-    protected $_options = [
+    protected $options = [
         'type'              => 'array',
         'log_events'        => false,
         'log_all_events'    => true,
@@ -65,7 +65,7 @@ class EventDispatcher implements EventDispatcherInterface
      *
      * @var array
      */
-    protected $_logEvents = [];
+    protected $logEvents = [];
 
     /**
      * create manage instance
@@ -75,18 +75,18 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function __construct(array $options = [], $events = [])
     {
-        $this->_options = array_merge($this->_options, $options);
+        $this->options = array_merge($this->options, $options);
 
-        if ($this->_options['from_file']) {
+        if ($this->options['from_file']) {
             $this->readEventConfiguration(
                 $events,
-                $this->_options['type']
+                $this->options['type']
             );
         } else {
-            $this->_eventsConfig = $events;
+            $this->eventsConfig = $events;
         }
 
-        unset($this->_options['events']);
+        unset($this->options['events']);
     }
 
     /**
@@ -97,22 +97,22 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function getEventObject($eventName)
     {
-        if (!array_key_exists($eventName, $this->_eventsConfig)) {
+        if (!array_key_exists($eventName, $this->eventsConfig)) {
             throw new \InvalidArgumentException('Event is not defined.');
         }
 
-        if (!array_key_exists($eventName, $this->_events)) {
-            $namespace = $this->_eventsConfig[$eventName]['object'];
+        if (!array_key_exists($eventName, $this->events)) {
+            $namespace = $this->eventsConfig[$eventName]['object'];
             $instance = new $namespace;
 
             if (!($instance instanceof EventInterface)) {
                 throw new \LogicException('Invalid interface of event object');
             }
 
-            $this->_events[$eventName] = $instance;
+            $this->events[$eventName] = $instance;
         }
 
-        return $this->_events[$eventName];
+        return $this->events[$eventName];
     }
 
     /**
@@ -123,8 +123,8 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function setEventConfiguration(array $events)
     {
-        $this->_eventsConfig = array_merge_recursive(
-            $this->_eventsConfig,
+        $this->eventsConfig = array_merge_recursive(
+            $this->eventsConfig,
             $events
         );
 
@@ -143,7 +143,7 @@ class EventDispatcher implements EventDispatcherInterface
         /** @var EventInterface $event */
         $event = $this->getEventObject($name);
 
-        foreach ($this->_eventsConfig as $listener) {
+        foreach ($this->eventsConfig as $listener) {
             foreach ($listener['listeners'] as $eventListener) {
                 if ($event->isPropagationStopped()) {
                     $this->makeLogEvent($name, $eventListener, self::EVENT_STATUS_BREAK);
@@ -175,15 +175,15 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function addEventListener($eventName, array $listeners)
     {
-        if (!array_key_exists($eventName, $this->_eventsConfig)) {
-            $this->_eventsConfig[$eventName] = [
+        if (!array_key_exists($eventName, $this->eventsConfig)) {
+            $this->eventsConfig[$eventName] = [
                 'object' => 'BlueEvent\Event\BaseEvent',
                 'listeners' => $listeners,
             ];
         }
 
-        $this->_eventsConfig[$eventName]['listeners'] = array_merge(
-            $this->_eventsConfig[$eventName]['listeners'],
+        $this->eventsConfig[$eventName]['listeners'] = array_merge(
+            $this->eventsConfig[$eventName]['listeners'],
             $listeners
         );
 
@@ -206,7 +206,7 @@ class EventDispatcher implements EventDispatcherInterface
 
     /**
      * read configuration from file
-     * 
+     *
      * @param mixed $path
      * @param string|null $type
      * @return $this
@@ -268,7 +268,7 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function enableEventLog()
     {
-        $this->_options['log_events'] = true;
+        $this->options['log_events'] = true;
         return $this;
     }
 
@@ -279,18 +279,8 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function disableEventLog()
     {
-        $this->_options['log_events'] = false;
+        $this->options['log_events'] = false;
         return $this;
-    }
-
-    /**
-     * get information that event log is enabled or disabled
-     *
-     * @return bool
-     */
-    public function isLogEnabled()
-    {
-        return $this->_options['log_events'];
     }
 
     /**
@@ -300,20 +290,20 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function getAllEvents()
     {
-        return $this->_events;
+        return $this->events;
     }
 
     /**
      * log given events
-     * 
+     *
      * @param array $events
      * @return $this
      */
     public function logEvent(array $events = [])
     {
         foreach ($events as $event) {
-            if (!in_array($event, $this->_logEvents)) {
-                $this->_logEvents[] = $event;
+            if (!in_array($event, $this->logEvents)) {
+                $this->logEvents[] = $event;
             }
         }
 
@@ -328,18 +318,23 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function logAllEvents($log = true)
     {
-        $this->_options['log_all_events'] = (bool)$log;
+        $this->options['log_all_events'] = (bool)$log;
         return $this;
     }
 
     /**
-     * get information that all event log is enabled or disabled
+     * get complete object configuration or value of single option
      *
-     * @return bool
+     * @param $option string|null
+     * @return mixed
      */
-    public function isLogAllEventsEnabled()
+    public function getConfiguration($option = null)
     {
-        return $this->_options['log_all_events'];
+        if (!is_null($option)) {
+            return $this->options[$option];
+        }
+
+        return $this->options;
     }
 
     /**
@@ -349,7 +344,7 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function getAllEventsToLog()
     {
-        return $this->_logEvents;
+        return $this->logEvents;
     }
 
     /**
@@ -359,7 +354,7 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function getEventConfiguration()
     {
-        return $this->_eventsConfig;
+        return $this->eventsConfig;
     }
 
     /**
@@ -369,7 +364,7 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function getErrors()
     {
-        return $this->_errorList;
+        return $this->errorList;
     }
 
     /**
@@ -379,7 +374,7 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function hasErrors()
     {
-        return $this->_hasErrors;
+        return $this->hasErrors;
     }
 
     /**
@@ -389,8 +384,8 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function clearErrors()
     {
-        $this->_errorList = [];
-        $this->_hasErrors = false;
+        $this->errorList = [];
+        $this->hasErrors = false;
 
         return $this;
     }
@@ -401,15 +396,15 @@ class EventDispatcher implements EventDispatcherInterface
      * @param \Exception $exception
      * @return $this
      */
-    public function addError(\Exception $exception)
+    protected function addError(\Exception $exception)
     {
-        $this->_errorList[$exception->getCode()] = [
+        $this->errorList[$exception->getCode()] = [
             'message'   => $exception->getMessage(),
             'line'      => $exception->getLine(),
             'file'      => $exception->getFile(),
             'trace'     => $exception->getTraceAsString(),
         ];
-        $this->_hasErrors = true;
+        $this->hasErrors = true;
 
         return $this;
     }
@@ -424,9 +419,9 @@ class EventDispatcher implements EventDispatcherInterface
      */
     protected function makeLogEvent($name, $eventListener, $status)
     {
-        if ($this->_options['log_events']
-            && ($this->_options['log_all_events']
-                || in_array($name, $this->_logEvents)
+        if ($this->options['log_events']
+            && ($this->options['log_all_events']
+                || in_array($name, $this->logEvents)
             )
         ) {
             $this->createLogObject();
@@ -443,14 +438,14 @@ class EventDispatcher implements EventDispatcherInterface
                     break;
             }
 
-            $this->_loggerInstance->makeLog(
+            $this->loggerInstance->makeLog(
                 [
                     'event_name' => $name,
                     'listener' => $data,
                     'status' => $status
                 ],
                 [
-                    'log_path' => $this->_options['log_path'],
+                    'log_path' => $this->options['log_path'],
                     'type' => 'events',
                 ]
             );
@@ -466,13 +461,13 @@ class EventDispatcher implements EventDispatcherInterface
      */
     protected function createLogObject()
     {
-        if (!$this->_loggerInstance) {
-            if ($this->_options['log_object']
-                && $this->_options['log_object'] instanceof \SimpleLog\LogInterface
+        if (!$this->loggerInstance) {
+            if ($this->options['log_object']
+                && $this->options['log_object'] instanceof \SimpleLog\LogInterface
             ) {
-                $this->_loggerInstance = $this->_options['log_object'];
+                $this->loggerInstance = $this->options['log_object'];
             } else {
-                $this->_loggerInstance = new Log;
+                $this->loggerInstance = new Log;
             }
         }
 

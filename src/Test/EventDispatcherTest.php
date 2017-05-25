@@ -32,17 +32,17 @@ class EventDispatcherTest extends TestCase
      *
      * @var string
      */
-    protected $_logPath;
+    protected $logPath;
 
     /**
      * actions launched before test starts
      */
     protected function setUp()
     {
-        $this->_logPath = dirname(__FILE__) . '/log';
+        $this->logPath = dirname(__FILE__) . '/log';
 
-        if (file_exists($this->_logPath . self::EVENT_LOG_NAME)) {
-            unlink($this->_logPath . self::EVENT_LOG_NAME);
+        if (file_exists($this->logPath . self::EVENT_LOG_NAME)) {
+            unlink($this->logPath . self::EVENT_LOG_NAME);
         }
     }
 
@@ -71,12 +71,12 @@ class EventDispatcherTest extends TestCase
      */
     public function testSetEventDispatcherConfiguration($events)
     {
-        $EventDispatcher = new EventDispatcher;
-        $EventDispatcher->setEventConfiguration($events);
+        $eventDispatcher = new EventDispatcher;
+        $eventDispatcher->setEventConfiguration($events);
 
-        $this->assertEquals($events, $EventDispatcher->getEventConfiguration());
+        $this->assertEquals($events, $eventDispatcher->getEventConfiguration());
 
-        $EventDispatcher->setEventConfiguration([
+        $eventDispatcher->setEventConfiguration([
             'test_event_code' => [
                 'listeners' => [
                     'newListener'
@@ -85,48 +85,48 @@ class EventDispatcherTest extends TestCase
         ]);
 
         $events['test_event_code']['listeners'][] = 'newListener';
-        $this->assertEquals($events, $EventDispatcher->getEventConfiguration());
+        $this->assertEquals($events, $eventDispatcher->getEventConfiguration());
 
         unset($events['test_event_code']['listeners'][3]);
 
-        $EventDispatcher   = new EventDispatcher;
-        $EventDispatcher->readEventConfiguration(
+        $eventDispatcher   = new EventDispatcher;
+        $eventDispatcher->readEventConfiguration(
             $this->getEventFileConfigPath('array'),
             'array'
         );
-        $this->assertEquals($events, $EventDispatcher->getEventConfiguration());
+        $this->assertEquals($events, $eventDispatcher->getEventConfiguration());
 
-        $EventDispatcher   = new EventDispatcher;
-        $EventDispatcher->readEventConfiguration(
+        $eventDispatcher   = new EventDispatcher;
+        $eventDispatcher->readEventConfiguration(
             $this->getEventFileConfigPath('json'),
             'json'
         );
-        $this->assertEquals($events, $EventDispatcher->getEventConfiguration());
+        $this->assertEquals($events, $eventDispatcher->getEventConfiguration());
 
-        $EventDispatcher   = new EventDispatcher;
-        $EventDispatcher->readEventConfiguration(
+        $eventDispatcher   = new EventDispatcher;
+        $eventDispatcher->readEventConfiguration(
             $this->getEventFileConfigPath('ini'),
             'ini'
         );
-        $this->assertEquals($events, $EventDispatcher->getEventConfiguration());
+        $this->assertEquals($events, $eventDispatcher->getEventConfiguration());
 
-        $EventDispatcher = new EventDispatcher(
+        $eventDispatcher = new EventDispatcher(
             [
                 'from_file' => true,
                 'type'      => 'xml'
             ],
             $this->getEventFileConfigPath('xml')
         );
-        $this->assertEquals($events, $EventDispatcher->getEventConfiguration());
+        $this->assertEquals($events, $eventDispatcher->getEventConfiguration());
 
-        $EventDispatcher = new EventDispatcher(
+        $eventDispatcher = new EventDispatcher(
             [
                 'from_file' => true,
                 'type'      => 'yaml'
             ],
             $this->getEventFileConfigPath('yaml')
         );
-        $this->assertEquals($events, $EventDispatcher->getEventConfiguration());
+        $this->assertEquals($events, $eventDispatcher->getEventConfiguration());
     }
 
     /**
@@ -136,9 +136,9 @@ class EventDispatcherTest extends TestCase
      */
     public function testTryToLoadConfigFromMissingFile()
     {
-        $EventDispatcher = new EventDispatcher;
+        $eventDispatcher = new EventDispatcher;
 
-        $EventDispatcher->readEventConfiguration(
+        $eventDispatcher->readEventConfiguration(
             $this->getEventFileConfigPath('txt'),
             'txt'
         );
@@ -155,7 +155,7 @@ class EventDispatcherTest extends TestCase
                 'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
                     'BlueEvent\Test\EventDispatcherTest::trigger',
-                    function ($attr, $event) {
+                    function ($attr) {
                         self::$eventTriggered += $attr['value'];
                     }
                 ]
@@ -208,7 +208,7 @@ class EventDispatcherTest extends TestCase
         $instance->addEventListener(
             'test_event',
             [
-                function ($attr, $event) {
+                function ($attr) {
                     self::$eventTriggered += $attr['value'];
                 }
             ]
@@ -334,23 +334,43 @@ class EventDispatcherTest extends TestCase
     /**
      * test that event log can be enabled/disabled
      */
+    public function testGetConfiguration()
+    {
+        $instance = new EventDispatcher;
+
+        $this->assertEquals(
+            [
+              'type' => 'array',
+              'log_events' => false,
+              'log_all_events' => true,
+              'from_file' => false,
+              'log_path' => false,
+              'log_object' => false,
+            ],
+            $instance->getConfiguration()
+        );
+    }
+
+    /**
+     * test that event log can be enabled/disabled
+     */
     public function testEnableAndDisableEventLog()
     {
         $instance = new EventDispatcher;
 
-        $this->assertFalse($instance->isLogEnabled());
+        $this->assertFalse($instance->getConfiguration('log_events'));
         $instance->disableEventLog();
-        $this->assertFalse($instance->isLogEnabled());
+        $this->assertFalse($instance->getConfiguration('log_events'));
         $instance->enableEventLog();
-        $this->assertTrue($instance->isLogEnabled());
+        $this->assertTrue($instance->getConfiguration('log_events'));
 
         $instance = new EventDispatcher([
             'log_events' => true
         ]);
 
-        $this->assertTrue($instance->isLogEnabled());
+        $this->assertTrue($instance->getConfiguration('log_events'));
         $instance->disableEventLog();
-        $this->assertFalse($instance->isLogEnabled());
+        $this->assertFalse($instance->getConfiguration('log_events'));
     }
 
     /**
@@ -375,7 +395,7 @@ class EventDispatcherTest extends TestCase
     {
         $instance = new EventDispatcher([
             'log_events'    => true,
-            'log_path'      => $this->_logPath,
+            'log_path'      => $this->logPath,
         ]);
         $instance->setEventConfiguration([
             'test_event' => [
@@ -390,9 +410,9 @@ class EventDispatcherTest extends TestCase
             ],
         ]);
 
-        $this->assertFileNotExists($this->_logPath . self::EVENT_LOG_NAME);
+        $this->assertFileNotExists($this->logPath . self::EVENT_LOG_NAME);
         $instance->triggerEvent('test_event');
-        $this->assertFileExists($this->_logPath . self::EVENT_LOG_NAME);
+        $this->assertFileExists($this->logPath . self::EVENT_LOG_NAME);
     }
 
     /**
@@ -402,7 +422,7 @@ class EventDispatcherTest extends TestCase
     {
         $instance = new EventDispatcher([
             'log_all_events'    => true,
-            'log_path'          =>  $this->_logPath,
+            'log_path'          =>  $this->logPath,
             'log_object'        => (new \SimpleLog\Log),
         ]);
 
@@ -418,7 +438,7 @@ class EventDispatcherTest extends TestCase
         ]);
 
         $instance->triggerEvent('test_event');
-        $this->assertFileExists($this->_logPath);
+        $this->assertFileExists($this->logPath);
     }
 
     /**
@@ -427,12 +447,12 @@ class EventDispatcherTest extends TestCase
     public function testEventLogWithGivenEvents()
     {
         $instance = new EventDispatcher([
-            'log_path' =>  $this->_logPath
+            'log_path' =>  $this->logPath
         ]);
 
         $instance->enableEventLog()->logAllEvents();
 
-        $this->assertTrue($instance->isLogAllEventsEnabled());
+        $this->assertTrue($instance->getConfiguration('log_all_events'));
 
         $instance->setEventConfiguration([
             'test_event' => [
@@ -444,7 +464,7 @@ class EventDispatcherTest extends TestCase
         ]);
 
         $instance->triggerEvent('test_event');
-        $this->assertFileExists($this->_logPath);
+        $this->assertFileExists($this->logPath);
     }
 
 
@@ -454,7 +474,7 @@ class EventDispatcherTest extends TestCase
     public function testEventLogWithSpecifiedEvents()
     {
         $instance = new EventDispatcher([
-            'log_path'          =>  $this->_logPath,
+            'log_path'          =>  $this->logPath,
             'log_all_events'    => false
         ]);
 
@@ -475,7 +495,7 @@ class EventDispatcherTest extends TestCase
             $instance->getAllEventsToLog()
         );
         $instance->triggerEvent('test_event');
-        $this->assertFileExists($this->_logPath);
+        $this->assertFileExists($this->logPath);
     }
 
     /**
@@ -554,8 +574,8 @@ class EventDispatcherTest extends TestCase
      */
     protected function tearDown()
     {
-        if (file_exists($this->_logPath . self::EVENT_LOG_NAME)) {
-            unlink($this->_logPath . self::EVENT_LOG_NAME);
+        if (file_exists($this->logPath . self::EVENT_LOG_NAME)) {
+            unlink($this->logPath . self::EVENT_LOG_NAME);
         }
     }
 }

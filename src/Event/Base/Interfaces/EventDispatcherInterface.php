@@ -13,9 +13,8 @@ interface EventDispatcherInterface
     public function hasErrors();
     public function clearErrors();
     public function getAllEventsToLog();
-    public function isLogAllEventsEnabled();
     public function logAllEvents();
-    public function isLogEnabled();
+    public function getConfiguration();
     public function disableEventLog();
     public function enableEventLog();
     public function setEventConfiguration(array $config);

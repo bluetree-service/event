@@ -14,11 +14,11 @@
     }
   ],
   "require": {
-    "php": ">=5.4.0",
+    "php": ">=5.5.0",
     "bluetree-service/simple-log": "v0.5.0.1",
-    "zendframework/zend-config": "2.5.*",
-    "zendframework/zend-json": "2.5.*",
-    "mustangostang/spyc": "0.5.*"
+    "zendframework/zend-config": "3.1.*",
+    "zendframework/zend-json": "3.0.*",
+    "mustangostang/spyc": "0.6.*"
   },
   "require-dev": {
     "satooshi/php-coveralls": "1.0.*",

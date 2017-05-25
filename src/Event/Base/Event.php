@@ -11,21 +11,21 @@ abstract class Event implements EventInterface
      *
      * @var int
      */
-    protected static $_launchCount = 0;
+    protected static $launchCount = 0;
 
     /**
      * store information that event propagation is stopped or not
      *
      * @var bool
      */
-    protected $_propagationStopped = false;
+    protected $propagationStopped = false;
 
     /**
      * create event instance
      */
     public function __construct()
     {
-        self::$_launchCount++;
+        self::$launchCount++;
     }
 
     /**
@@ -35,7 +35,7 @@ abstract class Event implements EventInterface
      */
     public static function getLaunchCount()
     {
-        return self::$_launchCount;
+        return self::$launchCount;
     }
 
     /**
@@ -45,7 +45,7 @@ abstract class Event implements EventInterface
      */
     public function isPropagationStopped()
     {
-        return $this->_propagationStopped;
+        return $this->propagationStopped;
     }
 
     /**
@@ -55,7 +55,7 @@ abstract class Event implements EventInterface
      */
     public function stopPropagation()
     {
-        $this->_propagationStopped = true;
+        $this->propagationStopped = true;
         return $this;
     }
 }
