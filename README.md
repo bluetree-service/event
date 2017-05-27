@@ -58,7 +58,7 @@ libraries paste into `composer.json`:
 
 ### Requirements
 
-* PHP 5.5 or higher
+* PHP 5.6 or higher
 
 
 

@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## 0.4.0.0 - 2017-27-05
+### Changed
+* Increased minimal PHP version to 5.6
+
 ## 0.3.0.2 - 2017-26-05
 ### Changed
 * Updated SimpleLog library version
@@ -36,7 +40,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 * Namespace and project name change
 
-## 0.1.4.1 - 2016-
+## 0.1.4.1 - 2016-02-07
 ### Changed
 * Documentation update
 

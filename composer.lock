@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "07a33ca5373aa38dee913b55c3969578",
+    "content-hash": "eb1e783b6bc78021bf5ac30f7643ff26",
     "packages": [
         {
             "name": "bluetree-service/simple-log",
@@ -2031,7 +2031,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.5.0"
+        "php": ">=5.6.0"
     },
     "platform-dev": []
 }
