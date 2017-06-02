@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## 0.5.0.0 - 2017-02-06
+### Changed
+* Rebuild configuration setup
+
 ## 0.4.0.0 - 2017-27-05
 ### Changed
 * Increased minimal PHP version to 5.6

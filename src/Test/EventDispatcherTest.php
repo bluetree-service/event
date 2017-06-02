@@ -49,32 +49,31 @@ class EventDispatcherTest extends TestCase
     /**
      * test event initialize
      *
-     * @param array $events
      * @param array $options
      * @dataProvider configDataProvider
      */
-    public function testEventCreation($events, $options)
+    public function testEventCreation($options)
     {
         $instance = new EventDispatcher;
         $this->assertInstanceOf('BlueEvent\Event\Base\EventDispatcher', $instance);
         $this->assertFalse($instance->hasErrors());
 
-        $instance = new EventDispatcher($options, $events);
-        $this->assertEquals($events, $instance->getEventConfiguration());
+        $instance = new EventDispatcher($options);
+        $this->assertEquals($options['events'], $instance->getEventConfiguration());
     }
 
     /**
      * test read configuration
      *
-     * @param array $events
+     * @param array $options
      * @dataProvider configDataProvider
      */
-    public function testSetEventDispatcherConfiguration($events)
+    public function testSetEventDispatcherConfiguration($options)
     {
         $eventDispatcher = new EventDispatcher;
-        $eventDispatcher->setEventConfiguration($events);
+        $eventDispatcher->setEventConfiguration($options['events']);
 
-        $this->assertEquals($events, $eventDispatcher->getEventConfiguration());
+        $this->assertEquals($options['events'], $eventDispatcher->getEventConfiguration());
 
         $eventDispatcher->setEventConfiguration([
             'test_event_code' => [
@@ -84,49 +83,47 @@ class EventDispatcherTest extends TestCase
             ]
         ]);
 
-        $events['test_event_code']['listeners'][] = 'newListener';
-        $this->assertEquals($events, $eventDispatcher->getEventConfiguration());
+        $options['events']['test_event_code']['listeners'][] = 'newListener';
+        $this->assertEquals($options['events'], $eventDispatcher->getEventConfiguration());
 
-        unset($events['test_event_code']['listeners'][3]);
+        unset($options['events']['test_event_code']['listeners'][3]);
 
         $eventDispatcher   = new EventDispatcher;
         $eventDispatcher->readEventConfiguration(
             $this->getEventFileConfigPath('array'),
             'array'
         );
-        $this->assertEquals($events, $eventDispatcher->getEventConfiguration());
+        $this->assertEquals($options['events'], $eventDispatcher->getEventConfiguration());
 
         $eventDispatcher   = new EventDispatcher;
         $eventDispatcher->readEventConfiguration(
             $this->getEventFileConfigPath('json'),
             'json'
         );
-        $this->assertEquals($events, $eventDispatcher->getEventConfiguration());
+        $this->assertEquals($options['events'], $eventDispatcher->getEventConfiguration());
 
         $eventDispatcher   = new EventDispatcher;
         $eventDispatcher->readEventConfiguration(
             $this->getEventFileConfigPath('ini'),
             'ini'
         );
-        $this->assertEquals($events, $eventDispatcher->getEventConfiguration());
+        $this->assertEquals($options['events'], $eventDispatcher->getEventConfiguration());
 
         $eventDispatcher = new EventDispatcher(
             [
-                'from_file' => true,
+                'from_file' => $this->getEventFileConfigPath('xml'),
                 'type'      => 'xml'
-            ],
-            $this->getEventFileConfigPath('xml')
+            ]
         );
-        $this->assertEquals($events, $eventDispatcher->getEventConfiguration());
+        $this->assertEquals($options['events'], $eventDispatcher->getEventConfiguration());
 
         $eventDispatcher = new EventDispatcher(
             [
-                'from_file' => true,
+                'from_file' => $this->getEventFileConfigPath('yaml'),
                 'type'      => 'yaml'
-            ],
-            $this->getEventFileConfigPath('yaml')
+            ]
         );
-        $this->assertEquals($events, $eventDispatcher->getEventConfiguration());
+        $this->assertEquals($options['events'], $eventDispatcher->getEventConfiguration());
     }
 
     /**
@@ -340,12 +337,13 @@ class EventDispatcherTest extends TestCase
 
         $this->assertEquals(
             [
-              'type' => 'array',
-              'log_events' => false,
-              'log_all_events' => true,
-              'from_file' => false,
-              'log_path' => false,
-              'log_object' => false,
+                'type' => 'array',
+                'log_events' => false,
+                'log_all_events' => true,
+                'from_file' => false,
+                'log_path' => false,
+                'log_object' => false,
+                'events' => [],
             ],
             $instance->getConfiguration()
         );
@@ -507,19 +505,19 @@ class EventDispatcherTest extends TestCase
     {
         return [
             [
-                'events' => [
-                    'test_event_code' => [
-                        'object'    => 'BlueEvent\Event\BaseEvent',
-                        'listeners' => [
-                            'ClassOne::method',
-                            'ClassSecond::method',
-                            'someFunction',
-                        ]
-                    ]
-                ],
                 'options' => [
                     'type'      => 'array',
                     'from_file' => false,
+                    'events' => [
+                        'test_event_code' => [
+                            'object'    => 'BlueEvent\Event\BaseEvent',
+                            'listeners' => [
+                                'ClassOne::method',
+                                'ClassSecond::method',
+                                'someFunction',
+                            ]
+                        ]
+                    ],
                 ]
             ]
         ];

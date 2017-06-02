@@ -11,16 +11,17 @@ $EventDispatcher = new EventDispatcher([
 
 Available options:
 
-1. **type** - File type of event configuration, can be: `array`, `yaml`, `ini`, `xml`, `json`
-2. **from_file** - Allow to load configuration from file (`true` | `false` default: `false`)
-3. **log_events** - Allow to log events to log file (`true` | `false` default: `false`)
-4. **log_all_events** - Allow to log all events to log file, otherwise log only specified one (`true` | `false` default: `true`)
-5. **log_path** - Path to log file
-6. **log_object** - Namespace of class to handle log, default is: `\SimpleLog\Log` (Must be instance of `\SimpleLog\LogInterface`)
+* **type** - File type of event configuration, can be: `array`, `yaml`, `ini`, `xml`, `json` (default: `array`)
+* **from_file** - Allow to load configuration from file (`file_path` | `false` default: `false`)
+* **log_events** - Allow to log events to log file (`true` | `false` default: `false`)
+* **log_all_events** - Allow to log all events to log file, otherwise log only specified one (`true` | `false` default: `true`)
+* **log_path** - Path to log file
+* **log_object** - Namespace of class, or log object to handle log, default is: `\SimpleLog\Log` (Must be instance of `\SimpleLog\LogInterface`)
+* **events** - Complete list of events to handle with event object and listeners
 
-## Configuration via methods
+## Configuration EventDispatcher via methods
 Some of configuration options can be changed by some special methods. There are
-three categories of that methods, first to turn on option, seccond to turn off
+three categories of that methods, first to turn on option, second to turn off
 and last to check that option is on or off.
 
 * **enableEventLog** - Set *log_events* option to `true`
@@ -46,15 +47,16 @@ Event configuration structure example:
 
 ```php
 $config = [
-    'event_code' => [
-        'object'    => 'EventStatementClass',
-        'listeners' => [
-            'Listener::method',
-            'AnotherListener::method',
-            'someFunction',
-        ]
-    ],
-    'another_event_code' => [
+    'events' => [
+        'event_code' => [
+            'object'    => 'EventStatementClass',
+            'listeners' => [
+                'Listener::method',
+                'AnotherListener::method',
+                'someFunction',
+            ]
+        ],
+        'another_event_code' => [
             'listeners' => [
                 [new \Listener, 'method'],
                 function ($attr, $event) {
@@ -62,20 +64,22 @@ $config = [
                 },
             ]
         ],
+    ]
 ];
+new EventDispatcher($config);
 ```
+
+If you use `setEventConfiguration` method, you need to omit `events` key.
 
 ### Load configuration from file
 If event configuration must be loaded from file, there are two possibilities.  
-First is set `from_file` to `true`, set event configuration type by `type` and instead
-second parameter in constructor paste path to event configuration file, like here:
+First is set `from_file` to __path to configuration file__, set event configuration type by `type` (depend of file content).
 
 ```php
 $EventDispatcher = new EventDispatcher(
-    'path/to/file.php',
     [
-        'from_file' => true,
-        'type'      => 'array'
+        'from_file' => 'path/to/file.json',
+        'type'      => 'json'
     ]
 );
 ```

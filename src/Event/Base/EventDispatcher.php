@@ -14,13 +14,6 @@ class EventDispatcher implements EventDispatcherInterface
     const EVENT_STATUS_BREAK    = 'propagation_stop';
 
     /**
-     * store all loaded configuration
-     *
-     * @var array
-     */
-    protected $eventsConfig = [];
-
-    /**
      * store all called events
      *
      * @var array
@@ -52,12 +45,13 @@ class EventDispatcher implements EventDispatcherInterface
      * @var array
      */
     protected $options = [
-        'type'              => 'array',
-        'log_events'        => false,
-        'log_all_events'    => true,
-        'from_file'         => false,
-        'log_path'          => false,
-        'log_object'        => false,
+        'type' => 'array',
+        'log_events' => false,
+        'log_all_events' => true,
+        'from_file' => false,
+        'log_path' => false,
+        'log_object' => false,
+        'events' => [],
     ];
 
     /**
@@ -71,22 +65,17 @@ class EventDispatcher implements EventDispatcherInterface
      * create manage instance
      *
      * @param array $options
-     * @param array|string $events
      */
-    public function __construct(array $options = [], $events = [])
+    public function __construct(array $options = [])
     {
         $this->options = array_merge($this->options, $options);
 
         if ($this->options['from_file']) {
             $this->readEventConfiguration(
-                $events,
+                $this->options['from_file'],
                 $this->options['type']
             );
-        } else {
-            $this->eventsConfig = $events;
         }
-
-        unset($this->options['events']);
     }
 
     /**
@@ -97,12 +86,12 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function getEventObject($eventName)
     {
-        if (!array_key_exists($eventName, $this->eventsConfig)) {
+        if (!array_key_exists($eventName, $this->options['events'])) {
             throw new \InvalidArgumentException('Event is not defined.');
         }
 
         if (!array_key_exists($eventName, $this->events)) {
-            $namespace = $this->eventsConfig[$eventName]['object'];
+            $namespace = $this->options['events'][$eventName]['object'];
             $instance = new $namespace;
 
             if (!($instance instanceof EventInterface)) {
@@ -123,8 +112,8 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function setEventConfiguration(array $events)
     {
-        $this->eventsConfig = array_merge_recursive(
-            $this->eventsConfig,
+        $this->options['events'] = array_merge_recursive(
+            $this->options['events'],
             $events
         );
 
@@ -143,7 +132,7 @@ class EventDispatcher implements EventDispatcherInterface
         /** @var EventInterface $event */
         $event = $this->getEventObject($name);
 
-        foreach ($this->eventsConfig as $listener) {
+        foreach ($this->options['events'] as $listener) {
             foreach ($listener['listeners'] as $eventListener) {
                 if ($event->isPropagationStopped()) {
                     $this->makeLogEvent($name, $eventListener, self::EVENT_STATUS_BREAK);
@@ -175,15 +164,15 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function addEventListener($eventName, array $listeners)
     {
-        if (!array_key_exists($eventName, $this->eventsConfig)) {
-            $this->eventsConfig[$eventName] = [
+        if (!array_key_exists($eventName, $this->options['events'])) {
+            $this->options['events'][$eventName] = [
                 'object' => 'BlueEvent\Event\BaseEvent',
                 'listeners' => $listeners,
             ];
         }
 
-        $this->eventsConfig[$eventName]['listeners'] = array_merge(
-            $this->eventsConfig[$eventName]['listeners'],
+        $this->options['events'][$eventName]['listeners'] = array_merge(
+            $this->options['events'][$eventName]['listeners'],
             $listeners
         );
 
@@ -354,7 +343,7 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function getEventConfiguration()
     {
-        return $this->eventsConfig;
+        return $this->options['events'];
     }
 
     /**

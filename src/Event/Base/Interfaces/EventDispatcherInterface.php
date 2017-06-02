@@ -4,7 +4,7 @@ namespace BlueEvent\Event\Base\Interfaces;
 
 interface EventDispatcherInterface
 {
-    public function __construct(array $options = [], $events = []);
+    public function __construct(array $options = []);
     public function getEventObject($eventName);
     public function triggerEvent($name, array $data = []);
     public function readEventConfiguration($configuration, $type);
