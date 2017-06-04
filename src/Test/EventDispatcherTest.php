@@ -568,6 +568,48 @@ class EventDispatcherTest extends TestCase
     }
 
     /**
+     * test that event is called correctly
+     */
+    public function testTriggerMultipleEvents()
+    {
+        $testData = [];
+        $instance = new EventDispatcher(['events' => [
+            'test_event' => [
+                'object'    => 'BlueEvent\Event\BaseEvent',
+                'listeners' => [
+                    function ($params) use (&$testData) {
+                        $testData['test_event'] = $params;
+                    }
+                ]
+            ],
+            'test_event_other' => [
+                'object'    => 'BlueEvent\Event\BaseEvent',
+                'listeners' => [
+                    function ($params) use (&$testData) {
+                        $testData['test_event_other'] = $params;
+                    }
+                ]
+            ],
+        ]]);
+
+        $instance->triggerEvent('test_event', ['value' => 2]);
+
+        $this->assertArrayHasKey('test_event', $testData);
+        $this->assertEquals(
+            ['value' => 2],
+            $testData['test_event']
+        );
+
+        $instance->triggerEvent('test_event_other', ['value' => 5]);
+
+        $this->assertArrayHasKey('test_event_other', $testData);
+        $this->assertEquals(
+            ['value' => 5],
+            $testData['test_event_other']
+        );
+    }
+
+    /**
      * actions launched after test was finished
      */
     protected function tearDown()

@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## 0.5.1.0 - 2017-04-06
+### Changed
+* Rebuild configuration setup
+
 ## 0.5.0.0 - 2017-02-06
 ### Changed
 * Rebuild configuration setup

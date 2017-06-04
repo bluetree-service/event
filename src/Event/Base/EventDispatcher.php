@@ -129,26 +129,28 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function triggerEvent($name, array $data = [])
     {
-        /** @var EventInterface $event */
-        $event = $this->getEventObject($name);
+        try {
+            /** @var EventInterface $event */
+            $event = $this->getEventObject($name);
+        } catch (\InvalidArgumentException $exception) {
+            return $this;
+        }
 
-        foreach ($this->options['events'] as $listener) {
-            foreach ($listener['listeners'] as $eventListener) {
-                if ($event->isPropagationStopped()) {
-                    $this->makeLogEvent($name, $eventListener, self::EVENT_STATUS_BREAK);
-                    break;
-                }
-
-                try {
-                    $this->callFunction($eventListener, $data, $event);
-                    $status = self::EVENT_STATUS_OK;
-                } catch (\Exception $e) {
-                    $this->addError($e);
-                    $status = self::EVENT_STATUS_ERROR;
-                }
-
-                $this->makeLogEvent($name, $eventListener, $status);
+        foreach ($this->options['events'][$name]['listeners'] as $eventListener) {
+            if ($event->isPropagationStopped()) {
+                $this->makeLogEvent($name, $eventListener, self::EVENT_STATUS_BREAK);
+                break;
             }
+
+            try {
+                $this->callFunction($eventListener, $data, $event);
+                $status = self::EVENT_STATUS_OK;
+            } catch (\Exception $e) {
+                $this->addError($e);
+                $status = self::EVENT_STATUS_ERROR;
+            }
+
+            $this->makeLogEvent($name, $eventListener, $status);
         }
 
         return $this;
