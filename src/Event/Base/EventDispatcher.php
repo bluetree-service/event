@@ -14,13 +14,6 @@ class EventDispatcher implements EventDispatcherInterface
     const EVENT_STATUS_BREAK    = 'propagation_stop';
 
     /**
-     * store all called events
-     *
-     * @var array
-     */
-    protected $events = [];
-
-    /**
      * @var bool
      */
     protected $hasErrors = false;
@@ -82,26 +75,23 @@ class EventDispatcher implements EventDispatcherInterface
      * return event object or create it if not exist
      *
      * @param string $eventName
+     * @param array $data
      * @return EventInterface
      */
-    public function getEventObject($eventName)
+    protected function createEventObject($eventName, array $data)
     {
         if (!array_key_exists($eventName, $this->options['events'])) {
             throw new \InvalidArgumentException('Event is not defined.');
         }
 
-        if (!array_key_exists($eventName, $this->events)) {
-            $namespace = $this->options['events'][$eventName]['object'];
-            $instance = new $namespace;
+        $namespace = $this->options['events'][$eventName]['object'];
+        $instance = new $namespace($eventName, $data);
 
-            if (!($instance instanceof EventInterface)) {
-                throw new \LogicException('Invalid interface of event object');
-            }
-
-            $this->events[$eventName] = $instance;
+        if (!($instance instanceof EventInterface)) {
+            throw new \LogicException('Invalid interface of event object');
         }
 
-        return $this->events[$eventName];
+        return $instance;
     }
 
     /**
@@ -131,7 +121,7 @@ class EventDispatcher implements EventDispatcherInterface
     {
         try {
             /** @var EventInterface $event */
-            $event = $this->getEventObject($name);
+            $event = $this->createEventObject($name, $data);
         } catch (\InvalidArgumentException $exception) {
             return $this;
         }
@@ -143,7 +133,7 @@ class EventDispatcher implements EventDispatcherInterface
             }
 
             try {
-                $this->callFunction($eventListener, $data, $event);
+                $this->callFunction($eventListener, $event);
                 $status = self::EVENT_STATUS_OK;
             } catch (\Exception $e) {
                 $this->addError($e);
@@ -185,13 +175,12 @@ class EventDispatcher implements EventDispatcherInterface
      * allow to call event listeners functions
      *
      * @param string $listener
-     * @param array $data
      * @param EventInterface $event
      */
-    protected function callFunction($listener, array $data, EventInterface $event)
+    protected function callFunction($listener, EventInterface $event)
     {
         if (is_callable($listener)) {
-            call_user_func_array($listener, [$data, $event]);
+            call_user_func($listener, $event);
         }
     }
 
@@ -272,16 +261,6 @@ class EventDispatcher implements EventDispatcherInterface
     {
         $this->options['log_events'] = false;
         return $this;
-    }
-
-    /**
-     * return all currently launched events
-     *
-     * @return array
-     */
-    public function getAllEvents()
-    {
-        return $this->events;
     }
 
     /**

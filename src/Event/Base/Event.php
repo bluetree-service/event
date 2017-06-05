@@ -18,13 +18,29 @@ abstract class Event implements EventInterface
      *
      * @var bool
      */
-    protected $propagationStopped = false;
+    protected static $propagationStopped = false;
+
+    /**
+     * @var array
+     */
+    protected $eventParameters = [];
+
+    /**
+     * @var string
+     */
+    protected $eventName = '';
 
     /**
      * create event instance
+     *
+     * @param string $eventName
+     * @param array $parameters
      */
-    public function __construct()
+    public function __construct($eventName, array $parameters)
     {
+        $this->eventName = $eventName;
+        $this->eventParameters = $parameters;
+
         self::$launchCount++;
     }
 
@@ -45,7 +61,7 @@ abstract class Event implements EventInterface
      */
     public function isPropagationStopped()
     {
-        return $this->propagationStopped;
+        return self::$propagationStopped;
     }
 
     /**
@@ -55,7 +71,23 @@ abstract class Event implements EventInterface
      */
     public function stopPropagation()
     {
-        $this->propagationStopped = true;
+        self::$propagationStopped = true;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEventCode()
+    {
+        return $this->eventName;
+    }
+
+    /**
+     * @return array
+     */
+    public function getEventParameters()
+    {
+        return $this->eventParameters;
     }
 }
