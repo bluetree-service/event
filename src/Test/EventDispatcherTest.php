@@ -152,8 +152,9 @@ class EventDispatcherTest extends TestCase
                 'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
                     'BlueEvent\Test\EventDispatcherTest::trigger',
-                    function ($attr) {
-                        self::$eventTriggered += $attr['value'];
+                    function ($event) {
+                        /** @var $event \BlueEvent\Event\BaseEvent */
+                        self::$eventTriggered += $event->getEventParameters()['value'];
                     }
                 ]
             ],
@@ -175,12 +176,15 @@ class EventDispatcherTest extends TestCase
                 'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
                     'BlueEvent\Test\EventDispatcherTest::triggerStop',
-                    function ($attr, $event) {
-                        self::$eventTriggered += $attr['value'];
+                    function ($event) {
+                        /** @var $event \BlueEvent\Event\BaseEvent */
+                        self::$eventTriggered += $event->getEventParameters()['value'];
                     }
                 ]
             ],
         ]);
+
+        $this->assertEquals(3, self::$eventTriggered);
 
         $instance->triggerEvent('test_event', ['value' => 2]);
 
@@ -205,8 +209,9 @@ class EventDispatcherTest extends TestCase
         $instance->addEventListener(
             'test_event',
             [
-                function ($attr) {
-                    self::$eventTriggered += $attr['value'];
+                function ($event) {
+                    /** @var $event \BlueEvent\Event\BaseEvent */
+                    self::$eventTriggered += $event->getEventParameters()['value'];
                 }
             ]
         );
@@ -248,43 +253,6 @@ class EventDispatcherTest extends TestCase
     }
 
     /**
-     * test return of event object launch count correct value
-     */
-    public function testEventLaunchCount()
-    {
-        $instance = new EventDispatcher;
-        $instance->setEventConfiguration([
-            'test_event' => [
-                'object'    => 'BlueEvent\Event\BaseEvent',
-                'listeners' => [
-                    'BlueEvent\Test\EventDispatcherTest::trigger',
-                ]
-            ],
-        ]);
-
-        /** use static method to avoid launch increment and store in EventDispatcher instance */
-        $this->assertEquals(4, \BlueEvent\Event\BaseEvent::getLaunchCount());
-
-        $instance->triggerEvent('test_event');
-        $instance->triggerEvent('test_event');
-
-        $this->assertEquals(5, $instance->getEventObject('test_event')->getLaunchCount());
-        $this->assertEquals(5, \BlueEvent\Event\BaseEvent::getLaunchCount());
-    }
-
-    /**
-     * test that event dispatcher throw an exception if we try to get none existing event object
-     *
-     * @expectedException \InvalidArgumentException
-     */
-    public function testGetNoneExistingObject()
-    {
-        $instance = new EventDispatcher;
-
-        $instance->getEventObject('none_existing_event');
-    }
-
-    /**
      * check for error if invalid object was declared as listener
      *
      * @expectedException \LogicException
@@ -300,32 +268,7 @@ class EventDispatcherTest extends TestCase
             ],
         ]);
 
-        $instance->getEventObject('invalid_object_event');
-    }
-
-    /**
-     * test get all called events objects
-     */
-    public function testGettingAllCreatedEvents()
-    {
-        $instance = new EventDispatcher;
-
-        $this->assertEmpty($instance->getAllEvents());
-
-        $instance->setEventConfiguration([
-            'test_event' => [
-                'object'    => 'BlueEvent\Event\BaseEvent',
-                'listeners' => [
-                    'BlueEvent\Test\EventDispatcherTest::triggerError',
-                ]
-            ],
-        ]);
-        $this->assertEmpty($instance->getAllEvents());
-
-        $instance->triggerEvent('test_event');
-
-        $this->assertNotEmpty($instance->getAllEvents());
-        $this->assertCount(1, $instance->getAllEvents());
+        $instance->triggerEvent('invalid_object_event');
     }
 
     /**
@@ -372,21 +315,6 @@ class EventDispatcherTest extends TestCase
     }
 
     /**
-     * test try to add event listener fo none existing event in configuration
-     */
-    public function testAddEventListenerForNoneExistingEvent()
-    {
-        $instance = new EventDispatcher;
-
-        $instance->addEventListener('test_event', []);
-
-        $instance->triggerEvent('test_event');
-
-        $this->assertNotEmpty($instance->getAllEvents());
-        $this->assertCount(1, $instance->getAllEvents());
-    }
-
-    /**
      * test that log file was created correctly
      */
     public function testEventLog()
@@ -402,7 +330,6 @@ class EventDispatcherTest extends TestCase
                     'BlueEvent\Test\EventDispatcherTest::trigger',
                     'BlueEvent\Test\EventDispatcherTest::triggerError',
                     function () {
-
                     }
                 ]
             ],
@@ -558,10 +485,9 @@ class EventDispatcherTest extends TestCase
     /**
      * method to test event triggering
      *
-     * @param mixed $attr
      * @param EventInterface $event
      */
-    public static function triggerStop($attr, EventInterface $event)
+    public static function triggerStop(EventInterface $event)
     {
         $event->stopPropagation();
         self::$eventTriggered++;
@@ -577,16 +503,18 @@ class EventDispatcherTest extends TestCase
             'test_event' => [
                 'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    function ($params) use (&$testData) {
-                        $testData['test_event'] = $params;
+                    function ($event) use (&$testData) {
+                        /** @var $event \BlueEvent\Event\BaseEvent */
+                        $testData['test_event'] = $event->getEventParameters();
                     }
                 ]
             ],
             'test_event_other' => [
                 'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    function ($params) use (&$testData) {
-                        $testData['test_event_other'] = $params;
+                    function ($event) use (&$testData) {
+                        /** @var $event \BlueEvent\Event\BaseEvent */
+                        $testData['test_event_other'] = $event->getEventParameters();
                     }
                 ]
             ],
