@@ -29,7 +29,7 @@ $instance->logEvent(['event_1', 'event_2']);
 ## Log message example
 Default log has specified format, that contains such information as:
 
-1. event key name
+1. Event key name
 2. Date ant time of execution
 3. Current launched listener
 4. Status of listener execution

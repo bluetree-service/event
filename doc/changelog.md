@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## 0.6.0.0 - 2017-06-06
+### Changed
+* Create one event object for one event trigger, instead of keep instance of event object
+* Event object store configuration that was added by trigger
+
 ## 0.5.1.0 - 2017-04-06
 ### Changed
 * Rebuild configuration setup

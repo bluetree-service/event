@@ -59,7 +59,7 @@ $config = [
         'another_event_code' => [
             'listeners' => [
                 [new \Listener, 'method'],
-                function ($attr, $event) {
+                function ($event) {
                     //listener logic
                 },
             ]
@@ -73,7 +73,8 @@ If you use `setEventConfiguration` method, you need to omit `events` key.
 
 ### Load configuration from file
 If event configuration must be loaded from file, there are two possibilities.  
-First is set `from_file` to __path to configuration file__, set event configuration type by `type` (depend of file content).
+First is set `from_file` to __path to configuration file__, set event configuration type by `type`
+(depend of file content).
 
 ```php
 $EventDispatcher = new EventDispatcher(

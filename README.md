@@ -61,7 +61,6 @@ libraries paste into `composer.json`:
 * PHP 5.6 or higher
 
 
-
 ## Change log
 All release version changes:  
 [Change log](https://github.com/bluetree-service/event/doc/changelog.md "Change log")

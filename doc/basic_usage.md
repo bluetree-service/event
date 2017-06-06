@@ -10,8 +10,8 @@ $eventDispatcher->setEventConfiguration([
     'event_code' => [
         'object'    => 'BlueEvent\Event\BaseEvent',
         'listeners' => [
-            function ($attr, $event) {
-                echo 'Listener was executed';
+            function ($event) {
+                echo 'Listener was executed for event: ' . $event->getEventCode();
             },
         ]
     ]
@@ -32,10 +32,9 @@ can be namespace and method separated by _::_, anonymous function, or array wher
 firs parameter is object and second method to execute.  
 All listeners on list are executed after trigger event in order that is the same
 as the listeners on the list.  
-Each listener get two parameters. First is array of additional parameters that was
-given in `triggerEvent` method. Second is instance of Event object, that was given
-in `object` key on event configuration or `BlueEvent\Event\BaseEvent` when that
-object was not specified.  
+Each listener get only one parameter that is Event object instance that was set up in event configuration key.
+All objects must be compatible with `BlueEvent\Event\Base\Interfaces` or just implement `BlueEvent\Event\Base\Event`.
+If object was not specified, by default will be used `BlueEvent\Event\BaseEvent`.
 
 ```php
 $eventDispatcher->triggerEvent(
