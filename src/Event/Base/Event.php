@@ -1,4 +1,11 @@
 <?php
+/**
+ * Event Object Class
+ *
+ * @package     BlueEvent
+ * @author      Michał Adamiak    <chajr@bluetree.pl>
+ * @copyright   chajr/bluetree
+ */
 
 namespace BlueEvent\Event\Base;
 
@@ -7,7 +14,7 @@ use BlueEvent\Event\Base\Interfaces\EventInterface;
 abstract class Event implements EventInterface
 {
     /**
-     * store information how many times event was called
+     * store information how many times event object was called
      *
      * @var int
      */
@@ -18,7 +25,7 @@ abstract class Event implements EventInterface
      *
      * @var bool
      */
-    protected static $propagationStopped = false;
+    protected $propagationStopped = false;
 
     /**
      * @var array
@@ -61,7 +68,7 @@ abstract class Event implements EventInterface
      */
     public function isPropagationStopped()
     {
-        return self::$propagationStopped;
+        return $this->propagationStopped;
     }
 
     /**
@@ -71,7 +78,7 @@ abstract class Event implements EventInterface
      */
     public function stopPropagation()
     {
-        self::$propagationStopped = true;
+        $this->propagationStopped = true;
         return $this;
     }
 

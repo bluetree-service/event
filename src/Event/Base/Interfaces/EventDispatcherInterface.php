@@ -1,4 +1,11 @@
 <?php
+/**
+ * Event Dispatcher Class Interface
+ *
+ * @package     BlueEvent
+ * @author      Michał Adamiak    <chajr@bluetree.pl>
+ * @copyright   chajr/bluetree
+ */
 
 namespace BlueEvent\Event\Base\Interfaces;
 
