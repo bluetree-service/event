@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "bluetree-service/simple-log",
-            "version": "v0.6.0.2",
+            "version": "v0.6.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bluetree-service/simple-log.git",
-                "reference": "139f2f3985283a88c73b8a3d1a7c02c0a4e03caf"
+                "reference": "d20ab6bd1599a44bdd7b8c62df4ce139b17d1e07"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bluetree-service/simple-log/zipball/139f2f3985283a88c73b8a3d1a7c02c0a4e03caf",
-                "reference": "139f2f3985283a88c73b8a3d1a7c02c0a4e03caf",
+                "url": "https://api.github.com/repos/bluetree-service/simple-log/zipball/d20ab6bd1599a44bdd7b8c62df4ce139b17d1e07",
+                "reference": "d20ab6bd1599a44bdd7b8c62df4ce139b17d1e07",
                 "shasum": ""
             },
             "require": {
@@ -56,7 +56,7 @@
                 "messages",
                 "warning"
             ],
-            "time": "2017-05-26T16:30:56+00:00"
+            "time": "2017-05-27T12:17:04+00:00"
         },
         {
             "name": "mustangostang/spyc",

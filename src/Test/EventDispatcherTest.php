@@ -165,6 +165,15 @@ class EventDispatcherTest extends TestCase
         $this->assertEquals(3, self::$eventTriggered);
     }
 
+    public function testTriggerNoneExistingEvent()
+    {
+        $instance = new EventDispatcher;
+
+        $instance->triggerEvent('test_event', ['value' => 2]);
+
+        $this->assertEquals(3, self::$eventTriggered);
+    }
+
     /**
      * test trigger event with stop propagation before next listener
      */
@@ -189,6 +198,25 @@ class EventDispatcherTest extends TestCase
         $instance->triggerEvent('test_event', ['value' => 2]);
 
         $this->assertEquals(4, self::$eventTriggered);
+    }
+
+    public function testAddListenerForNoneExistingKey()
+    {
+        $instance = new EventDispatcher;
+
+        $instance->addEventListener(
+            'test_event',
+            [
+                function ($event) {
+                    /** @var $event \BlueEvent\Event\BaseEvent */
+                    self::$eventTriggered += $event->getEventParameters()['value'];
+                }
+            ]
+        );
+
+        $instance->triggerEvent('test_event', ['value' => 2]);
+
+        $this->assertEquals(8, self::$eventTriggered);
     }
 
     /**
@@ -218,7 +246,7 @@ class EventDispatcherTest extends TestCase
 
         $instance->triggerEvent('test_event', ['value' => 2]);
 
-        $this->assertEquals(7, self::$eventTriggered);
+        $this->assertEquals(11, self::$eventTriggered);
     }
 
     /**

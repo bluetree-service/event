@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## 0.6.0.1 - 2017-07-06
+### Changed
+* Updated libraries version
+* Updated test coverage
+
 ## 0.6.0.0 - 2017-06-06
 ### Changed
 * Create one event object for one event trigger, instead of keep instance of event object
