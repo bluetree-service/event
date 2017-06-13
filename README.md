@@ -12,11 +12,12 @@
 
 Simple PHP event handling mechanism
 
-### Included libraries
+### Included classes
 * **BlueEvent\Base\Event** - Abstract class to store event statement
 * **BlueEvent\Base\EventDispatcher** - Main event class, allow to manage events and listeners
 * **BlueEvent\BaseEvent** - Simple event object to store event statement
-* **BlueEvent\Log\Log** - Allow to save trigger event information into log file
+* **BlueEvent\Event\Base\Interfaces\EventDispatcherInterface** - Use to create different objects that can be used by all libraries required event library
+* **BlueEvent\Event\Base\Interfaces\EventInterface** - Use to create Event objects
 
 ## Documentation
 

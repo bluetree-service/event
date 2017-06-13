@@ -41,9 +41,7 @@ class EventDispatcherTest extends TestCase
     {
         $this->logPath = dirname(__FILE__) . '/log';
 
-        if (file_exists($this->logPath . self::EVENT_LOG_NAME)) {
-            unlink($this->logPath . self::EVENT_LOG_NAME);
-        }
+        $this->clearLog();
     }
 
     /**
@@ -565,13 +563,20 @@ class EventDispatcherTest extends TestCase
         );
     }
 
+    protected function clearLog()
+    {
+        $logFile = $this->logPath . self::EVENT_LOG_NAME;
+
+        if (file_exists($logFile)) {
+            unlink($logFile);
+        }
+    }
+
     /**
      * actions launched after test was finished
      */
     protected function tearDown()
     {
-        if (file_exists($this->logPath . self::EVENT_LOG_NAME)) {
-            unlink($this->logPath . self::EVENT_LOG_NAME);
-        }
+        $this->clearLog();
     }
 }
