@@ -10,6 +10,6 @@ engines:
     enabled: true
 ratings:
   paths:
-  - "src/Event/*"
+  - "src/Event/**"
 exclude_paths:
 - "src/Test/*"
