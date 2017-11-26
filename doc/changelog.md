@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## 0.6.0.4 - 2017-11-26
+### Changed
+* Fixed repository link in composer.json
+
 ## 0.6.0.3 - 2017-07-18
 ### Changed
 * Code climate config update

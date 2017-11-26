@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "description": "Simple PHP event handling mechanism",
   "keywords": ["event", "php"],
-  "homepage": "https://github.com/chajr/class-event",
+  "homepage": "https://github.com/bluetree-service/event",
   "authors": [
     {
       "name": "Michał Adamiak",
