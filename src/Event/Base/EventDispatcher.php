@@ -37,7 +37,7 @@ class EventDispatcher implements EventDispatcherInterface
      *
      * @var \SimpleLog\LogInterface
      */
-    protected $loggerInstance = null;
+    protected $loggerInstance;
 
     /**
      * store default options for event dispatcher
@@ -84,6 +84,8 @@ class EventDispatcher implements EventDispatcherInterface
      * @param string $eventName
      * @param array $data
      * @return EventInterface
+     * @throws \LogicException
+     * @throws \InvalidArgumentException
      */
     protected function createEventObject($eventName, array $data)
     {
@@ -123,6 +125,7 @@ class EventDispatcher implements EventDispatcherInterface
      * @param string $name
      * @param array $data
      * @return $this
+     * @throws \LogicException
      */
     public function triggerEvent($name, array $data = [])
     {
@@ -181,14 +184,12 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * allow to call event listeners functions
      *
-     * @param string $listener
+     * @param callable $listener
      * @param EventInterface $event
      */
-    protected function callFunction($listener, EventInterface $event)
+    protected function callFunction(callable $listener, EventInterface $event)
     {
-        if (is_callable($listener)) {
-            call_user_func($listener, $event);
-        }
+        $listener($event);
     }
 
     /**
@@ -197,6 +198,7 @@ class EventDispatcher implements EventDispatcherInterface
      * @param mixed $path
      * @param string|null $type
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function readEventConfiguration($path, $type)
     {
@@ -214,6 +216,7 @@ class EventDispatcher implements EventDispatcherInterface
      * @param string $path
      * @param string $type
      * @return array
+     * @throws \InvalidArgumentException
      */
     protected function configurationStrategy($path, $type)
     {
@@ -225,7 +228,7 @@ class EventDispatcher implements EventDispatcherInterface
 
         switch ($type) {
             case 'array':
-                $config = include_once($path);
+                $config = include $path;
                 break;
             case 'ini':
                 $reader = new Reader\Ini;
@@ -279,7 +282,7 @@ class EventDispatcher implements EventDispatcherInterface
     public function logEvent(array $events = [])
     {
         foreach ($events as $event) {
-            if (!in_array($event, $this->logEvents)) {
+            if (!in_array($event, $this->logEvents, true)) {
                 $this->logEvents[] = $event;
             }
         }
@@ -398,7 +401,7 @@ class EventDispatcher implements EventDispatcherInterface
     {
         if ($this->options['log_events']
             && ($this->options['log_all_events']
-                || in_array($name, $this->logEvents)
+                || in_array($name, $this->logEvents, true)
             )
         ) {
             $this->createLogObject();
