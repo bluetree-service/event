@@ -18,12 +18,12 @@
     "bluetree-service/simple-log": "v0.6.*",
     "zendframework/zend-config": "3.1.*",
     "zendframework/zend-json": "3.0.*",
-    "mustangostang/spyc": "0.6.*",
-    "roave/security-advisories": "dev-master"
+    "mustangostang/spyc": "0.6.*"
   },
   "require-dev": {
     "satooshi/php-coveralls": "1.0.*",
-    "phpunit/phpunit": "4.8.35"
+    "phpunit/phpunit": "4.8.35",
+    "roave/security-advisories": "dev-master"
   },
   "autoload": {
     "psr-4": {
