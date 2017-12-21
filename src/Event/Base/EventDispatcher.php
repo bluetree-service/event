@@ -65,6 +65,7 @@ class EventDispatcher implements EventDispatcherInterface
      * create manage instance
      *
      * @param array $options
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $options = [])
     {
@@ -184,12 +185,14 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * allow to call event listeners functions
      *
-     * @param callable $listener
+     * @param string $listener
      * @param EventInterface $event
      */
-    protected function callFunction(callable $listener, EventInterface $event)
+    protected function callFunction($listener, EventInterface $event)
     {
-        $listener($event);
+        if (is_callable($listener)) {
+            call_user_func($listener, $event);
+        }
     }
 
     /**
