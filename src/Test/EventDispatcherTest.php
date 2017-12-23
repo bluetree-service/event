@@ -314,7 +314,7 @@ class EventDispatcherTest extends TestCase
                 'log_config' => [
                     'log_path' => './log',
                     'level' => 'debug',
-                    'storage' => '\SimpleLog\Storage\File',
+                    'storage' => \SimpleLog\Storage\File::class,
                 ],
                 'events' => [],
             ],
