@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## 0.6.0.5 - 2017-12-23
+### Changed
+* Fixed repository link in composer.json
+* Added scrutinizer support
+* Added phpunit whitelist to fix building on travis
+* roave/security-advisories moved into 
+
 ## 0.6.0.4 - 2017-11-26
 ### Changed
 * Fixed repository link in composer.json
