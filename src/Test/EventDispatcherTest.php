@@ -18,7 +18,7 @@ class EventDispatcherTest extends TestCase
     /**
      * name of test event log file
      */
-    const EVENT_LOG_NAME = '/events.log';
+    const EVENT_LOG_NAME = '/debug.log';
 
     /**
      * store information that even was triggered
@@ -39,7 +39,7 @@ class EventDispatcherTest extends TestCase
      */
     protected function setUp()
     {
-        $this->logPath = dirname(__FILE__) . '/log';
+        $this->logPath = __DIR__ . '/log';
 
         $this->clearLog();
     }
@@ -310,8 +310,12 @@ class EventDispatcherTest extends TestCase
                 'log_events' => false,
                 'log_all_events' => true,
                 'from_file' => false,
-                'log_path' => false,
                 'log_object' => false,
+                'log_config' => [
+                    'log_path' => './log',
+                    'level' => 'debug',
+                    'storage' => '\SimpleLog\Storage\File',
+                ],
                 'events' => [],
             ],
             $instance->getConfiguration()
@@ -346,8 +350,8 @@ class EventDispatcherTest extends TestCase
     public function testEventLog()
     {
         $instance = new EventDispatcher([
-            'log_events'    => true,
-            'log_path'      => $this->logPath,
+            'log_events' => true,
+            'log_config' => ['log_path' => $this->logPath],
         ]);
         $instance->setEventConfiguration([
             'test_event' => [
@@ -489,7 +493,7 @@ class EventDispatcherTest extends TestCase
             $extension = 'php';
         }
 
-        return dirname(__FILE__) . '/testConfig/config.' . $extension;
+        return __DIR__ . '/testConfig/config.' . $extension;
     }
 
     /**

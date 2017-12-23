@@ -49,8 +49,12 @@ class EventDispatcher implements EventDispatcherInterface
         'log_events' => false,
         'log_all_events' => true,
         'from_file' => false,
-        'log_path' => false,
         'log_object' => false,
+        'log_config' => [
+            'log_path' => './log',
+            'level' => 'debug',
+            'storage' => \SimpleLog\Storage\File::class,
+        ],
         'events' => [],
     ];
 
@@ -69,7 +73,7 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function __construct(array $options = [])
     {
-        $this->options = array_merge($this->options, $options);
+        $this->options = array_replace_recursive($this->options, $options);
 
         if ($this->options['from_file']) {
             $this->readEventConfiguration(
@@ -426,10 +430,6 @@ class EventDispatcher implements EventDispatcherInterface
                     'event_name' => $name,
                     'listener' => $data,
                     'status' => $status
-                ],
-                [
-                    'log_path' => $this->options['log_path'],
-                    'type' => 'events',
                 ]
             );
         }
@@ -450,7 +450,7 @@ class EventDispatcher implements EventDispatcherInterface
             ) {
                 $this->loggerInstance = $this->options['log_object'];
             } else {
-                $this->loggerInstance = new Log;
+                $this->loggerInstance = new Log($this->options['log_config']);
             }
         }
 
