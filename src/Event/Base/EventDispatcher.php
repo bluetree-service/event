@@ -203,18 +203,15 @@ class EventDispatcher implements EventDispatcherInterface
      * read configuration from file
      *
      * @param mixed $path
-     * @param string|null $type
+     * @param string $type
      * @return $this
      * @throws \InvalidArgumentException
      */
     public function readEventConfiguration($path, $type)
     {
-        if ($type) {
-            $config = $this->configurationStrategy($path, $type);
-            $this->setEventConfiguration($config);
-        }
+        $config = $this->configurationStrategy($path, $type);
 
-        return $this;
+        return $this->setEventConfiguration($config);
     }
 
     /**
@@ -401,7 +398,7 @@ class EventDispatcher implements EventDispatcherInterface
      *
      * @param string $name
      * @param mixed $eventListener
-     * @param bool $status
+     * @param bool|string $status
      * @return $this
      */
     protected function makeLogEvent($name, $eventListener, $status)
