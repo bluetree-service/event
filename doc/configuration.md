@@ -15,9 +15,17 @@ Available options:
 * **from_file** - Allow to load configuration from file (`file_path` | `false` default: `false`)
 * **log_events** - Allow to log events to log file (`true` | `false` default: `false`)
 * **log_all_events** - Allow to log all events to log file, otherwise log only specified one (`true` | `false` default: `true`)
-* **log_path** - Path to log file
 * **log_object** - Namespace of class, or log object to handle log, default is: `\SimpleLog\Log` (Must be instance of `\SimpleLog\LogInterface`)
 * **events** - Complete list of events to handle with event object and listeners
+* **log_config** - 
+
+'log_config' => [
+            'log_path' => './log',
+            'level' => 'debug',
+            'storage' => \SimpleLog\Storage\File::class,
+        ],
+
+* **log_path** - Path to log file
 
 ## Configuration EventDispatcher via methods
 Some of configuration options can be changed by some special methods. There are
