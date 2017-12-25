@@ -17,15 +17,10 @@ Available options:
 * **log_all_events** - Allow to log all events to log file, otherwise log only specified one (`true` | `false` default: `true`)
 * **log_object** - Namespace of class, or log object to handle log, default is: `\SimpleLog\Log` (Must be instance of `\SimpleLog\LogInterface`)
 * **events** - Complete list of events to handle with event object and listeners
-* **log_config** - 
-
-'log_config' => [
-            'log_path' => './log',
-            'level' => 'debug',
-            'storage' => \SimpleLog\Storage\File::class,
-        ],
-
-* **log_path** - Path to log file
+* **log_config** - Configuration for SimpleLog object
+    * **log_path** -  Path to log file (default: ./log)
+    * **level** - (default: debug)
+    * **storage** - (default: \SimpleLog\Storage\File)
 
 ## Configuration EventDispatcher via methods
 Some of configuration options can be changed by some special methods. There are

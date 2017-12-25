@@ -54,7 +54,8 @@ All event listener execution return status for log file.
 ## Extending Log class
 Format of log message can be changed by creating own Log class and inject
 new instance to event dispatcher. New class should implements `LogInterface` and
-have one public method `makeLog` that get array of parameters to log event.
+have one public method `makeLog` that get array of parameters to log event.  
+`SimpleLog` is compatible with __PSR-3__.
 
 ## Log events methods
 
