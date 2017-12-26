@@ -140,6 +140,20 @@ class EventDispatcherTest extends TestCase
     }
 
     /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Incorrect configuration type: incorrect
+     */
+    public function testTryToLoadConfigWithIncorrectType()
+    {
+        $eventDispatcher = new EventDispatcher;
+
+        $eventDispatcher->readEventConfiguration(
+            $this->getEventFileConfigPath('incorrect'),
+            'incorrect'
+        );
+    }
+
+    /**
      * test that event is called correctly
      */
     public function testTriggerEvent()
