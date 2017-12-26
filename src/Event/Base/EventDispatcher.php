@@ -11,6 +11,7 @@ namespace BlueEvent\Event\Base;
 
 use BlueEvent\Event\Base\Interfaces\EventDispatcherInterface;
 use BlueEvent\Event\Base\Interfaces\EventInterface;
+use BlueEvent\Event\BaseEvent;
 use Zend\Config\Reader;
 use SimpleLog\Log;
 
@@ -147,16 +148,29 @@ class EventDispatcher implements EventDispatcherInterface
                 break;
             }
 
-            try {
-                $this->callFunction($eventListener, $event);
-                $status = self::EVENT_STATUS_OK;
-            } catch (\Exception $e) {
-                $this->addError($e);
-                $status = self::EVENT_STATUS_ERROR;
-            }
-
-            $this->makeLogEvent($name, $eventListener, $status);
+            $this->executeListener($eventListener, $event, $name);
         }
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $eventListener
+     * @param EventInterface $event
+     * @param string $name
+     * @return $this
+     */
+    protected function executeListener($eventListener, EventInterface $event, $name)
+    {
+        try {
+            $this->callFunction($eventListener, $event);
+            $status = self::EVENT_STATUS_OK;
+        } catch (\Exception $e) {
+            $this->addError($e);
+            $status = self::EVENT_STATUS_ERROR;
+        }
+
+        $this->makeLogEvent($name, $eventListener, $status);
 
         return $this;
     }
@@ -173,7 +187,7 @@ class EventDispatcher implements EventDispatcherInterface
     {
         if (!array_key_exists($eventName, $this->options['events'])) {
             $this->options['events'][$eventName] = [
-                'object' => 'BlueEvent\Event\BaseEvent',
+                'object' =>BaseEvent::class,
                 'listeners' => $listeners,
             ];
         }
@@ -189,7 +203,7 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * allow to call event listeners functions
      *
-     * @param string $listener
+     * @param mixed $listener
      * @param EventInterface $event
      */
     protected function callFunction($listener, EventInterface $event)
@@ -224,35 +238,33 @@ class EventDispatcher implements EventDispatcherInterface
      */
     protected function configurationStrategy($path, $type)
     {
-        $config = [];
-
         if (!file_exists($path)) {
-            throw new \InvalidArgumentException('File ' . $path . 'don\'t exists.');
+            throw new \InvalidArgumentException('File ' . $path . ' don\'t exists.');
         }
 
         switch ($type) {
             case 'array':
-                $config = include $path;
-                break;
+                return include $path;
+
             case 'ini':
                 $reader = new Reader\Ini;
-                $config = $reader->fromFile($path);
-                break;
+                return $reader->fromFile($path);
+
             case 'xml':
                 $reader = new Reader\Xml;
-                $config = $reader->fromFile($path);
-                break;
+                return $reader->fromFile($path);
+
             case 'json':
                 $reader = new Reader\Json;
-                $config = $reader->fromFile($path);
-                break;
+                return $reader->fromFile($path);
+
             case 'yaml':
                 $reader = new Reader\Yaml(['Spyc','YAMLLoadString']);
-                $config = $reader->fromFile($path);
-                break;
-        }
+                return $reader->fromFile($path);
 
-        return $config;
+            default:
+                throw new \InvalidArgumentException('Incorrect configuration type: ' . $type);
+        }
     }
 
     /**
@@ -410,28 +422,34 @@ class EventDispatcher implements EventDispatcherInterface
         ) {
             $this->createLogObject();
 
-            switch (true) {
-                case $eventListener instanceof \Closure:
-                    $data = 'Closure';
-                    break;
-                case is_array($eventListener):
-                    $data = get_class($eventListener[0]) . '::' . $eventListener[1];
-                    break;
-                default:
-                    $data = $eventListener;
-                    break;
-            }
-
             $this->loggerInstance->makeLog(
                 [
                     'event_name' => $name,
-                    'listener' => $data,
+                    'listener' => $this->getListenerData($eventListener),
                     'status' => $status
                 ]
             );
         }
 
         return $this;
+    }
+
+    /**
+     * @param mixed $eventListener
+     * @return string
+     */
+    protected function getListenerData($eventListener)
+    {
+        switch (true) {
+            case $eventListener instanceof \Closure:
+                return 'Closure';
+
+            case is_array($eventListener):
+                return get_class($eventListener[0]) . '::' . $eventListener[1];
+
+            default:
+                return $eventListener;
+        }
     }
 
     /**
