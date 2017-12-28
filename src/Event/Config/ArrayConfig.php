@@ -1,6 +1,6 @@
 <?php
 
-namespace Config;
+namespace BlueEvent\Event\Config;
 
 class ArrayConfig implements ConfigReader
 {
