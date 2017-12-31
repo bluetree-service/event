@@ -36,29 +36,15 @@ class EventLog
     {
         $this->options = $logConfig;
 
-        $this->createLogObject();
-    }
-
-    /**
-     * create log object instance
-     *
-     * @return $this
-     */
-    public function createLogObject()
-    {
-        if (!$this->loggerInstance) {
-            if ($this->options['log_object']
-                && $this->options['log_object'] instanceof \SimpleLog\LogInterface
-            ) {
-                $this->loggerInstance = $this->options['log_object'];
-            } else {
-                $this->loggerInstance = new Log($this->options['log_config']);
-            }
+        if ($this->options['log_object']
+            && $this->options['log_object'] instanceof \SimpleLog\LogInterface
+        ) {
+            $this->loggerInstance = $this->options['log_object'];
+        } else {
+            $this->loggerInstance = new Log($this->options['log_config']);
         }
-
-        return $this;
     }
-    
+
     /**
      * check that event data can be logged and create log message
      *
