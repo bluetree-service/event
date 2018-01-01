@@ -7,7 +7,7 @@
  * @author      Michał Adamiak    <chajr@bluetree.pl>
  * @copyright   chajr/bluetree
  */
-namespace BlueEvent\Test\Config;
+namespace BlueEventTest\Config;
 
 use BlueEvent\Event\Config\ArrayConfig;
 use PHPUnit\Framework\TestCase;

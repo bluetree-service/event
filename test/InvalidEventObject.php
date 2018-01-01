@@ -1,8 +1,8 @@
 <?php
 
-namespace BlueEvent\Test;
+namespace BlueEventTest;
 
-class IncorrectEventDispatcher
+class InvalidEventObject
 {
     public function __construct()
     {

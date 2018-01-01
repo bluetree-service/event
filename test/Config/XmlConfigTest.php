@@ -7,18 +7,18 @@
  * @author      Michał Adamiak    <chajr@bluetree.pl>
  * @copyright   chajr/bluetree
  */
-namespace BlueEvent\Test\Config;
+namespace BlueEventTest\Config;
 
-use BlueEvent\Event\Config\YamlConfig;
+use BlueEvent\Event\Config\XmlConfig;
 use PHPUnit\Framework\TestCase;
 
-class YamlConfigTest extends TestCase
+class XmlConfigTest extends TestCase
 {
     public function testLoadConfig()
     {
-        $arrayConfig = new YamlConfig;
+        $arrayConfig = new XmlConfig;
         $config = $arrayConfig->readConfig(
-            __DIR__ . '/testConfig/config.yaml'
+            __DIR__ . '/testConfig/config.xml'
         );
 
         $this->assertEquals(

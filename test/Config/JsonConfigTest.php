@@ -7,18 +7,18 @@
  * @author      Michał Adamiak    <chajr@bluetree.pl>
  * @copyright   chajr/bluetree
  */
-namespace BlueEvent\Test\Config;
+namespace BlueEventTest\Config;
 
-use BlueEvent\Event\Config\XmlConfig;
+use BlueEvent\Event\Config\JsonConfig;
 use PHPUnit\Framework\TestCase;
 
-class XmlConfigTest extends TestCase
+class JsonConfigTest extends TestCase
 {
     public function testLoadConfig()
     {
-        $arrayConfig = new XmlConfig;
+        $arrayConfig = new JsonConfig;
         $config = $arrayConfig->readConfig(
-            __DIR__ . '/testConfig/config.xml'
+            __DIR__ . '/testConfig/config.json'
         );
 
         $this->assertEquals(

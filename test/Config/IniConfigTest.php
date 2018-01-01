@@ -7,18 +7,18 @@
  * @author      Michał Adamiak    <chajr@bluetree.pl>
  * @copyright   chajr/bluetree
  */
-namespace BlueEvent\Test\Config;
+namespace BlueEventTest\Config;
 
-use BlueEvent\Event\Config\JsonConfig;
+use BlueEvent\Event\Config\IniConfig;
 use PHPUnit\Framework\TestCase;
 
-class JsonConfigTest extends TestCase
+class IniConfigTest extends TestCase
 {
     public function testLoadConfig()
     {
-        $arrayConfig = new JsonConfig;
+        $arrayConfig = new IniConfig;
         $config = $arrayConfig->readConfig(
-            __DIR__ . '/testConfig/config.json'
+            __DIR__ . '/testConfig/config.ini'
         );
 
         $this->assertEquals(

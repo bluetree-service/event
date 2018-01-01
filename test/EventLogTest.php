@@ -1,5 +1,5 @@
 <?php
-namespace BlueEvent\Test;
+namespace BlueEventTest;
 
 use PHPUnit\Framework\TestCase;
 use BlueEvent\Event\Base\EventLog;

@@ -7,18 +7,18 @@
  * @author      Michał Adamiak    <chajr@bluetree.pl>
  * @copyright   chajr/bluetree
  */
-namespace BlueEvent\Test\Config;
+namespace BlueEventTest\Config;
 
-use BlueEvent\Event\Config\IniConfig;
+use BlueEvent\Event\Config\YamlConfig;
 use PHPUnit\Framework\TestCase;
 
-class IniConfigTest extends TestCase
+class YamlConfigTest extends TestCase
 {
     public function testLoadConfig()
     {
-        $arrayConfig = new IniConfig;
+        $arrayConfig = new YamlConfig;
         $config = $arrayConfig->readConfig(
-            __DIR__ . '/testConfig/config.ini'
+            __DIR__ . '/testConfig/config.yaml'
         );
 
         $this->assertEquals(

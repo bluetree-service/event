@@ -7,7 +7,7 @@
  * @author      Michał Adamiak    <chajr@bluetree.pl>
  * @copyright   chajr/bluetree
  */
-namespace BlueEvent\Test;
+namespace BlueEventTest;
 
 use BlueEvent\Event\Base\Interfaces\EventInterface;
 use BlueEvent\Event\Base\EventDispatcher;
@@ -163,7 +163,7 @@ class EventDispatcherTest extends TestCase
             'test_event' => [
                 'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    'BlueEvent\Test\EventDispatcherTest::trigger',
+                    'BlueEventTest\EventDispatcherTest::trigger',
                     function ($event) {
                         /** @var $event \BlueEvent\Event\BaseEvent */
                         self::$eventTriggered += $event->getEventParameters()['value'];
@@ -196,7 +196,7 @@ class EventDispatcherTest extends TestCase
             'test_event' => [
                 'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    'BlueEvent\Test\EventDispatcherTest::triggerStop',
+                    'BlueEventTest\EventDispatcherTest::triggerStop',
                     function ($event) {
                         /** @var $event \BlueEvent\Event\BaseEvent */
                         self::$eventTriggered += $event->getEventParameters()['value'];
@@ -241,7 +241,7 @@ class EventDispatcherTest extends TestCase
             'test_event' => [
                 'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    'BlueEvent\Test\EventDispatcherTest::trigger'
+                    'BlueEventTest\EventDispatcherTest::trigger'
                 ]
             ],
         ]);
@@ -271,7 +271,7 @@ class EventDispatcherTest extends TestCase
             'test_event' => [
                 'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    'BlueEvent\Test\EventDispatcherTest::triggerError',
+                    'BlueEventTest\EventDispatcherTest::triggerError',
                 ]
             ],
         ]);
@@ -303,7 +303,7 @@ class EventDispatcherTest extends TestCase
 
         $instance->setEventConfiguration([
             'invalid_object_event' => [
-                'object'    => 'BlueEvent\Test\InvalidEventObject',
+                'object'    => InvalidEventObject::class,
                 'listeners' => []
             ],
         ]);
@@ -371,8 +371,8 @@ class EventDispatcherTest extends TestCase
             'test_event' => [
                 'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    ['BlueEvent\Test\EventDispatcherTest', 'trigger'],
-                    'BlueEvent\Test\EventDispatcherTest::triggerError',
+                    [__CLASS__, 'trigger'],
+                    'BlueEventTest\EventDispatcherTest::triggerError',
                     function () {
                     }
                 ]
@@ -427,7 +427,7 @@ class EventDispatcherTest extends TestCase
             'test_event' => [
                 'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    'BlueEvent\Test\EventDispatcherTest::trigger',
+                    'BlueEventTest\EventDispatcherTest::trigger',
                 ]
             ],
         ]);
@@ -454,7 +454,7 @@ class EventDispatcherTest extends TestCase
             'test_event' => [
                 'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    'BlueEvent\Test\EventDispatcherTest::trigger',
+                    'BlueEventTest\EventDispatcherTest::trigger',
                 ]
             ],
         ]);

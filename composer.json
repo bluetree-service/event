@@ -29,5 +29,10 @@
     "psr-4": {
       "BlueEvent\\": "src/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "BlueEventTest\\": "test/"
+    }
   }
 }

@@ -2,20 +2,20 @@
 <phpunit bootstrap="vendor/autoload.php" colors="true">
     <testsuites>
         <testsuite name="config">
-            <file>src/Test/Config/ArrayConfigTest.php</file>
-            <file>src/Test/Config/IniConfigTest.php</file>
-            <file>src/Test/Config/JsonConfigTest.php</file>
-            <file>src/Test/Config/XmlConfigTest.php</file>
-            <file>src/Test/Config/YamlConfigTest.php</file>
+            <file>test/Config/ArrayConfigTest.php</file>
+            <file>test/Config/IniConfigTest.php</file>
+            <file>test/Config/JsonConfigTest.php</file>
+            <file>test/Config/XmlConfigTest.php</file>
+            <file>test/Config/YamlConfigTest.php</file>
         </testsuite>
         <testsuite name="log">
-            <file>src/Test/EventLogTest.php</file>
+            <file>test/EventLogTest.php</file>
         </testsuite>
         <testsuite name="event">
-            <file>src/Test/BaseEventTest.php</file>
+            <file>test/BaseEventTest.php</file>
         </testsuite>
         <testsuite name="dispatcher">
-            <file>src/Test/EventDispatcherTest.php</file>
+            <file>test/EventDispatcherTest.php</file>
         </testsuite>
     </testsuites>
     <filter>

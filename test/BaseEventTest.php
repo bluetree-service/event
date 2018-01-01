@@ -7,7 +7,7 @@
  * @author      Michał Adamiak    <chajr@bluetree.pl>
  * @copyright   chajr/bluetree
  */
-namespace BlueEvent\Test;
+namespace BlueEventTest;
 
 use BlueEvent\Event\Base\EventDispatcher;
 use PHPUnit\Framework\TestCase;
