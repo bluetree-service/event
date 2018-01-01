@@ -344,9 +344,9 @@ class EventDispatcherTest extends TestCase
         $instance = new EventDispatcher;
 
         $this->assertFalse($instance->getConfiguration('log_events'));
-        $instance->disableEventLog();
+        $instance->setEventLog(false);
         $this->assertFalse($instance->getConfiguration('log_events'));
-        $instance->enableEventLog();
+        $instance->setEventLog(true);
         $this->assertTrue($instance->getConfiguration('log_events'));
 
         $instance = new EventDispatcher([
@@ -354,7 +354,7 @@ class EventDispatcherTest extends TestCase
         ]);
 
         $this->assertTrue($instance->getConfiguration('log_events'));
-        $instance->disableEventLog();
+        $instance->setEventLog(false);
         $this->assertFalse($instance->getConfiguration('log_events'));
     }
 
@@ -371,7 +371,7 @@ class EventDispatcherTest extends TestCase
             'test_event' => [
                 'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    'BlueEvent\Test\EventDispatcherTest::trigger',
+                    ['BlueEvent\Test\EventDispatcherTest', 'trigger'],
                     'BlueEvent\Test\EventDispatcherTest::triggerError',
                     function () {
                     }
@@ -392,16 +392,16 @@ class EventDispatcherTest extends TestCase
         $instance = new EventDispatcher([
             'log_all_events'    => true,
             'log_path'          =>  $this->logPath,
-            'log_object'        => (new \SimpleLog\Log),
+            'log_object'        => new \SimpleLog\Log,
         ]);
 
-        $instance->enableEventLog();
+        $instance->setEventLog(true);
 
         $instance->setEventConfiguration([
             'test_event' => [
                 'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    [new \BlueEvent\Test\EventDispatcherTest, 'trigger']
+                    [new self, 'trigger']
                 ]
             ],
         ]);
@@ -419,7 +419,7 @@ class EventDispatcherTest extends TestCase
             'log_path' =>  $this->logPath
         ]);
 
-        $instance->enableEventLog()->logAllEvents();
+        $instance->setEventLog(true)->logAllEvents();
 
         $this->assertTrue($instance->getConfiguration('log_all_events'));
 
@@ -447,7 +447,7 @@ class EventDispatcherTest extends TestCase
             'log_all_events'    => false
         ]);
 
-        $instance->enableEventLog();
+        $instance->setEventLog(true);
         $instance->logEvent(['test_event']);
 
         $instance->setEventConfiguration([
@@ -507,7 +507,7 @@ class EventDispatcherTest extends TestCase
             $extension = 'php';
         }
 
-        return __DIR__ . '/testConfig/config.' . $extension;
+        return __DIR__ . '/Config/testConfig/config.' . $extension;
     }
 
     /**
@@ -520,6 +520,8 @@ class EventDispatcherTest extends TestCase
 
     /**
      * method to test event triggering
+     *
+     * @throws \Exception
      */
     public static function triggerError()
     {

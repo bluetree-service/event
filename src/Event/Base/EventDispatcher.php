@@ -12,8 +12,6 @@ namespace BlueEvent\Event\Base;
 use BlueEvent\Event\Base\Interfaces\EventDispatcherInterface;
 use BlueEvent\Event\Base\Interfaces\EventInterface;
 use BlueEvent\Event\BaseEvent;
-use Zend\Config\Reader;
-use SimpleLog\Log;
 
 class EventDispatcher implements EventDispatcherInterface
 {
@@ -36,7 +34,7 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * store logger instance
      *
-     * @var \SimpleLog\LogInterface
+     * @var EventLog
      */
     protected $loggerInstance;
 
@@ -60,13 +58,6 @@ class EventDispatcher implements EventDispatcherInterface
     ];
 
     /**
-     * store all event names to log
-     *
-     * @var array
-     */
-    protected $logEvents = [];
-
-    /**
      * create manage instance
      *
      * @param array $options
@@ -82,6 +73,8 @@ class EventDispatcher implements EventDispatcherInterface
                 $this->options['type']
             );
         }
+
+        $this->loggerInstance = new EventLog($this->options);
     }
 
     /**
@@ -144,7 +137,7 @@ class EventDispatcher implements EventDispatcherInterface
 
         foreach ($this->options['events'][$name]['listeners'] as $eventListener) {
             if ($event->isPropagationStopped()) {
-                $this->makeLogEvent($name, $eventListener, self::EVENT_STATUS_BREAK);
+                $this->loggerInstance->makeLogEvent($name, $eventListener, self::EVENT_STATUS_BREAK);
                 break;
             }
 
@@ -170,7 +163,7 @@ class EventDispatcher implements EventDispatcherInterface
             $status = self::EVENT_STATUS_ERROR;
         }
 
-        $this->makeLogEvent($name, $eventListener, $status);
+        $this->loggerInstance->makeLogEvent($name, $eventListener, $status);
 
         return $this;
     }
@@ -223,74 +216,36 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function readEventConfiguration($path, $type)
     {
-        $config = $this->configurationStrategy($path, $type);
-
-        return $this->setEventConfiguration($config);
-    }
-
-    /**
-     * call and read specified configuration
-     *
-     * @param string $path
-     * @param string $type
-     * @return array
-     * @throws \InvalidArgumentException
-     */
-    protected function configurationStrategy($path, $type)
-    {
         if (!file_exists($path)) {
-            throw new \InvalidArgumentException('File ' . $path . ' don\'t exists.');
+            throw new \InvalidArgumentException('File ' . $path . 'don\'t exists.');
         }
 
-        switch ($type) {
-            case 'array':
-                return include $path;
+        $name = '\BlueEvent\Event\Config\\' . ucfirst($type) . 'Config';
 
-            case 'ini':
-                $reader = new Reader\Ini;
-                return $reader->fromFile($path);
-
-            case 'xml':
-                $reader = new Reader\Xml;
-                return $reader->fromFile($path);
-
-            case 'json':
-                $reader = new Reader\Json;
-                return $reader->fromFile($path);
-
-            case 'yaml':
-                $reader = new Reader\Yaml(['Spyc','YAMLLoadString']);
-                return $reader->fromFile($path);
-
-            default:
-                throw new \InvalidArgumentException('Incorrect configuration type: ' . $type);
+        if (!class_exists($name)) {
+            throw new \InvalidArgumentException('Incorrect configuration type: ' . $type);
         }
+
+        /** @var \BlueEvent\Event\Config\ConfigReader $reader */
+        $reader = new $name;
+
+        return $this->setEventConfiguration($reader->readConfig($path));
     }
 
     /**
-     * allow to enable event logging
+     * disable or enable event logging (true to enable)
      *
+     * @param bool $logEvents
      * @return $this
      */
-    public function enableEventLog()
+    public function setEventLog($logEvents)
     {
-        $this->options['log_events'] = true;
+        $this->options['log_events'] = (bool)$logEvents;
         return $this;
     }
 
     /**
-     * allow to disable event logging
-     *
-     * @return $this
-     */
-    public function disableEventLog()
-    {
-        $this->options['log_events'] = false;
-        return $this;
-    }
-
-    /**
-     * log given events
+     * log given events by given name
      *
      * @param array $events
      * @return $this
@@ -298,8 +253,8 @@ class EventDispatcher implements EventDispatcherInterface
     public function logEvent(array $events = [])
     {
         foreach ($events as $event) {
-            if (!in_array($event, $this->logEvents, true)) {
-                $this->logEvents[] = $event;
+            if (!in_array($event, $this->loggerInstance->logEvents, true)) {
+                $this->loggerInstance->logEvents[] = $event;
             }
         }
 
@@ -340,7 +295,7 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function getAllEventsToLog()
     {
-        return $this->logEvents;
+        return $this->loggerInstance->logEvents;
     }
 
     /**
@@ -401,73 +356,6 @@ class EventDispatcher implements EventDispatcherInterface
             'trace'     => $exception->getTraceAsString(),
         ];
         $this->hasErrors = true;
-
-        return $this;
-    }
-
-    /**
-     * check that event data can be logged and create log message
-     *
-     * @param string $name
-     * @param mixed $eventListener
-     * @param bool|string $status
-     * @return $this
-     */
-    protected function makeLogEvent($name, $eventListener, $status)
-    {
-        if ($this->options['log_events']
-            && ($this->options['log_all_events']
-                || in_array($name, $this->logEvents, true)
-            )
-        ) {
-            $this->createLogObject();
-
-            $this->loggerInstance->makeLog(
-                [
-                    'event_name' => $name,
-                    'listener' => $this->getListenerData($eventListener),
-                    'status' => $status
-                ]
-            );
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param mixed $eventListener
-     * @return string
-     */
-    protected function getListenerData($eventListener)
-    {
-        switch (true) {
-            case $eventListener instanceof \Closure:
-                return 'Closure';
-
-            case is_array($eventListener):
-                return get_class($eventListener[0]) . '::' . $eventListener[1];
-
-            default:
-                return $eventListener;
-        }
-    }
-
-    /**
-     * create log object instance
-     *
-     * @return $this
-     */
-    protected function createLogObject()
-    {
-        if (!$this->loggerInstance) {
-            if ($this->options['log_object']
-                && $this->options['log_object'] instanceof \SimpleLog\LogInterface
-            ) {
-                $this->loggerInstance = $this->options['log_object'];
-            } else {
-                $this->loggerInstance = new Log($this->options['log_config']);
-            }
-        }
 
         return $this;
     }
