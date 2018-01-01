@@ -21,8 +21,7 @@ interface EventDispatcherInterface
     public function getAllEventsToLog();
     public function logAllEvents();
     public function getConfiguration();
-    public function disableEventLog();
-    public function enableEventLog();
+    public function setEventLog($logEvents);
     public function setEventConfiguration(array $config);
     public function getEventConfiguration();
     public function addEventListener($eventName, array $listeners);
