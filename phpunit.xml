@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <phpunit bootstrap="vendor/autoload.php" colors="true">
     <testsuites>
+        <testsuite name="config">
+            <file>src/Test/Config/ArrayConfigTest.php</file>
+            <file>src/Test/Config/IniConfigTest.php</file>
+            <file>src/Test/Config/JsonConfigTest.php</file>
+            <file>src/Test/Config/XmlConfigTest.php</file>
+            <file>src/Test/Config/YamlConfigTest.php</file>
+        </testsuite>
+        <testsuite name="log">
+            <file>src/Test/EventLogTest.php</file>
+        </testsuite>
         <testsuite name="event">
             <file>src/Test/BaseEventTest.php</file>
         </testsuite>
