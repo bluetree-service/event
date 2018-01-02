@@ -4,7 +4,8 @@ log system implemented into event dispatcher. Event dispatcher has ability to lo
 all events or only specified one.  
 All logs by default are stored in specified log file given in configuration.  
 To do that you can use `log_events` config given into `__constructor` or special
-method `enableEventLog`. That allow lo log events, by default log all events.
+method `setEventLog` with parameter with `true` value.
+That allow lo log events, by default log all events.
 
 Event is using by default `bluetree-service/simple-log` library in the newest
 available version.  
@@ -59,8 +60,7 @@ have one public method `makeLog` that get array of parameters to log event.
 
 ## Log events methods
 
-* **enableEventLog** - turn on log event
-* **disableEventLog** - turn off log events
+* **setEventLog** - Enable or disable event logging. To enable set on `true`, `false` to disable
 * **isLogEnabled** - return status of log events (true | false)
 * **logEvent** - Allow to log specified events
 * **logAllEvents** - turn on or off log all events by boolean value (must be off to log specified events)

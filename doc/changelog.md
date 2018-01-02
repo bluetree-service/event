@@ -1,11 +1,21 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## 0.6.1.0 - 2017-12-
+## 0.7.0.0 - 20180-01-02
 ### Changed
-* 
+* EventDispatcher refactor, some parts moved into separate classes
+* Reduced some code complexity
+* Tests moved into separate directory
 
 ## 0.6.0.5 - 2017-12-23
+### Changed
+* Added scrutinizer badge into README
+* Coverage update
+* Implement some fixes from static analyse
+* Libraries update
+* Some other code convention changes and fixes
+
+## 0.6.0.5 - 2017-12
 ### Changed
 * Fixed repository link in composer.json
 * Added scrutinizer support

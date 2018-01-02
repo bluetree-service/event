@@ -27,8 +27,7 @@ Some of configuration options can be changed by some special methods. There are
 three categories of that methods, first to turn on option, second to turn off
 and last to check that option is on or off.
 
-* **enableEventLog** - Set *log_events* option to `true`
-* **disableEventLog** - Set *log_events* option to `false`
+* **setEventLog** - Set *log_events* option to `true` or `false` to enable or disable event logging
 * **getConfiguration** - Return `EventDispatcher` configuration or single option if key is given as value
 * **logAllEvents** - Set *log_all_events* option to given parameter (will be split into separate methods in future)
 * **logEvent** - Allow to log specified events
