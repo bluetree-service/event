@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## 0.7.0.1 - 20180-01-22
+### Changed
+* Dependencies update (simple-log v0.7.1.1)
+
 ## 0.7.0.0 - 20180-01-02
 ### Changed
 * EventDispatcher refactor, some parts moved into separate classes
