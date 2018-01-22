@@ -8,21 +8,21 @@
     "packages": [
         {
             "name": "bluetree-service/simple-log",
-            "version": "v0.7.0.0",
+            "version": "v0.7.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bluetree-service/simple-log.git",
-                "reference": "7fc9ef85bc698719abd1f79a53fe56af09009052"
+                "reference": "16fb8d593610cbfc2e5606333251f0f714341790"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bluetree-service/simple-log/zipball/7fc9ef85bc698719abd1f79a53fe56af09009052",
-                "reference": "7fc9ef85bc698719abd1f79a53fe56af09009052",
+                "url": "https://api.github.com/repos/bluetree-service/simple-log/zipball/16fb8d593610cbfc2e5606333251f0f714341790",
+                "reference": "16fb8d593610cbfc2e5606333251f0f714341790",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.0",
-                "psr/log": "^1.0"
+                "php": ">=5.6.0",
+                "psr/log": "1.0.*"
             },
             "require-dev": {
                 "phpunit/phpunit": "4.8.35",
@@ -57,7 +57,7 @@
                 "messages",
                 "warning"
             ],
-            "time": "2017-08-24T13:46:10+00:00"
+            "time": "2018-01-21T17:14:04+00:00"
         },
         {
             "name": "mustangostang/spyc",
