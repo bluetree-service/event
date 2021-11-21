@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## 0.8.0.1 - 2021-11-21
+### Changed
+* Scrutinizer configuration
+* Doc fix
+
 ## 0.8.0.0 - 2021-11-21
 ### Added
 * PHP 7.1, 7.2, 7.3, 7.4, 8.0 support

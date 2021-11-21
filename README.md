@@ -72,7 +72,7 @@ libraries paste into `composer.json`:
 
 ### Requirements
 
-* PHP 5.6 or higher
+* PHP 7.1 or higher
 
 
 ## Change log
