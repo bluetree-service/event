@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 * Type declarations
 ### Removed
 * PHP 5.6 & 7.0 support
+* composer.lock from repository
 ### Changed
 * Some required libraries version
 * Some minor changes in code style
