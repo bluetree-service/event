@@ -9,7 +9,7 @@
 ##### Builds
 | Travis | Scrutinizer |
 |:---:|:---:|
-| [![Build Status](https://travis-ci.org/bluetree-service/event.svg)](https://travis-ci.org/bluetree-service/event) | [![Build Status](https://scrutinizer-ci.com/g/bluetree-service/event/badges/build.png?b=master)](https://scrutinizer-ci.com/g/bluetree-service/event/build-status/master) |
+| [![Build Status](https://app.travis-ci.com/bluetree-service/event.svg?branch=master)](https://app.travis-ci.com/github/bluetree-service/event) | [![Build Status](https://scrutinizer-ci.com/g/bluetree-service/event/badges/build.png?b=master)](https://scrutinizer-ci.com/g/bluetree-service/event/build-status/master) |
 
 ##### Coverage
 | Coveralls | Scrutinizer |
@@ -17,9 +17,9 @@
 | [![Coverage Status](https://coveralls.io/repos/github/bluetree-service/event/badge.svg?branch=master)](https://coveralls.io/github/bluetree-service/event?branch=master) | [![Code Coverage](https://scrutinizer-ci.com/g/bluetree-service/event/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/bluetree-service/event/?branch=master) |
 
 ##### Quality
-| Code Climate | Scrutinizer | Sensio Labs |
+| Code Climate | Scrutinizer | SymfonyInsight |
 |:---:|:---:|:---:|
-| [![Code Climate](https://codeclimate.com/github/bluetree-service/event/badges/gpa.svg)](https://codeclimate.com/github/bluetree-service/event) | [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/bluetree-service/event/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/bluetree-service/event/?branch=master) | [![SensioLabsInsight](https://insight.sensiolabs.com/projects/1487084a-8f8d-4d4e-962d-59f036a67096/mini.png)](https://insight.sensiolabs.com/projects/1487084a-8f8d-4d4e-962d-59f036a67096) |
+| [![Code Climate](https://codeclimate.com/github/bluetree-service/event/badges/gpa.svg)](https://codeclimate.com/github/bluetree-service/event) | [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/bluetree-service/event/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/bluetree-service/event/?branch=master) | [![SymfonyInsight](https://insight.symfony.com/projects/50b60652-fb85-43d5-a56b-bbdddeb78eba/mini.svg)](https://insight.symfony.com/projects/50b60652-fb85-43d5-a56b-bbdddeb78eba) |
 |  | [![Code Intelligence Status](https://scrutinizer-ci.com/g/bluetree-service/event/badges/code-intelligence.svg?b=master)](https://scrutinizer-ci.com/code-intelligence) |  |
 
 
