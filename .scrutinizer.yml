@@ -9,10 +9,10 @@ build:
       php80:
         environment:
           php: 8.0
-    tests:
-        override:
-            -
-                command: 'vendor/bin/phpunit --coverage-clover=build/logs/clover.xml'
-                coverage:
-                    file: 'build/logs/clover.xml'
-                    format: 'clover'
+      analysis:
+        tests:
+          override:
+            - command: 'vendor/bin/phpunit --coverage-clover=build/logs/clover.xml'
+              analysis:
+                file: 'build/logs/clover.xml'
+                  format: 'clover'
