@@ -14,7 +14,7 @@
     }
   ],
   "require": {
-    "php": ">=7.1",
+    "php": ">=7.3",
     "bluetree-service/simple-log": "v0.7.*",
     "laminas/laminas-config": "3.7.*",
     "laminas/laminas-json": "3.3.*",
