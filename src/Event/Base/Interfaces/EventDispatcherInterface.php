@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Event Dispatcher Class Interface
  *
@@ -7,13 +8,15 @@
  * @copyright   chajr/bluetree
  */
 
+declare(strict_types=1);
+
 namespace BlueEvent\Event\Base\Interfaces;
 
 interface EventDispatcherInterface
 {
     public function __construct(array $options = []);
-    public function triggerEvent($name, array $data = []);
-    public function readEventConfiguration($configuration, $type);
+    public function triggerEvent(string $name, array $data = []);
+    public function readEventConfiguration(string $configuration, string $type);
     public function logEvent();
     public function getErrors();
     public function hasErrors();
@@ -22,7 +25,7 @@ interface EventDispatcherInterface
     public function logAllEvents();
     public function getConfiguration();
     public function setEventLog($logEvents);
-    public function setEventConfiguration(array $config);
+    public function setEventConfiguration(array $events);
     public function getEventConfiguration();
-    public function addEventListener($eventName, array $listeners);
+    public function addEventListener(string $eventName, array $listeners);
 }

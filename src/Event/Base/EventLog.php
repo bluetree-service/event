@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BlueEvent\Event\Base;
 
 use SimpleLog\Log;
@@ -31,12 +33,14 @@ class EventLog
      * EventLog constructor.
      *
      * @param array $logConfig
+     * @throws \ReflectionException
      */
     public function __construct(array $logConfig)
     {
         $this->options = $logConfig;
 
-        if ($this->options['log_object']
+        if (
+            $this->options['log_object']
             && $this->options['log_object'] instanceof \SimpleLog\LogInterface
         ) {
             $this->loggerInstance = $this->options['log_object'];
@@ -53,11 +57,12 @@ class EventLog
      * @param bool|string $status
      * @return $this
      */
-    public function makeLogEvent($name, $eventListener, $status)
+    public function makeLogEvent(string $name, $eventListener, $status): self
     {
-        if ($this->options['log_events']
+        if (
+            $this->options['log_events']
             && ($this->options['log_all_events']
-                || in_array($name, $this->logEvents, true)
+                || \in_array($name, $this->logEvents, true)
             )
         ) {
             $this->loggerInstance->makeLog(
@@ -76,13 +81,13 @@ class EventLog
      * @param mixed $eventListener
      * @return string
      */
-    protected function getListenerData($eventListener)
+    protected function getListenerData($eventListener): string
     {
         switch (true) {
             case $eventListener instanceof \Closure:
                 return 'Closure';
 
-            case is_array($eventListener):
+            case \is_array($eventListener):
                 return $eventListener[0] . '::' . $eventListener[1];
 
             default:

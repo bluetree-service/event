@@ -1,4 +1,5 @@
 <?php
+
 namespace BlueEventTest;
 
 use PHPUnit\Framework\TestCase;
@@ -31,7 +32,7 @@ class EventLogTest extends TestCase
 
         $instance->logEvents[] = 'some_name';
 
-        $this->assertFileNotExists($this->logPath . EventDispatcherTest::EVENT_LOG_NAME);
+        $this->assertFileDoesNotExist($this->logPath . EventDispatcherTest::EVENT_LOG_NAME);
         $instance->makeLogEvent('some_name', 'some_listener', EventDispatcher::EVENT_STATUS_OK);
         $this->assertFileExists($this->logPath . EventDispatcherTest::EVENT_LOG_NAME);
     }
@@ -55,7 +56,7 @@ class EventLogTest extends TestCase
         $instance->logEvents[] = 'some_name';
         $instance->logEvents[] = 'some_name_2';
 
-        $this->assertFileNotExists($this->logPath . EventDispatcherTest::EVENT_LOG_NAME);
+        $this->assertFileDoesNotExist($this->logPath . EventDispatcherTest::EVENT_LOG_NAME);
         $instance->makeLogEvent('some_name', 'some_listener', EventDispatcher::EVENT_STATUS_OK);
         $instance->makeLogEvent(
             'some_name_2',
@@ -81,7 +82,7 @@ class EventLogTest extends TestCase
 
         $instance->logEvents[] = 'some_name';
 
-        $this->assertFileNotExists($this->logPath . EventDispatcherTest::EVENT_LOG_NAME);
+        $this->assertFileDoesNotExist($this->logPath . EventDispatcherTest::EVENT_LOG_NAME);
         $instance->makeLogEvent('some_name', ['class', 'method'], EventDispatcher::EVENT_STATUS_OK);
         $this->assertFileExists($this->logPath . EventDispatcherTest::EVENT_LOG_NAME);
     }
@@ -89,7 +90,7 @@ class EventLogTest extends TestCase
     /**
      * actions launched before test starts
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->logPath = __DIR__ . '/log';
 
@@ -108,7 +109,7 @@ class EventLogTest extends TestCase
     /**
      * actions launched after test was finished
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->clearLog();
     }

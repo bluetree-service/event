@@ -1,11 +1,21 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## 0.7.0.1 - 20180-01-22
+## 0.8.0.0 - 2021-11-21
+### Added
+* PHP 7.1, 7.2, 7.3, 7.4, 8.0 support
+* Type declarations
+### Removed
+* PHP 5.6 & 7.0 support
+### Changed
+* Some required libraries version
+* Some minor changes in code style
+
+## 0.7.0.1 - 2018-01-22
 ### Changed
 * Dependencies update (simple-log v0.7.1.1)
 
-## 0.7.0.0 - 20180-01-02
+## 0.7.0.0 - 2018-01-02
 ### Changed
 * EventDispatcher refactor, some parts moved into separate classes
 * Reduced some code complexity

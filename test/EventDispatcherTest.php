@@ -1,4 +1,5 @@
 <?php
+
 /**
  * test Event Dispatcher class
  *
@@ -37,7 +38,7 @@ class EventDispatcherTest extends TestCase
     /**
      * actions launched before test starts
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->logPath = __DIR__ . '/log';
 
@@ -126,12 +127,11 @@ class EventDispatcherTest extends TestCase
 
     /**
      * check for error if configuration file don't exists
-     *
-     * @expectedException \InvalidArgumentException
      */
-    public function testTryToLoadConfigFromMissingFile()
+    public function testTryToLoadConfigFromMissingFile(): void
     {
-        $eventDispatcher = new EventDispatcher;
+        $this->expectException(\InvalidArgumentException::class);
+        $eventDispatcher = new EventDispatcher();
 
         $eventDispatcher->readEventConfiguration(
             $this->getEventFileConfigPath('txt'),
@@ -139,13 +139,11 @@ class EventDispatcherTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Incorrect configuration type: incorrect
-     */
-    public function testTryToLoadConfigWithIncorrectType()
+    public function testTryToLoadConfigWithIncorrectType(): void
     {
-        $eventDispatcher = new EventDispatcher;
+        $this->expectExceptionMessage("Incorrect configuration type: incorrect");
+        $this->expectException(\InvalidArgumentException::class);
+        $eventDispatcher = new EventDispatcher();
 
         $eventDispatcher->readEventConfiguration(
             $this->getEventFileConfigPath('incorrect'),
@@ -294,12 +292,11 @@ class EventDispatcherTest extends TestCase
 
     /**
      * check for error if invalid object was declared as listener
-     *
-     * @expectedException \LogicException
      */
-    public function testGetInvalidEventObject()
+    public function testGetInvalidEventObject(): void
     {
-        $instance = new EventDispatcher;
+        $this->expectException(\LogicException::class);
+        $instance = new EventDispatcher();
 
         $instance->setEventConfiguration([
             'invalid_object_event' => [
@@ -361,7 +358,7 @@ class EventDispatcherTest extends TestCase
     /**
      * test that log file was created correctly
      */
-    public function testEventLog()
+    public function testEventLog(): void
     {
         $instance = new EventDispatcher([
             'log_events' => true,
@@ -379,7 +376,7 @@ class EventDispatcherTest extends TestCase
             ],
         ]);
 
-        $this->assertFileNotExists($this->logPath . self::EVENT_LOG_NAME);
+        $this->assertFileDoesNotExist($this->logPath . self::EVENT_LOG_NAME);
         $instance->triggerEvent('test_event');
         $this->assertFileExists($this->logPath . self::EVENT_LOG_NAME);
     }
@@ -595,7 +592,7 @@ class EventDispatcherTest extends TestCase
     /**
      * actions launched after test was finished
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->clearLog();
     }

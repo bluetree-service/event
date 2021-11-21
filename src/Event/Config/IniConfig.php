@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BlueEvent\Event\Config;
 
-use Zend\Config\Reader\Ini;
+use Laminas\Config\Reader\Ini;
 
 class IniConfig implements ConfigReader
 {
@@ -10,9 +12,9 @@ class IniConfig implements ConfigReader
      * @param string $path
      * @return array
      */
-    public function readConfig($path)
+    public function readConfig(string $path): array
     {
-        $reader = new Ini;
+        $reader = new Ini();
         return $reader->fromFile($path);
     }
 }

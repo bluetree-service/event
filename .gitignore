@@ -4,3 +4,4 @@ src/Test/log/events.log
 build
 log
 /nbproject/private/
+.phpunit.result.cache

@@ -14,15 +14,15 @@
     }
   ],
   "require": {
-    "php": ">=5.6.0",
+    "php": ">=7.1",
     "bluetree-service/simple-log": "v0.7.*",
-    "zendframework/zend-config": "3.1.*",
-    "zendframework/zend-json": "3.0.*",
+    "laminas/laminas-config": "3.7.*",
+    "laminas/laminas-json": "3.3.*",
     "mustangostang/spyc": "0.6.*"
   },
   "require-dev": {
-    "satooshi/php-coveralls": "1.0.*",
-    "phpunit/phpunit": "4.8.35",
+    "php-coveralls/php-coveralls": "^2.5",
+    "phpunit/phpunit": "^9.5",
     "roave/security-advisories": "dev-master"
   },
   "autoload": {

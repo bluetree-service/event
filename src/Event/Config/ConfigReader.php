@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BlueEvent\Event\Config;
 
 interface ConfigReader
@@ -8,5 +10,5 @@ interface ConfigReader
      * @param string $path
      * @return array
      */
-    public function readConfig($path);
+    public function readConfig(string $path): array;
 }

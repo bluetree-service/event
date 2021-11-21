@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Event Dispatcher Class
  *
@@ -6,6 +7,8 @@
  * @author      Michał Adamiak    <chajr@bluetree.pl>
  * @copyright   chajr/bluetree
  */
+
+declare(strict_types=1);
 
 namespace BlueEvent\Event\Base;
 
@@ -15,9 +18,9 @@ use BlueEvent\Event\BaseEvent;
 
 class EventDispatcher implements EventDispatcherInterface
 {
-    const EVENT_STATUS_OK       = 'ok';
-    const EVENT_STATUS_ERROR    = 'error';
-    const EVENT_STATUS_BREAK    = 'propagation_stop';
+    public const EVENT_STATUS_OK       = 'ok';
+    public const EVENT_STATUS_ERROR    = 'error';
+    public const EVENT_STATUS_BREAK    = 'propagation_stop';
 
     /**
      * @var bool
@@ -61,7 +64,7 @@ class EventDispatcher implements EventDispatcherInterface
      * create manage instance
      *
      * @param array $options
-     * @throws \InvalidArgumentException
+     * @throws \InvalidArgumentException|\ReflectionException
      */
     public function __construct(array $options = [])
     {
@@ -86,9 +89,9 @@ class EventDispatcher implements EventDispatcherInterface
      * @throws \LogicException
      * @throws \InvalidArgumentException
      */
-    protected function createEventObject($eventName, array $data)
+    protected function createEventObject(string $eventName, array $data): EventInterface
     {
-        if (!array_key_exists($eventName, $this->options['events'])) {
+        if (!\array_key_exists($eventName, $this->options['events'])) {
             throw new \InvalidArgumentException('Event is not defined.');
         }
 
@@ -108,7 +111,7 @@ class EventDispatcher implements EventDispatcherInterface
      * @param array $events
      * @return $this
      */
-    public function setEventConfiguration(array $events)
+    public function setEventConfiguration(array $events): self
     {
         $this->options['events'] = array_merge_recursive(
             $this->options['events'],
@@ -126,10 +129,9 @@ class EventDispatcher implements EventDispatcherInterface
      * @return $this
      * @throws \LogicException
      */
-    public function triggerEvent($name, array $data = [])
+    public function triggerEvent(string $name, array $data = []): self
     {
         try {
-            /** @var EventInterface $event */
             $event = $this->createEventObject($name, $data);
         } catch (\InvalidArgumentException $exception) {
             return $this;
@@ -148,12 +150,12 @@ class EventDispatcher implements EventDispatcherInterface
     }
 
     /**
-     * @param mixed $eventListener
+     * @param callable|string $eventListener
      * @param EventInterface $event
      * @param string $name
      * @return $this
      */
-    protected function executeListener($eventListener, EventInterface $event, $name)
+    protected function executeListener($eventListener, EventInterface $event, string $name): self
     {
         try {
             $this->callFunction($eventListener, $event);
@@ -176,11 +178,11 @@ class EventDispatcher implements EventDispatcherInterface
      * @param array $listeners
      * @return $this
      */
-    public function addEventListener($eventName, array $listeners)
+    public function addEventListener(string $eventName, array $listeners): self
     {
-        if (!array_key_exists($eventName, $this->options['events'])) {
+        if (!\array_key_exists($eventName, $this->options['events'])) {
             $this->options['events'][$eventName] = [
-                'object' =>BaseEvent::class,
+                'object' => BaseEvent::class,
                 'listeners' => $listeners,
             ];
         }
@@ -196,27 +198,27 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * allow to call event listeners functions
      *
-     * @param mixed $listener
+     * @param callable|string $listener
      * @param EventInterface $event
      */
-    protected function callFunction($listener, EventInterface $event)
+    protected function callFunction($listener, EventInterface $event): void
     {
         if (is_callable($listener)) {
-            call_user_func($listener, $event);
+            $listener($event);
         }
     }
 
     /**
      * read configuration from file
      *
-     * @param mixed $path
+     * @param string $path
      * @param string $type
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function readEventConfiguration($path, $type)
+    public function readEventConfiguration(string $path, string $type): self
     {
-        if (!file_exists($path)) {
+        if (!\file_exists($path)) {
             throw new \InvalidArgumentException('File ' . $path . 'don\'t exists.');
         }
 
@@ -227,7 +229,7 @@ class EventDispatcher implements EventDispatcherInterface
         }
 
         /** @var \BlueEvent\Event\Config\ConfigReader $reader */
-        $reader = new $name;
+        $reader = new $name();
 
         return $this->setEventConfiguration($reader->readConfig($path));
     }
@@ -238,7 +240,7 @@ class EventDispatcher implements EventDispatcherInterface
      * @param bool $logEvents
      * @return $this
      */
-    public function setEventLog($logEvents)
+    public function setEventLog($logEvents): self
     {
         $this->options['log_events'] = (bool)$logEvents;
         return $this;
@@ -250,7 +252,7 @@ class EventDispatcher implements EventDispatcherInterface
      * @param array $events
      * @return $this
      */
-    public function logEvent(array $events = [])
+    public function logEvent(array $events = []): self
     {
         foreach ($events as $event) {
             if (!in_array($event, $this->loggerInstance->logEvents, true)) {
@@ -267,9 +269,9 @@ class EventDispatcher implements EventDispatcherInterface
      * @param bool $log
      * @return $this
      */
-    public function logAllEvents($log = true)
+    public function logAllEvents(bool $log = true): self
     {
-        $this->options['log_all_events'] = (bool)$log;
+        $this->options['log_all_events'] = $log;
         return $this;
     }
 
@@ -279,9 +281,9 @@ class EventDispatcher implements EventDispatcherInterface
      * @param $option string|null
      * @return mixed
      */
-    public function getConfiguration($option = null)
+    public function getConfiguration(?string $option = null)
     {
-        if (!is_null($option)) {
+        if ($option !== null) {
             return $this->options[$option];
         }
 
@@ -293,7 +295,7 @@ class EventDispatcher implements EventDispatcherInterface
      *
      * @return array
      */
-    public function getAllEventsToLog()
+    public function getAllEventsToLog(): array
     {
         return $this->loggerInstance->logEvents;
     }
@@ -303,7 +305,7 @@ class EventDispatcher implements EventDispatcherInterface
      *
      * @return array
      */
-    public function getEventConfiguration()
+    public function getEventConfiguration(): array
     {
         return $this->options['events'];
     }
@@ -313,7 +315,7 @@ class EventDispatcher implements EventDispatcherInterface
      *
      * @return array
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errorList;
     }
@@ -323,7 +325,7 @@ class EventDispatcher implements EventDispatcherInterface
      *
      * @return bool
      */
-    public function hasErrors()
+    public function hasErrors(): bool
     {
         return $this->hasErrors;
     }
@@ -333,7 +335,7 @@ class EventDispatcher implements EventDispatcherInterface
      *
      * @return $this
      */
-    public function clearErrors()
+    public function clearErrors(): self
     {
         $this->errorList = [];
         $this->hasErrors = false;
@@ -347,7 +349,7 @@ class EventDispatcher implements EventDispatcherInterface
      * @param \Exception $exception
      * @return $this
      */
-    protected function addError(\Exception $exception)
+    protected function addError(\Exception $exception): self
     {
         $this->errorList[$exception->getCode()] = [
             'message'   => $exception->getMessage(),

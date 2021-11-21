@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BlueEvent\Event\Config;
 
 class ArrayConfig implements ConfigReader
 {
     /**
      * @param string $path
-     * @return mixed
+     * @return array
      */
-    public function readConfig($path)
+    public function readConfig(string $path): array
     {
         return include $path;
     }

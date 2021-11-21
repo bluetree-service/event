@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Event Object Class
  *
@@ -6,6 +7,8 @@
  * @author      Michał Adamiak    <chajr@bluetree.pl>
  * @copyright   chajr/bluetree
  */
+
+declare(strict_types=1);
 
 namespace BlueEvent\Event\Base;
 
@@ -43,7 +46,7 @@ abstract class Event implements EventInterface
      * @param string $eventName
      * @param array $parameters
      */
-    public function __construct($eventName, array $parameters)
+    public function __construct(string $eventName, array $parameters)
     {
         $this->eventName = $eventName;
         $this->eventParameters = $parameters;
@@ -56,7 +59,7 @@ abstract class Event implements EventInterface
      *
      * @return int
      */
-    public static function getLaunchCount()
+    public static function getLaunchCount(): int
     {
         return self::$launchCount;
     }
@@ -66,7 +69,7 @@ abstract class Event implements EventInterface
      *
      * @return bool
      */
-    public function isPropagationStopped()
+    public function isPropagationStopped(): bool
     {
         return $this->propagationStopped;
     }
@@ -76,7 +79,7 @@ abstract class Event implements EventInterface
      *
      * @return $this
      */
-    public function stopPropagation()
+    public function stopPropagation(): self
     {
         $this->propagationStopped = true;
         return $this;
@@ -85,7 +88,7 @@ abstract class Event implements EventInterface
     /**
      * @return string
      */
-    public function getEventCode()
+    public function getEventCode(): string
     {
         return $this->eventName;
     }
@@ -93,7 +96,7 @@ abstract class Event implements EventInterface
     /**
      * @return array
      */
-    public function getEventParameters()
+    public function getEventParameters(): array
     {
         return $this->eventParameters;
     }

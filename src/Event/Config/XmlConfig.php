@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BlueEvent\Event\Config;
 
-use Zend\Config\Reader\Xml;
+use Laminas\Config\Reader\Xml;
 
 class XmlConfig implements ConfigReader
 {
@@ -10,9 +12,9 @@ class XmlConfig implements ConfigReader
      * @param string $path
      * @return array
      */
-    public function readConfig($path)
+    public function readConfig(string $path): array
     {
-        $reader = new Xml;
+        $reader = new Xml();
         return $reader->fromFile($path);
     }
 }

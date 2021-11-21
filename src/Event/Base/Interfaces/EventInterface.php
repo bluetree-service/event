@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Event Object Class Interface
  *
@@ -7,11 +8,13 @@
  * @copyright   chajr/bluetree
  */
 
+declare(strict_types=1);
+
 namespace BlueEvent\Event\Base\Interfaces;
 
 interface EventInterface
 {
-    public function __construct($eventName, array $parameters);
+    public function __construct(string $eventName, array $parameters);
     public static function getLaunchCount();
     public function isPropagationStopped();
     public function stopPropagation();
