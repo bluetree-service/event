@@ -74,6 +74,8 @@ libraries paste into `composer.json`:
 
 * PHP 7.3 or higher
 
+## Usage
+All information in [this](https://github.com/bluetree-service/event/tree/master/doc) director
 
 ## Change log
 All release version changes:  

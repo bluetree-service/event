@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## 0.9.1.0 - 2022-03-12
+### Changed
+* Required lib versions change
+### Added
+* PHP 8.1 support
+
 ## 0.9.0.0 - 2021-11-21
 ### Changed
 * Scrutinizer configuration
