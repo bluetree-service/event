@@ -13,21 +13,21 @@ class EventLog
      *
      * @var array
      */
-    public $logEvents = [];
+    public array $logEvents = [];
 
     /**
      * store logger instance
      *
      * @var \SimpleLog\LogInterface
      */
-    protected $loggerInstance;
+    protected \SimpleLog\LogInterface $loggerInstance;
 
     /**
      * store default options for event dispatcher
      *
      * @var array
      */
-    protected $options = [];
+    protected array $options = [];
 
     /**
      * EventLog constructor.
@@ -57,7 +57,7 @@ class EventLog
      * @param bool|string $status
      * @return $this
      */
-    public function makeLogEvent(string $name, $eventListener, $status): self
+    public function makeLogEvent(string $name, mixed $eventListener, bool|string $status): self
     {
         if (
             $this->options['log_events']
@@ -81,17 +81,12 @@ class EventLog
      * @param mixed $eventListener
      * @return string
      */
-    protected function getListenerData($eventListener): string
+    protected function getListenerData(mixed $eventListener): string
     {
-        switch (true) {
-            case $eventListener instanceof \Closure:
-                return 'Closure';
-
-            case \is_array($eventListener):
-                return $eventListener[0] . '::' . $eventListener[1];
-
-            default:
-                return $eventListener;
-        }
+        return match (true) {
+            $eventListener instanceof \Closure => 'Closure',
+            \is_array($eventListener) => $eventListener[0] . '::' . $eventListener[1],
+            default => $eventListener,
+        };
     }
 }

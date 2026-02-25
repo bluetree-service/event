@@ -17,28 +17,33 @@ use BlueEvent\Event\Base\Interfaces\EventInterface;
 abstract class Event implements EventInterface
 {
     /**
+     * @var array
+     */
+    protected array $exchanger = [];
+
+    /**
      * store information how many times event object was called
      *
      * @var int
      */
-    protected static $launchCount = 0;
+    protected static int $launchCount = 0;
 
     /**
      * store information that event propagation is stopped or not
      *
      * @var bool
      */
-    protected $propagationStopped = false;
+    protected bool $propagationStopped = false;
 
     /**
      * @var array
      */
-    protected $eventParameters = [];
+    protected array $eventParameters = [];
 
     /**
      * @var string
      */
-    protected $eventName = '';
+    protected string $eventName = '';
 
     /**
      * create event instance
@@ -76,13 +81,10 @@ abstract class Event implements EventInterface
 
     /**
      * allow to stop event propagation
-     *
-     * @return $this
      */
-    public function stopPropagation(): self
+    public function stopPropagation(): void
     {
         $this->propagationStopped = true;
-        return $this;
     }
 
     /**
@@ -99,5 +101,24 @@ abstract class Event implements EventInterface
     public function getEventParameters(): array
     {
         return $this->eventParameters;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @return void
+     */
+    public function setExchanger(string $name, mixed $value): void
+    {
+        $this->exchanger[$name] = $value;
+    }
+
+    /**
+     * @param string $name
+     * @return mixed
+     */
+    public function getExchanger(string $name): mixed
+    {
+        return $this->exchanger[$name] ?? null;
     }
 }

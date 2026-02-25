@@ -14,7 +14,6 @@ class JsonConfig implements ConfigReader
      */
     public function readConfig(string $path): array
     {
-        $reader = new Json();
-        return $reader->fromFile($path);
+        return (new Json())->fromFile($path);
     }
 }

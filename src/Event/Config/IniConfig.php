@@ -14,7 +14,6 @@ class IniConfig implements ConfigReader
      */
     public function readConfig(string $path): array
     {
-        $reader = new Ini();
-        return $reader->fromFile($path);
+        return (new Ini())->fromFile($path);
     }
 }

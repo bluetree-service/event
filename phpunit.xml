@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<phpunit bootstrap="vendor/autoload.php" colors="true">
-    <testsuites>
-        <testsuite name="config">
-            <file>test/Config/ArrayConfigTest.php</file>
-            <file>test/Config/IniConfigTest.php</file>
-            <file>test/Config/JsonConfigTest.php</file>
-            <file>test/Config/XmlConfigTest.php</file>
-            <file>test/Config/YamlConfigTest.php</file>
-        </testsuite>
-        <testsuite name="log">
-            <file>test/EventLogTest.php</file>
-        </testsuite>
-        <testsuite name="event">
-            <file>test/BaseEventTest.php</file>
-        </testsuite>
-        <testsuite name="dispatcher">
-            <file>test/EventDispatcherTest.php</file>
-        </testsuite>
-    </testsuites>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">src/Event</directory>
-        </whitelist>
-    </filter>
+<phpunit bootstrap="vendor/autoload.php" colors="true"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnTestsThatTriggerErrors="true"
+         displayDetailsOnTestsThatTriggerNotices="true"
+         displayDetailsOnTestsThatTriggerWarnings="true"
+         displayDetailsOnPhpunitDeprecations="true"
+>
+<testsuites>
+    <testsuite name="config">
+        <file>tests/Config/ArrayConfigTest.php</file>
+        <file>tests/Config/IniConfigTest.php</file>
+        <file>tests/Config/JsonConfigTest.php</file>
+        <file>tests/Config/XmlConfigTest.php</file>
+        <file>tests/Config/YamlConfigTest.php</file>
+    </testsuite>
+    <testsuite name="log">
+        <file>tests/EventLogTest.php</file>
+    </testsuite>
+    <testsuite name="event">
+        <file>tests/BaseEventTest.php</file>
+    </testsuite>
+    <testsuite name="dispatcher">
+        <file>tests/EventDispatcherTest.php</file>
+    </testsuite>
+</testsuites>
+<source>
+    <include>
+        <directory suffix=".php">src</directory>
+    </include>
+</source>
 </phpunit>

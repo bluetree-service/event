@@ -14,16 +14,11 @@
     }
   ],
   "require": {
-    "php": ">=7.3",
-    "bluetree-service/simple-log": "0.9",
-    "laminas/laminas-config": "3.7.*",
-    "laminas/laminas-json": "3.3.*",
-    "mustangostang/spyc": "0.6.*"
-  },
-  "require-dev": {
-    "php-coveralls/php-coveralls": "^2.5",
-    "phpunit/phpunit": "^9.5",
-    "roave/security-advisories": "dev-master"
+    "php": "^8.2",
+    "bluetree-service/simple-log": "^0.10.0",
+    "laminas/laminas-config": "^2.5",
+    "laminas/laminas-json": "^3.8",
+    "mustangostang/spyc": "^0.6.3"
   },
   "autoload": {
     "psr-4": {
@@ -32,7 +27,23 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "BlueEventTest\\": "test/"
+      "BlueEventTest\\": "tests/"
     }
+  },
+    "scripts": {
+        "test": "./vendor/bin/phpunit --display-warnings",
+        "coverage": "./vendor/bin/phpunit --display-warnings --coverage-clover build/logs/clover.xml",
+        "clover-report": "./vendor/bin/clover_reporter -c build/logs/clover.xml",
+        "clover-full": "./vendor/bin/clover_reporter -f build/logs/clover.xml",
+        "clover-html": "./vendor/bin/clover_reporter -P ./build/report.html -f -H build/logs/clover.xml",
+        "test-complete": [
+            "@coverage",
+            "@clover-html"
+        ]
+    },
+  "require-dev": {
+    "phpunit/phpunit": "^11.5",
+    "roave/security-advisories": "dev-master",
+    "bluetree-service/clover-reporter": "^0.3.2"
   }
 }

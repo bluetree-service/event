@@ -10,8 +10,9 @@
  */
 namespace BlueEventTest;
 
-use BlueEvent\Event\Base\Interfaces\EventInterface;
 use BlueEvent\Event\Base\EventDispatcher;
+use BlueEvent\Event\Base\Interfaces\EventInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class EventDispatcherTest extends TestCase
@@ -49,8 +50,8 @@ class EventDispatcherTest extends TestCase
      * test event initialize
      *
      * @param array $options
-     * @dataProvider configDataProvider
      */
+    #[DataProvider('configDataProvider')]
     public function testEventCreation($options)
     {
         $instance = new EventDispatcher;
@@ -65,8 +66,8 @@ class EventDispatcherTest extends TestCase
      * test read configuration
      *
      * @param array $options
-     * @dataProvider configDataProvider
      */
+    #[DataProvider('configDataProvider')]
     public function testSetEventDispatcherConfiguration($options)
     {
         $eventDispatcher = new EventDispatcher;
@@ -398,7 +399,7 @@ class EventDispatcherTest extends TestCase
             'test_event' => [
                 'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
-                    [new self, 'trigger']
+                    [new self('internal'), 'trigger']
                 ]
             ],
         ]);
@@ -469,7 +470,7 @@ class EventDispatcherTest extends TestCase
      *
      * @return array
      */
-    public function configDataProvider()
+    public static function configDataProvider()
     {
         return [
             [

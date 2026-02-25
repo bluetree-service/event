@@ -15,9 +15,11 @@ namespace BlueEvent\Event\Base\Interfaces;
 interface EventInterface
 {
     public function __construct(string $eventName, array $parameters);
-    public static function getLaunchCount();
-    public function isPropagationStopped();
-    public function stopPropagation();
-    public function getEventCode();
-    public function getEventParameters();
+    public static function getLaunchCount(): int;
+    public function isPropagationStopped(): bool;
+    public function stopPropagation(): void;
+    public function getEventCode(): string;
+    public function getEventParameters(): array;
+    public function setExchanger(string $name, mixed $value): void;
+    public function getExchanger(string $name): mixed;
 }

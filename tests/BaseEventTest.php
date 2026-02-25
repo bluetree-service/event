@@ -82,7 +82,7 @@ class BaseEventTest extends TestCase
         );
     }
 
-    public function testExchangeDateBetweenListeners()
+    public function testExchangeDataBetweenListeners()
     {
         $info = false;
 
@@ -92,10 +92,10 @@ class BaseEventTest extends TestCase
                 'object'    => 'BlueEvent\Event\BaseEvent',
                 'listeners' => [
                     function ($event) {
-                        $event->something = true;
+                        $event->setExchanger('test', true);
                     },
                     function ($event) use (&$info) {
-                        $info = $event->something;
+                        $info = $event->getExchanger('test');
                     },
                 ]
             ],

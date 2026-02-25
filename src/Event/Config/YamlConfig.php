@@ -14,7 +14,6 @@ class YamlConfig implements ConfigReader
      */
     public function readConfig(string $path): array
     {
-        $reader = new Yaml(['Spyc','YAMLLoadString']);
-        return $reader->fromFile($path);
+        return (new Yaml(['Spyc', 'YAMLLoadString']))->fromFile($path);
     }
 }

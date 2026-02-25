@@ -17,15 +17,15 @@ interface EventDispatcherInterface
     public function __construct(array $options = []);
     public function triggerEvent(string $name, array $data = []);
     public function readEventConfiguration(string $configuration, string $type);
-    public function logEvent();
-    public function getErrors();
-    public function hasErrors();
-    public function clearErrors();
-    public function getAllEventsToLog();
-    public function logAllEvents();
-    public function getConfiguration();
-    public function setEventLog($logEvents);
-    public function setEventConfiguration(array $events);
-    public function getEventConfiguration();
-    public function addEventListener(string $eventName, array $listeners);
+    public function logEvent(array $events): self;
+    public function getErrors(): array;
+    public function hasErrors(): bool;
+    public function clearErrors(): self;
+    public function getAllEventsToLog(): array;
+    public function logAllEvents(bool $log): self;
+    public function getConfiguration(?string $option): mixed;
+    public function setEventLog(bool $logEvents): self;
+    public function setEventConfiguration(array $events): self;
+    public function getEventConfiguration(): array;
+    public function addEventListener(string $eventName, array $listeners): self;
 }

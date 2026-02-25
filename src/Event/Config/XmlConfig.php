@@ -14,7 +14,6 @@ class XmlConfig implements ConfigReader
      */
     public function readConfig(string $path): array
     {
-        $reader = new Xml();
-        return $reader->fromFile($path);
+        return (new Xml())->fromFile($path);
     }
 }
