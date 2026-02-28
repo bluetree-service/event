@@ -15,6 +15,8 @@ namespace BlueEvent\Event\Base;
 use BlueEvent\Event\Base\Interfaces\EventDispatcherInterface;
 use BlueEvent\Event\Base\Interfaces\EventInterface;
 use BlueEvent\Event\BaseEvent;
+use BlueEvent\Event\Parallel\RabbitQueue;
+use BlueEvent\Event\Parallel\RabbitListenerInterface;
 
 class EventDispatcher implements EventDispatcherInterface
 {
@@ -42,6 +44,11 @@ class EventDispatcher implements EventDispatcherInterface
     protected EventLog $loggerInstance;
 
     /**
+     * @var RabbitQueue|null
+     */
+    protected ?RabbitQueue $rabbit = null;
+
+    /**
      * store default options for event dispatcher
      *
      * @var array
@@ -58,6 +65,17 @@ class EventDispatcher implements EventDispatcherInterface
             'storage' => \SimpleLog\Storage\File::class,
         ],
         'events' => [],
+        'rabbitmq' => [
+            'enabled' => false,
+            'host' => 'localhost',
+            'port' => 5672,
+            'username' => 'guest',
+            'password' => 'guest',
+            'vhost' => '/',
+            'exchange' => 'event_dispatcher',
+            'exchange_type' => 'direct',
+            'queue' => 'event_dispatcher_queue',
+        ],
     ];
 
     /**
@@ -65,6 +83,7 @@ class EventDispatcher implements EventDispatcherInterface
      *
      * @param array $options
      * @throws \InvalidArgumentException|\ReflectionException
+     * @throws \Exception
      */
     public function __construct(array $options = [])
     {
@@ -77,7 +96,33 @@ class EventDispatcher implements EventDispatcherInterface
             );
         }
 
+        if ($this->options['rabbitmq']['enabled']) {
+            $this->rabbit = new RabbitQueue(
+                $this->options['rabbitmq']['host'],
+                $this->options['rabbitmq']['port'],
+                $this->options['rabbitmq']['username'],
+                $this->options['rabbitmq']['password'],
+                $this->options['rabbitmq']['vhost'],
+                $this->options['rabbitmq']['exchange'],
+                $this->options['rabbitmq']['exchange_type'],
+                $this->options['rabbitmq']['queue']
+            );
+        }
+
         $this->loggerInstance = new EventLog($this->options);
+    }
+
+    /**
+     * close rabbit connection if enabled
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function closeRabbitConnection(): void
+    {
+        if ($this->options['rabbitmq']['enabled']) {
+            $this->rabbit?->close();
+        }
     }
 
     /**
@@ -150,17 +195,17 @@ class EventDispatcher implements EventDispatcherInterface
     }
 
     /**
-     * @param callable|string $eventListener
+     * @param RabbitListenerInterface|callable|string $eventListener
      * @param EventInterface $event
      * @param string $name
      * @return $this
      */
-    protected function executeListener(callable|string $eventListener, EventInterface $event, string $name): self
+    protected function executeListener(RabbitListenerInterface|callable|string $eventListener, EventInterface $event, string $name): self
     {
         try {
             $this->callFunction($eventListener, $event);
             $status = self::EVENT_STATUS_OK;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->addError($e);
             $status = self::EVENT_STATUS_ERROR;
         }
@@ -198,11 +243,18 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * allow to call event listeners functions
      *
-     * @param callable|string $listener
+     * @param RabbitListenerInterface|callable|string $listener
      * @param EventInterface $event
+     * @throws \JsonException
      */
-    protected function callFunction(callable|string $listener, EventInterface $event): void
+    protected function callFunction(RabbitListenerInterface|callable|string $listener, EventInterface $event): void
     {
+        if ($listener instanceof RabbitListenerInterface) {
+            $listener->setRabbitConnection($this->rabbit);
+            $listener->trigger($event);
+            return;
+        }
+
         if (\is_callable($listener)) {
             $listener($event);
         }
@@ -349,7 +401,7 @@ class EventDispatcher implements EventDispatcherInterface
      * @param \Exception $exception
      * @return $this
      */
-    protected function addError(\Exception $exception): self
+    protected function addError(\Throwable $exception): self
     {
         $this->errorList[$exception->getCode()] = [
             'message' => $exception->getMessage(),

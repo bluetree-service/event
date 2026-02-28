@@ -18,7 +18,8 @@
     "bluetree-service/simple-log": "^0.10.0",
     "laminas/laminas-config": "^2.5",
     "laminas/laminas-json": "^3.8",
-    "mustangostang/spyc": "^0.6.3"
+    "mustangostang/spyc": "^0.6.3",
+    "php-amqplib/php-amqplib": "^v3.7"
   },
   "autoload": {
     "psr-4": {

@@ -19,6 +19,7 @@
     </testsuite>
     <testsuite name="event">
         <file>tests/BaseEventTest.php</file>
+        <file>tests/RabbitEventTest.php</file>
     </testsuite>
     <testsuite name="dispatcher">
         <file>tests/EventDispatcherTest.php</file>
