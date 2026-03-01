@@ -17,6 +17,7 @@ use BlueEvent\Event\Base\Interfaces\EventInterface;
 use BlueEvent\Event\BaseEvent;
 use BlueEvent\Event\Parallel\RabbitQueue;
 use BlueEvent\Event\Parallel\RabbitListenerInterface;
+use BlueEvent\Event\Parallel\ReactListenerInterface;
 
 class EventDispatcher implements EventDispatcherInterface
 {
@@ -195,12 +196,12 @@ class EventDispatcher implements EventDispatcherInterface
     }
 
     /**
-     * @param RabbitListenerInterface|callable|string $eventListener
+     * @param ReactListenerInterface|RabbitListenerInterface|callable|string $eventListener
      * @param EventInterface $event
      * @param string $name
      * @return $this
      */
-    protected function executeListener(RabbitListenerInterface|callable|string $eventListener, EventInterface $event, string $name): self
+    protected function executeListener(ReactListenerInterface|RabbitListenerInterface|callable|string $eventListener, EventInterface $event, string $name): self
     {
         try {
             $this->callFunction($eventListener, $event);
@@ -243,12 +244,16 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * allow to call event listeners functions
      *
-     * @param RabbitListenerInterface|callable|string $listener
+     * @param ReactListenerInterface|RabbitListenerInterface|callable|string $listener
      * @param EventInterface $event
-     * @throws \JsonException
      */
-    protected function callFunction(RabbitListenerInterface|callable|string $listener, EventInterface $event): void
+    protected function callFunction(ReactListenerInterface|RabbitListenerInterface|callable|string $listener, EventInterface $event): void
     {
+        if ($listener instanceof ReactListenerInterface) {
+            $listener->trigger($event);
+            return;
+        }
+        
         if ($listener instanceof RabbitListenerInterface) {
             $listener->setRabbitConnection($this->rabbit);
             $listener->trigger($event);

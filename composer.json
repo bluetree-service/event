@@ -19,7 +19,8 @@
     "laminas/laminas-config": "^2.5",
     "laminas/laminas-json": "^3.8",
     "mustangostang/spyc": "^0.6.3",
-    "php-amqplib/php-amqplib": "^v3.7"
+    "php-amqplib/php-amqplib": "^v3.7",
+    "react/child-process": "^0.6.7"
   },
   "autoload": {
     "psr-4": {
