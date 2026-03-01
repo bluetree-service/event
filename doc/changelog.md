@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## 0.10.0.0 - 2026-02-25
+## 0.10.0.0 - 2026-03-01
 ### Added
 * Composer scripts for testing
 * Makefile for easier development
@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 * Dedicated class variable for exchanging information between listeners
 * Variable types
 * Some small improvements
+* Sending event handling to RabbitMQ and a separate process using React PHP
 ### Changed
 * Minimal PHP version set to 8.2
 * Updated required libraries
