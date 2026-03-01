@@ -6,6 +6,13 @@ services:
     command: ${RUN_COMMAND}
     volumes:
       - ${MOUNT_POINT}
+  rabbitmq82:
+    image: rabbitmq:3-management
+    networks:
+      - backend82
+    ports:
+      - "15672:15672"
+      - "5672:5672"
 
 networks:
   backend83:

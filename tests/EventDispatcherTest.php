@@ -329,6 +329,17 @@ class EventDispatcherTest extends TestCase
                     'storage' => \SimpleLog\Storage\File::class,
                 ],
                 'events' => [],
+                'rabbitmq' => [
+                    'enabled' => false,
+                    'host' => 'localhost',
+                    'port' => 5672,
+                    'username' => 'guest',
+                    'password' => 'guest',
+                    'vhost' => '/',
+                    'exchange' => 'event_dispatcher',
+                    'exchange_type' => 'direct',
+                    'queue' => 'event_dispatcher_queue',
+                ],
             ],
             $instance->getConfiguration()
         );

@@ -7,6 +7,13 @@ services:
       - ../build:/var/www/html/build
       - ${MOUNT_POINT}
     command: ${RUN_COMMAND}
+  rabbitmq82:
+    image: rabbitmq:3-management
+    networks:
+      - backend82
+    ports:
+      - "15672:15672"
+      - "5672:5672"
 
 networks:
   backend85:

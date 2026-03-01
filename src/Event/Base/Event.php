@@ -70,6 +70,14 @@ abstract class Event implements EventInterface
     }
 
     /**
+     * @return void
+     */
+    public static function resetLaunchCount(): void
+    {
+        self::$launchCount = 0;
+    }
+
+    /**
      * return information that event propagation is stopped or not
      *
      * @return bool
