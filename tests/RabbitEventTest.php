@@ -55,7 +55,7 @@ class RabbitEventTest extends TestCase
 
         $instance->triggerEvent('test_event2');
 
-        $message = $this->getMessage(true);
+        $message = $this->getMessage();
         $this->assertJson($message);
         $data = \json_decode($message, true, 512, JSON_THROW_ON_ERROR);
         $this->assertEquals('test_event2', $data['eventName']);
@@ -70,12 +70,35 @@ class RabbitEventTest extends TestCase
     {
         \BlueEvent\Event\BaseEvent::resetLaunchCount();
 
+        $this->waitForRabbitIsEnabled();
+
         return new EventDispatcher([
             'rabbitmq' => [
                 'enabled' => true,
-                'host' => 'rabbitmq82',
+                'host' => $this->getRabbitHost(),
             ]
         ]);
+    }
+
+    /**
+     * @return void
+     */
+    protected function waitForRabbitIsEnabled(): void
+    {
+        $host = $this->getRabbitHost();
+        $port = 5672;
+        $timestamp = time();
+
+        for ($i = $timestamp; $i < $timestamp + 30; $i++) {
+            $connection = @fsockopen($host, 5672, $errno, $errstr, 5);
+            if ($connection) {
+                fclose($connection);
+                return;
+            }
+            sleep(1);
+        }
+
+        throw new \RuntimeException(sprintf('Cannot connect to RabbitMQ at %s:%d - %s', $host, $port, $errstr));
     }
 
     /**
@@ -87,7 +110,7 @@ class RabbitEventTest extends TestCase
         $exchangeType = 'direct';
         $queue = 'event_dispatcher_queue';
 
-        $connection = new AMQPStreamConnection('rabbitmq82', 5672, 'guest', 'guest', '/');
+        $connection = new AMQPStreamConnection($this->getRabbitHost(), 5672, 'guest', 'guest', '/');
         $channel = $connection->channel();
 
         $channel->exchange_declare($exchange, $exchangeType, false, true, false);
@@ -107,5 +130,13 @@ class RabbitEventTest extends TestCase
         $connection->close();
 
         return $res->getBody();
+    }
+
+    /**
+     * @return string
+     */
+    protected function getRabbitHost(): string
+    {
+        return getenv('RABBIT_HOST') ?: 'rabbitmq82';
     }
 }

@@ -6,6 +6,10 @@ services:
     command: ${RUN_COMMAND}
     volumes:
       - ${MOUNT_POINT}
+    environment:
+      - RABBIT_HOST=rabbitmq82
+    depends_on:
+      - rabbitmq82
   rabbitmq82:
     image: rabbitmq:3-management
     networks:

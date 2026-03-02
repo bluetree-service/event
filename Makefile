@@ -101,6 +101,7 @@ test-all: init
 		version=$$(echo "$$file" | sed -E 's/.*([0-9]{2})\.yaml/\1/'); \
 		echo "🛠 PHP version:$(BLUE) $$version $(NC)"; \
 		$(MAKE) run-and-test php_version=$${version}; \
+		$(MAKE) down; \
 		echo "====================================================================================================="; \
 	done
 
@@ -114,7 +115,11 @@ run-and-test: init
 
 copy: init
 	@echo "$(BLUE)💻 Copy files to container...$(NC)"
-	@$(DOCKER_COMPOSE_COMMAND) cp . php$(PHP_VERSION):/var/www/html
+	@$(DOCKER_COMPOSE_COMMAND) cp src/ php$(PHP_VERSION):/var/www/html
+	@$(DOCKER_COMPOSE_COMMAND) cp tests/ php$(PHP_VERSION):/var/www/html
+	@$(DOCKER_COMPOSE_COMMAND) cp composer.json php$(PHP_VERSION):/var/www/html
+	@$(DOCKER_COMPOSE_COMMAND) cp Makefile php$(PHP_VERSION):/var/www/html
+	@$(DOCKER_COMPOSE_COMMAND) cp phpunit.xml php$(PHP_VERSION):/var/www/html
 	@$(DOCKER_COMPOSE_COMMAND) exec php$(PHP_VERSION) chown -R www-data:www-data /var/www/html
 
 run: up copy build

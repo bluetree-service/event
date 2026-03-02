@@ -6,13 +6,14 @@ services:
     command: ${RUN_COMMAND}
     volumes:
       - ${MOUNT_POINT}
-  rabbitmq82:
+    environment:
+      - RABBIT_HOST=rabbitmq83
+    depends_on:
+      - rabbitmq83
+  rabbitmq83:
     image: rabbitmq:3-management
     networks:
-      - backend82
-    ports:
-      - "15672:15672"
-      - "5672:5672"
+      - backend83
 
 networks:
   backend83:

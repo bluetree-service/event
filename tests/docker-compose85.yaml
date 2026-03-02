@@ -7,13 +7,14 @@ services:
       - ../build:/var/www/html/build
       - ${MOUNT_POINT}
     command: ${RUN_COMMAND}
-  rabbitmq82:
+    environment:
+      - RABBIT_HOST=rabbitmq85
+    depends_on:
+      - rabbitmq85
+  rabbitmq85:
     image: rabbitmq:3-management
     networks:
-      - backend82
-    ports:
-      - "15672:15672"
-      - "5672:5672"
+      - backend85
 
 networks:
   backend85:
