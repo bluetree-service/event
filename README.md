@@ -72,7 +72,7 @@ libraries paste into `composer.json`:
 
 ### Requirements
 
-* PHP 7.3 or higher
+* PHP 8.2 or higher
 
 ## Usage
 All information in [this](https://github.com/bluetree-service/event/tree/master/doc) director

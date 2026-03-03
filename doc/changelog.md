@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## 0.10.1.0 - 2026-03-03
+###Changed
+* Updated libraries version
+
 ## 0.10.0.0 - 2026-03-01
 ### Added
 * Composer scripts for testing
